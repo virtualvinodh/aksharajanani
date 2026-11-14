@@ -69,19 +69,14 @@ When glyph **A** is saved:
 
 ## 15. Image Tracing Pipeline
 
-The Image Tracer converts raster images into vector glyphs using a multi-stage process involving external libraries and geometric cleanup.
+The tracer (`services/imageTracerService.ts`, dialog `components/modals/ImageTracerModal.tsx`) turns a photo or scan of a hand-written letter into one outline shape. It has no library of its own; paper.js fits the curves.
 
-### 15.1 Raster Processing
-1.  **Input**: User uploads an image or pastes a Data URL.
-2.  **Preprocessing**: `traceImageToSVG` (in `imageTracerService.ts`) optionally removes the background color using pixel-difference thresholding on an HTML5 Canvas.
-3.  **Vectorization**: The `imagetracer.js` library converts the processed bitmap into raw SVG path data.
-
-### 15.2 Geometric Refinement
-1.  **Import**: The raw SVG is imported into a headless `paper.js` scope.
-2.  **Boolean Operations**:
-    *   **Union**: Overlapping shapes are merged.
-    *   **Subtraction**: White background shapes are subtracted from the main shape to create proper holes (counters).
-3.  **Simplification**: The resulting path is simplified to reduce node count while maintaining visual fidelity.
+1.  **Even out the light**: the photo (or the part dragged over) is read at most 1000 px across. The paper's brightness is estimated with a morphological closing on a small copy (ink disappears, shadows and lighting gradients stay) and divided out. Places much darker than the paper (a table round it) are left out. Light writing on a dark board is detected from the middle of the photo and turned round.
+2.  **Ink**: Otsu's threshold on the evened-out picture, moved by the "Lines: thinner/thicker" slider.
+3.  **Clean-up**: specks (relative to the total ink, "Clean-up" slider), ruled lines, a frame round the photo and edge clutter are dropped; pinholes are filled; letter holes stay.
+4.  **Zoom**: if the letter fills under 60% of a large photo, it is read again at full resolution around the letter.
+5.  **Outlines**: marching squares on the lightly blurred mask give sub-pixel contours (ink always on the left, so holes run the other way and survive non-zero filling), fitted with Bézier curves by paper.js `simplify` ("Edges" slider).
+6.  **Placement**: the dialog scales the shape to the guide letter's height (measured with `measureText` in the guide font) and centres it on the guide; without a guide, between the top line and the baseline. All contours go into one `outline` path.
 4.  **Export**: The final geometry is extracted as an SVG string and converted into the application's internal `Path[]` format.
 
 ---
@@ -376,26 +371,25 @@ If the positioning rule is GSUB-based (requiring a baked ligature glyph):
 
 Aksharajanani is a "Fat Client" application that hydrtates multiple execution environments (JavaScript, Web Workers, and Python/WASM) upon startup.
 
-### 14.1 Script Tag Injection (Bootloader)
-Initialization begins in `index.html` via static `<script>` tags:
-1.  **Base Libraries**: `paper-full.min.js`, `opentype.js`, and `imagetracerjs` are loaded into the global `window` scope.
-2.  **Runtime Environment**: `pyodide.js` is loaded but not yet executed.
-3.  **Module Mapping**: The `importmap` resolves ES modules for `react`, `idb`, and `vitest`.
+### 14.1 Bundled Libraries
+`index.html` has a single module script (`/index.tsx`). Every library (`react`, `paper`, `opentype.js`, `idb`, `react-virtuoso`, `react-joyride`) is an npm dependency imported as an ES module and bundled by Vite; nothing is put on `window` by script tags. Only Pyodide and its Python packages come from outside the bundle (see 14.3).
 
 ### 14.2 App Container Mount
 The `AppContainer.tsx` component orchestrates the secondary hydration:
-1.  **Pyodide Initialization**: Calls `initializePyodide()` which spawns a dedicated Web Worker (`pythonFontService.ts`).
+1.  **Pyodide Initialization**: When a project opens (not on the start page), calls `initializePyodide()` from `services/pythonFontService.ts`, which starts a dedicated Web Worker. Importing a font from the start page starts it on demand.
 2.  **Logo Injection**: Dynamically injects a `@font-face` for the application's branding logo.
 3.  **Metadata Fetching**: Retrieves `scripts.json` to populate the script selection screen.
 
 ### 14.3 Python Worker Lifecycle
 The `pythonFontService.ts` executes a complex internal bootstrap:
-1.  **WASM Fetching**: The worker downloads the Pyodide WASM binary (~10MB).
-2.  **Micropip Setup**: Python's `micropip` module is initialized to manage virtual environment packages.
-3.  **Dependency Installation**: The worker calls `micropip.install('fonttools')` to load the 3.5MB font engineering library into memory.
+1.  **WASM Fetching**: The worker loads Pyodide (v0.25.1) from the app's own `font-builder/` folder (downloaded and hash-checked by `scripts/fetch-font-builder.mjs` before dev and build). If that copy is missing, it falls back to jsDelivr, piwheels and PyPI.
+2.  **Micropip Setup**: Python's `micropip` module is initialized to install packages.
+3.  **Dependency Installation**: The worker installs pinned wheels, checked by hash: fontTools and fontFeatures (whose `lxml` comes from Pyodide's package set).
 4.  **Signal**: The worker posts a `type: 'status', payload: 'ready'` message back to the main thread.
 
 ### 14.4 Project Asset Hydration
+All of the app's own files (`scripts.json`, `data/…`, `locales/…`, `font-builder/…`, and `/fonts/…` URLs in data files) are fetched through `utils/appUrl.ts`, relative to the base path the app is served from (`/` locally, `/Aksharajanani/` on GitHub Pages; set with `BASE_PATH` at build time).
+
 When a specific script (e.g., "Tamil") is selected:
 1.  **Blueprint Fetching**: `useProjectLoad.ts` fetches `characters_[id].json`, `positioning_[id].json`, and `rules_[id].json`.
 2.  **Guide Font Injection**: The `guide-font-face-style` element is created, fetching the reference `.ttf` file for tracing.

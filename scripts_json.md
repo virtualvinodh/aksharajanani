@@ -67,7 +67,6 @@ Sets the initial state of the editor settings when a user starts this script.
   "contrast": 1.0,             // 1.0 = Monoline, <1.0 = Calligraphic
   "showGridOutlines": true,    // Show ghost letters in background
   "isAutosaveEnabled": true,
-  "editorMode": "simple",      // 'simple' or 'advanced'
   "isPrefillEnabled": true     // Auto-fill composites with components
 }
 ```

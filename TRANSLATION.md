@@ -1,97 +1,72 @@
-# Translation Guide for AksharaJanani
+# Translating Aksharajanani
 
-AksharaJanani aims to be accessible to font designers worldwide. We support multiple languages for the UI interface. This guide explains how to add a new language or update existing translations.
+The interface is in English and Tamil. This guide explains how to update a translation or add a new interface language.
 
-## 1. Translation Files
+Most people using the app have never made a font. Translate for them: use everyday words in your language and avoid type-design terms (glyph, kerning, ligature, Latin) unless there is no other way. Prefer language names ("Tamil letters", "English letters") over script names.
 
-All translation files are located in the `public/locales` directory.
+## 1. Where the files are
 
 ```
-/public
-  /locales
-    en.json       # English (Source of Truth)
-    ta.json       # Tamil
-    de.json       # German
-    es.json       # Spanish
-    ...
+locales/
+  en.json            # the interface (English is the source)
+  ta.json            # Tamil
+  help/en.json       # the Help page
+  help/ta.json
+  tutorial/en.json   # the tutorial and tips
+  tutorial/ta.json
 ```
 
-### File Structure
-The JSON files are flat key-value pairs (mostly).
+Each file is a flat list of keys and texts:
 
 ```json
 {
-  "appName": "AksharaJanani",
-  "newProject": "New Project",
-  "export": "Export",
-  ...
+  "exportOtf": "Export Font",
+  "changeScript": "My fonts"
 }
 ```
 
----
+Translate the texts on the right. Never change the keys on the left; a key's name doesn't always match its text any more (`changeScript` is the "My fonts" button), so go by the English text. Keep placeholders such as `{count}` and `{name}` exactly as they are. Their position in the sentence can change.
 
-## 2. Adding a New Language
+The app loads these files while it runs (from `/locales/…`); `vite.config.ts` copies the folder into the build.
 
-1.  **Create the File:**
-    Copy `public/locales/en.json` to a new file named with your language code (e.g., `fr.json` for French).
+## 2. Finding missing translations
 
-2.  **Translate Values:**
-    Translate the values (right side) of the JSON object. **Do not change the keys (left side).**
+```bash
+npm run check:translations
+```
 
-    *   **English:** `"save": "Save Project"`
-    *   **French:** `"save": "Enregistrer le projet"`
+This lists every key the code uses that is missing from a translation, with where it is used. It should print "None found" before a pull request.
 
-3.  **Register the Language:**
-    Open `src/contexts/LocaleContext.tsx` and add your language to the `supportedLocales` array.
+## 3. Adding an interface language
 
-    ```typescript
-    export const supportedLocales: LocaleInfo[] = [
-      { code: 'en', nativeName: 'English' },
-      { code: 'fr', nativeName: 'Français' }, // Add this line
-      // ...
-    ];
-    ```
+1. Copy `locales/en.json`, `locales/help/en.json` and `locales/tutorial/en.json` to files named with your language code (for example `hi.json` for Hindi), and translate them.
+2. Add the language to `availableLocales` in `contexts/LocaleContext.tsx`:
 
-4.  **Test:**
-    Start the app (`npm run dev`), go to Settings, and switch the language to verify your changes.
+   ```typescript
+   export const availableLocales: LocaleInfo[] = [
+     { code: 'en', nativeName: 'English' },
+     { code: 'ta', nativeName: 'தமிழ்' },
+     { code: 'hi', nativeName: 'हिन्दी' },
+   ];
+   ```
+3. Run `npm run dev`, choose the language on the start page, and go through the main screens: the start page, the letter grid, drawing a letter, Spacing, the Test page, export and Settings. Check on a phone-sized window too: long words can push buttons off the screen.
 
----
+A missing key falls back to English. A few screens still have English written into the code (being moved into `locales/`), so not everything will change yet.
 
-## 3. Updating Translations
+## 4. Words with more than one meaning
 
-If new features are added, new keys will appear in `en.json`.
+Look at the screen where a text appears before translating it. For example:
+- **"Case"** can mean capital/small letters or a test case;
+- **"Mark"** can mean an accent or vowel sign, or ticking a box;
+- **"Spacing"** means the space between letters, not between lines.
 
-1.  **Check for Missing Keys:**
-    We provide a script to identify missing translations.
+If you're unsure, ask in a GitHub issue or pull request.
 
-    ```bash
-    node check_translations.js
-    ```
+## 5. Sending a translation
 
-    This script compares all locale files against `en.json` and reports any missing keys.
+1. Fork the repository and create a branch, for example `translate-hindi`.
+2. Add or update the JSON files (and `LocaleContext.tsx` for a new language).
+3. Run `npm run check:translations` and `npm run check`.
+4. Open a pull request.
 
-2.  **Add Missing Keys:**
-    Add the missing keys to your language file and provide translations.
-
----
-
-## 4. Contextual Translations
-
-Some terms might be ambiguous. Refer to the UI to understand the context.
-
-*   **"Case"**: Could mean "Upper Case" or "Test Case".
-*   **"Mark"**: Could mean "Diacritic Mark" or "To mark a checkbox".
-
-If you are unsure, please ask in a GitHub issue or Pull Request.
-
----
-
-## 5. Contributing
-
-1.  Fork the repository.
-2.  Create a branch: `git checkout -b translate-french`.
-3.  Add/Update the JSON file.
-4.  Update `LocaleContext.tsx` (if adding a new language).
-5.  Submit a Pull Request!
-
-Thank you for helping us reach more creators!
+Thank you for helping more people make fonts in their own language.

@@ -1,114 +1,77 @@
-# Testing Guide for AksharaJanani
+# Testing Aksharajanani
 
-Ensuring the quality and correctness of a font editor is critical, as errors can propagate into the exported font files and affect end-users. This guide outlines the testing strategies and tools available in AksharaJanani.
+Mistakes in the app end up in the fonts people install, so changes are checked at four levels: unit tests, end-to-end runs that build whole fonts, checks on the exported fonts, and manual checks in the app.
 
-## 1. Automated Unit Tests
+Before a pull request, run:
 
-We use **Vitest** for unit testing core logic and services.
-
-### Running Tests
 ```bash
-npm run test
+npm run check            # type check, lint, unit tests and production build
+npm run check:translations
 ```
 
-### Key Areas Covered
-*   **Glyph Rendering:** Verifies that vector paths are correctly generated from data.
-*   **OpenType Logic:** Ensures that GSUB/GPOS rules are correctly compiled into FEA syntax.
-*   **Data Transformation:** Tests the import/export logic for JSON and OTF files.
-*   **Geometry Math:** Validates Bezier curve calculations and intersection logic.
+## 1. Unit tests (Vitest)
 
-### Writing New Tests
-Create a `.test.ts` file alongside the source file (e.g., `src/services/myService.test.ts`).
+```bash
+npm test                 # once
+npm run test:watch       # while working
+```
+
+Tests live next to the code they test, as `*.test.ts` (for example `services/kerningService.test.ts`, `utils/ruleUsage.test.ts`). They cover feature-file generation, auto-spacing, mark placement, glyph geometry, rule usage, font coverage on the Test page, the font version number, project files, and the tutorial's translations.
 
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { myFunction } from './myService';
 
 describe('myService', () => {
-  it('should calculate correct value', () => {
-    const result = myFunction(10);
-    expect(result).toBe(20);
+  it('doubles the value', () => {
+    expect(myFunction(10)).toBe(20);
   });
 });
 ```
 
----
+## 2. End-to-end: building whole fonts
 
-## 2. Manual QA Checklist (Test Cases)
+`tools/e2e/e2e.cjs` drives the app in a real browser (Playwright) the way a person would, for one language at a time:
 
-The **Test Case Page** (`/test-cases`) is a comprehensive manual QA checklist for validating the entire application's functionality. It covers UI interactions, state management, drawing tools, and more.
+1. starts a project;
+2. draws every letter;
+3. places the accents and marks;
+4. spaces the letters;
+5. tries the Test page and the Creator;
+6. exports the font.
 
-### Defining Test Cases
-Test cases are defined in `data/test_cases.json`. They are categorized by feature area.
+Each run leaves screenshots, the exported `.otf`, the project file and a `summary.json` with any page errors in `tools/e2e/out/<script>/`.
 
-**Structure:**
-```json
-[
-  {
-    "id": "init_load_script",
-    "category": "App Initialization",
-    "description": "Select 'Tamil' script. Verify workspace loads with correct character grid.",
-    "priority": "high"
-  },
-  {
-    "id": "nav_mobile_drawer_open",
-    "category": "Mobile UI",
-    "description": "On mobile viewport, click the floating 'Grid' button. Verify Nav Drawer slides in from left.",
-    "priority": "high"
-  }
-]
+```bash
+npm run dev                                   # in another terminal
+SCRIPT=tamil node tools/e2e/e2e.cjs           # english, spanish, greek, cyrillic, tamil, kannada, telugu, …
 ```
 
-### Using the Checklist
-1.  Navigate to the **Test Cases** page (often accessible via the Command Palette or hidden menu).
-2.  Expand a category (e.g., "Drawing Tools", "Settings").
-3.  Perform the action described in the test case.
-4.  Mark the test as **Pass**, **Fail**, or **Skip**.
-5.  Your progress is saved locally, allowing you to track regression testing across sessions.
+Setup (Playwright isn't a project dependency), the full list of scripts, checkpoints, video recording and how to add a language are in [tools/README.md](tools/README.md).
 
----
+## 3. Checking the exported fonts
 
-## 3. Font Rendering Validation (Test Page)
+The scripts in `tools/font/` read an exported font with fontTools and HarfBuzz:
+- `rulecheck.py` checks that the font shapes the way the project's rules say it should;
+- `fontcheck.py` checks names, metrics and coverage;
+- `kerndump.py` lists the spacing pairs.
 
-The **Font Test Page** is a dedicated playground for testing the actual output of your font.
+`tools/checks/` checks the script data files and the translations. See [tools/README.md](tools/README.md) for how to run them (the easiest way is `uv run --with fonttools --with uharfbuzz python3 …`).
 
-1.  Open the **Test Font** page.
-2.  Type any text into the input area.
-3.  Adjust the font size using the slider.
-4.  Verify that:
-    *   Ligatures are forming correctly.
-    *   Marks are positioned accurately.
-    *   Kerning is applied as expected.
+## 4. Checking by hand in the app
 
----
+- **Try your font** (the Test page): type text and check that joined letters form, vowel signs and accents sit in the right place, and the spacing looks even. Letters that aren't drawn yet are shown in grey boxes.
+- **Compare**: view a set of letters side by side to check stroke weight, height and alignment.
+- **QA checklist** (development builds only): the "Test Cases" item in the header's More menu opens a checklist from `data/test_cases.json`. Mark each item Pass, Fail or Skip; progress is kept in the browser. It isn't shown in the published site.
 
-## 3. Glyph Consistency (Comparison View)
+Check new screens on a phone-sized window (390×844) as well as a desktop, and in both interface languages.
 
-The **Comparison View** allows you to select a specific set of glyphs and view them side-by-side in a grid. This is useful for checking consistency in stroke thickness, height, and alignment across a group of related characters (e.g., all uppercase vowels).
+## 5. Reporting bugs
 
-1.  Open the **Comparison** tab.
-2.  Use the sidebar to select specific characters or entire categories (e.g., "Vowels").
-3.  The main view renders the selected glyphs in a responsive grid.
-4.  Use the **Fold Lines** toggle to switch between a wrapped grid and a single continuous line.
-5.  Use this to check:
-    *   **Consistency:** Do all glyphs share the same stroke weight?
-    *   **Alignment:** Are they sitting correctly on the baseline and top line?
-    *   **Scale:** Are the glyphs proportional to each other?
+Open an issue on GitHub with:
+1. the steps to reproduce;
+2. what you expected, and what happened;
+3. a screenshot or video;
+4. if you can, the project's backup file (⋮ → Download a backup).
 
----
-
-## 4. End-to-End (E2E) Testing
-
-*Currently, we do not have automated E2E tests (e.g., Cypress/Playwright). Contributions in this area are welcome!*
-
-
----
-
-## 5. Reporting Bugs
-
-If you find a bug, please open an issue on GitHub with:
-1.  **Steps to Reproduce:** Clear, numbered list.
-2.  **Expected Behavior:** What should have happened.
-3.  **Actual Behavior:** What actually happened.
-4.  **Screenshots/Video:** Visual proof is extremely helpful for UI bugs.
-5.  **Project Export:** If possible, attach the `.json` export of the project where the issue occurs.
+Inside the app, ⋮ → Send feedback (also in the footer and after export) offers email or GitHub.

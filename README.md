@@ -1,117 +1,74 @@
-# AksharaJanani (Font Builder)
+# Aksharajanani
 
-A professional-grade, browser-based font creation suite built with React, TypeScript, and Tailwind CSS. AksharaJanani empowers designers to create complex OpenType fonts with support for advanced features like Kerning, Glyph Positioning (GPOS), and custom OpenType rules (GSUB).
+Make a font from your own handwriting, in your own language, in the browser.
 
-## 🚀 Key Features
+Aksharajanani is for people who have never made a font. You pick your language, draw each letter over a faint guide, and the app does the rest. It builds the letters that are made from other letters (for example கா from க and ா), places accents and vowel signs, spaces the letters, and exports a working OpenType font (`.otf`) that you can install and use in Word, Canva or on a phone.
 
-### 1. Vector Glyph Editor
-*   **Precision Drawing:** Full Bezier curve editing with `paper.js` integration.
-*   **Component System:** Build complex glyphs from reusable components (e.g., base letters + diacritics).
-*   **Image Tracing:** Import images and trace them into vector paths.
-*   **Unified Editor:** Seamlessly switch between drawing, components, and properties.
+It comes with ready-made letter sets for many languages: English and other European languages, Greek, Russian and other Cyrillic languages, Hebrew, Hindi, Marathi, Tamil, Kannada, Telugu, Malayalam, Sinhala, Punjabi, Thai, Lao, Japanese kana and more. You can also start an empty project and pick characters from the Unicode table.
 
-### 2. Advanced OpenType Support
-*   **Rule Editor:** Write and edit raw OpenType Feature File syntax (`.fea`).
-*   **GSUB (Glyph Substitution):**
-    *   **Ligatures:** Automatic generation of standard ligatures (`liga`).
-    *   **Contextual Alternates:** Define complex substitution rules.
-    *   **Indic Support:** Specialized logic for `akhn` (Akhand) and other Indic features.
-*   **GPOS (Glyph Positioning):**
-    *   **Anchor-Based Positioning:** Visually place anchors for precise mark-to-base and mark-to-mark positioning (`mark`, `mkmk`).
-    *   **Cursive Attachment:** Support for cursive scripts (`curs`).
-    *   **Heuristics:** Auto-inference of positioning based on glyph geometry.
+Everything stays on your computer: projects are saved in the browser, and you can download a backup file at any time.
 
-### 3. Professional Kerning
-*   **Visual Kerning Editor:** Adjust spacing between glyph pairs in real-time.
-*   **Class-Based Kerning:** Group similar glyphs for efficient spacing management.
-*   **Auto-Kerning:** Algorithmic suggestions for optimal spacing.
-*   **Exception Handling:** Define specific overrides for unique pairs.
+## What it can do
 
-### 4. Project Management
-*   **Multi-Script Support:** Native support for Latin, Devanagari, Tamil, and other scripts.
-*   **Import/Export:**
-    *   Import existing `.otf` / `.ttf` fonts.
-    *   Export production-ready OpenType fonts.
-    *   Import/Export glyphs as SVG.
-*   **Local Storage:** Robust persistence using IndexedDB (`idb`) ensures your work is saved automatically.
-*   **Version Control:** Snapshot and restore functionality.
+- **Draw letters** with a pen, shapes, curves and an eraser, over a guide letter in a real font. You can also trace a photo of a letter written on paper.
+- **Letters built from other letters** are made for you and update when their parts change. Accents, vowel signs and marks are placed automatically, and you can adjust them.
+- **Spacing:** letter spacing is set automatically. You can adjust any pair and the overall space between letters and words.
+- **Try your font** on the Test page before exporting, and make a picture with it in the Creator.
+- **Export** a font with the joining and positioning rules each language needs (built with fontTools in the browser).
+- **For experts:** rules screens for OpenType substitution and positioning, glyph properties, and importing existing fonts.
 
-### 5. Testing & Preview
-*   **Live Preview:** Type and test your font immediately within the app.
-*   **Test Cases:** Define specific text strings to validate complex rendering rules.
-*   **Comparison View:** Compare your font against system fonts or other versions.
+## Running it
 
-## 🛠️ Technical Stack
+Requires Node.js 18 or later.
 
-*   **Frontend Framework:** React 18
-*   **Build Tool:** Vite
-*   **Language:** TypeScript
-*   **Styling:** Tailwind CSS
-*   **Font Engine:** `opentype.js`
-*   **Vector Engine:** `paper.js`
-*   **Storage:** IndexedDB (via `idb`)
-*   **Virtualization:** `react-virtuoso` (for handling large character sets)
-*   **Icons:** `lucide-react`
-
-## 📂 Project Structure
-
-```
-/src
-  /components       # UI Components (Editors, Modals, Toolbars)
-    /drawing        # Drawing-specific components
-    /kerning        # Kerning-specific components
-    /positioning    # Positioning-specific components
-    /rules          # Rule editor components
-  /contexts         # React Contexts (Global State)
-  /services         # Core Logic & Algorithms
-    feaService.ts   # OpenType Feature File parser/generator
-    fontService.ts  # Font export/import logic
-    glyphRender...  # Rendering logic
-  /utils            # Helper functions (Geometry, Path manipulation)
-  /types            # TypeScript definitions
+```bash
+git clone https://github.com/virtualvinodh/Aksharajanani.git
+cd Aksharajanani
+npm install
+npm run dev
 ```
 
-## ⚡ Getting Started
+Then open http://localhost:3000/.
 
-### Prerequisites
-*   Node.js (v18 or higher)
-*   npm
+`npm run dev` and `npm run build` first download the font builder (Pyodide, fontTools and fontFeatures, about 19 MB, each file checked against a pinned SHA-256) into `public/font-builder/` with `scripts/fetch-font-builder.mjs`; after that it's a no-op. The app serves these files itself and starts loading them when a project opens.
 
-### Installation
+To build for a sub-folder (as on GitHub Pages), set `BASE_PATH`, e.g. `BASE_PATH=/Aksharajanani/ npm run build`. The test site at https://virtualvinodh.github.io/Aksharajanani/ is deployed by `.github/workflows/pages.yml` on every push to `claude` or `main`.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-org/aksharajanani.git
-    cd aksharajanani
-    ```
+Other commands:
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+| Command | What it does |
+|---|---|
+| `npm run build` | Production build into `dist/` |
+| `npm run check` | Type check, lint, unit tests and build |
+| `npm test` | Unit tests (Vitest) |
+| `npm run check:translations` | Lists interface strings missing from a translation |
 
-3.  **Start the development server:**
-    ```bash
-    npm run dev
-    ```
+## Project layout
 
-4.  **Open the app:**
-    Navigate to `http://localhost:3000` in your browser.
+```
+components/   React components (grid, drawing editor, spacing, positioning, rules, dialogs)
+contexts/     React contexts (project, settings, layout, locale)
+hooks/        State and actions
+services/     Font building (opentype.js + fontTools via Pyodide), feature-file generation,
+              auto-spacing, photo tracing, rendering
+utils/        Geometry and other helpers
+data/         Letter sets and rules for each ready-made language (see characters_json.md,
+              rules_json.md, positioning_json.md, scripts_json.md)
+locales/      Interface translations (English and Tamil)
+workers/      Web workers
+tools/        Browser end-to-end tests and font checks (see tools/README.md)
+```
 
-## 📖 Usage Workflow
+How data moves through the app is described in `data_flow.md` and `data_structure.md`.
 
-1.  **Create Project:** Start a new project and select your target scripts (e.g., Latin, Devanagari).
-2.  **Draw Glyphs:** Double-click a grid cell to open the editor. Draw paths or import SVGs.
-3.  **Define Components:** Use "Add Component" to reuse existing glyphs (e.g., using 'A' in 'Á').
-4.  **Set Positioning:** Go to the **Positioning** tab to place anchors for marks.
-5.  **Adjust Kerning:** Switch to the **Kerning** tab to fine-tune spacing.
-6.  **Write Rules:** (Optional) Use the **Rules** tab to define custom OpenType features.
-7.  **Export:** Click the Export button to generate your `.otf` file.
+Built with React 18, TypeScript, Vite, Tailwind CSS, paper.js, opentype.js, Pyodide/fontTools, IndexedDB (`idb`) and `react-virtuoso`.
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Please see `CONTRIBUTING.md` for details on how to submit pull requests, report issues, and suggest improvements.
+See `CONTRIBUTING.md`, `TESTING.md` and `TRANSLATION.md`.
 
-## 📄 License
+## Licence
 
-This project is licensed under the MIT License. See `LICENSE` for more details.
+Aksharajanani is free software under the GNU General Public License, version 3 or later (`GPL-3.0-or-later`); see [LICENSE](LICENSE). You may use, change and share it; if you share a changed version, you must share its source under the same licence.
+
+The fonts people make with the app belong to them; the licence of the app doesn't apply to them. The guide fonts are open-licence fonts (mostly Noto, under the SIL Open Font License), loaded from a CDN; `public/fonts` has the Japanese kana guide font and its licence.

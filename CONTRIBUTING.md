@@ -44,7 +44,6 @@ The `scripts.json` file in the root directory acts as the registry. You need to 
     "pathSimplification": 0.5,
     "showGridOutlines": true,
     "isAutosaveEnabled": true,
-    "editorMode": "simple",
     "isPrefillEnabled": true
   },
   "grid": {
