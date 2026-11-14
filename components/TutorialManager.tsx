@@ -12,6 +12,7 @@ import { useLinearTutorial } from './tutorial/useLinearTutorial';
 import { useJITHints } from './tutorial/useJITHints';
 import { mergeWithEnglishFallback } from './tutorial/tutorialTranslations';
 import { fetchOptionalJson } from '../utils/optionalFetch';
+import { appUrl } from '../utils/appUrl';
 
 // Dummy component to get access to context
 const TutorialStateProvider: React.FC<{ onToolChange: (tool: Tool) => void }> = ({ onToolChange }) => {
@@ -82,7 +83,7 @@ const TutorialManager: React.FC = () => {
 
     useEffect(() => {
         let cancelled = false;
-        const fetchJson = (code: string) => fetchOptionalJson<Record<string, string>>(`/locales/tutorial/${code}.json`);
+        const fetchJson = (code: string) => fetchOptionalJson<Record<string, string>>(appUrl(`locales/tutorial/${code}.json`));
         const fetchTranslations = async () => {
             // English is always loaded so keys missing from a partial translation fall back per key.
             const [english, localized] = await Promise.all([

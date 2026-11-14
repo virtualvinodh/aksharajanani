@@ -112,6 +112,18 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
         props.setViewOffset(newOffset);
     };
 
+    // Back to the normal view, or zoomed out just enough to show parts that reach outside the drawing area.
+    const handleFitView = () => {
+        const S = DRAWING_CANVAS_SIZE;
+        const box = props.currentPaths.length ? getAccurateGlyphBBox(props.currentPaths, props.settings.strokeThickness) : null;
+        const x0 = Math.min(0, box?.x ?? 0), y0 = Math.min(0, box?.y ?? 0);
+        const x1 = Math.max(S, box ? box.x + box.width : S), y1 = Math.max(S, box ? box.y + box.height : S);
+        const outside = x0 < 0 || y0 < 0 || x1 > S || y1 > S;
+        const zoom = outside ? Math.min(S / ((x1 - x0) * 1.05), S / ((y1 - y0) * 1.05)) : 1;
+        props.setZoom(zoom);
+        props.setViewOffset(zoom === 1 ? { x: 0, y: 0 } : { x: S / 2 - ((x0 + x1) / 2) * zoom, y: S / 2 - ((y0 + y1) / 2) * zoom });
+    };
+
     const mainContentClasses = `flex-grow flex flex-col items-center bg-white dark:bg-gray-950/20 overflow-hidden relative h-full`;
 
     return (
@@ -128,7 +140,7 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
                                         onUndo={props.undo} canUndo={props.canUndo} onRedo={props.redo} canRedo={props.canRedo}
                                         onCut={props.handleCut} selectedPathIds={props.selectedPathIds} onCopy={props.handleCopy} onPaste={props.handlePaste} clipboard={props.clipboard}
                                         onGroup={props.handleGroup} canGroup={props.canGroup} onUngroup={props.handleUngroup} canUngroup={props.canUngroup}
-                                        onZoom={handleZoomAction} onImageImportClick={props.onImageImportClick} onSvgImportClick={props.onSvgImportClick}
+                                        onZoom={handleZoomAction} onFitView={handleFitView} onImageImportClick={props.onImageImportClick} onSvgImportClick={props.onSvgImportClick}
                                         onImageTraceClick={props.onImageTraceClick} calligraphyAngle={props.calligraphyAngle} setCalligraphyAngle={props.setCalligraphyAngle}
                                         onApplyTransform={props.onApplyTransform} previewTransform={props.previewTransform} setPreviewTransform={props.setPreviewTransform}
                                     />
@@ -199,14 +211,14 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
             </div>
 
             {!props.isLargeScreen && (
-                <div className="flex-shrink-0 w-full z-20 p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-center shadow-lg">
+                <div className="flex-shrink-0 w-full z-20 p-2 sm:p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-center shadow-lg">
                     <DrawingToolbar
                         character={props.character} currentTool={props.currentTool} setCurrentTool={props.setCurrentTool} 
                         settings={props.settings} isLargeScreen={false}
                         onUndo={props.undo} canUndo={props.canUndo} onRedo={props.redo} canRedo={props.canRedo}
                         onCut={props.handleCut} selectedPathIds={props.selectedPathIds} onCopy={props.handleCopy} onPaste={props.handlePaste} clipboard={props.clipboard}
                         onGroup={props.handleGroup} onUngroup={props.handleUngroup} canGroup={props.canGroup} canUngroup={props.canUngroup}
-                        onZoom={handleZoomAction} onImageImportClick={props.onImageImportClick} onSvgImportClick={props.onSvgImportClick}
+                        onZoom={handleZoomAction} onFitView={handleFitView} onImageImportClick={props.onImageImportClick} onSvgImportClick={props.onSvgImportClick}
                         onImageTraceClick={props.onImageTraceClick} calligraphyAngle={props.calligraphyAngle} setCalligraphyAngle={props.setCalligraphyAngle}
                         onApplyTransform={props.onApplyTransform} previewTransform={props.previewTransform} setPreviewTransform={props.setPreviewTransform}
                     />

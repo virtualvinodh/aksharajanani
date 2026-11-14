@@ -1,12 +1,12 @@
 
-import React, { useMemo, forwardRef, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { Character, CharacterSet } from '../types';
 import UnifiedCard from './UnifiedCard';
 import { useLocale } from '../contexts/LocaleContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { useLayout } from '../contexts/LayoutContext';
 import { useGlyphData } from '../contexts/GlyphDataContext';
-import { VirtuosoGrid, Virtuoso, VirtuosoHandle } from 'react-virtuoso';
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import { AddIcon, SwitchScriptIcon, CheckCircleIcon, EditIcon, CloseIcon, TrashIcon } from '../constants';
 import { isGlyphComplete } from '../utils/glyphUtils';
 import { useProject } from '../contexts/ProjectContext';
@@ -30,14 +30,56 @@ interface CharacterGridProps {
   onAddGroup?: () => void;
 }
 
-// --- Components for Flat Grid View ---
-const ItemContainer = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => (
-    <div {...props} ref={ref} className="min-w-0 w-full" />
-));
-ItemContainer.displayName = 'ItemContainer';
+// --- Flat grid (filtered or searched letters) ---
+// Columns follow the same rules as the grouped view: 2 in the overlay, as many 5rem cards as fit
+// in the side panel, and 4-12 by screen width in the full view.
+const columnsFor = (variant: CharacterGridProps['variant'], width: number): number => {
+    if (variant === 'overlay') return 2;
+    if (variant === 'compact') return Math.max(1, Math.floor((width - 16 + 8) / (80 + 8)));
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    return vw >= 1280 ? 12 : vw >= 1024 ? 10 : vw >= 768 ? 8 : vw >= 640 ? 6 : 4;
+};
 
-const GridHeader = () => <div className="col-span-full h-6" />;
-const GridFooter = () => <div className="col-span-full h-24" />;
+const FlatGrid: React.FC<{ characters: Character[]; variant: CharacterGridProps['variant']; renderCard: (c: Character) => React.ReactNode }> = ({ characters, variant, renderCard }) => {
+    const boxRef = useRef<HTMLDivElement>(null);
+    const [columns, setColumns] = useState(() => columnsFor(variant, 0));
+    useEffect(() => {
+        const el = boxRef.current;
+        if (!el) return;
+        const update = () => setColumns(columnsFor(variant, el.clientWidth));
+        update();
+        const ro = new ResizeObserver(update);
+        ro.observe(el);
+        window.addEventListener('resize', update);
+        return () => { ro.disconnect(); window.removeEventListener('resize', update); };
+    }, [variant]);
+
+    const rows = useMemo(() => {
+        const out: Character[][] = [];
+        for (let i = 0; i < characters.length; i += columns) out.push(characters.slice(i, i + columns));
+        return out;
+    }, [characters, columns]);
+
+    const isFull = variant !== 'overlay' && variant !== 'compact';
+    const rowClass = isFull ? 'grid gap-2 px-2 pb-2 sm:gap-4 sm:px-4 sm:pb-4' : 'grid gap-2 px-2 pb-2';
+    return (
+        <div ref={boxRef} className="h-full w-full">
+            <Virtuoso
+                style={{ height: '100%' }}
+                data={rows}
+                increaseViewportBy={400}
+                components={{ Header: FlatHeader, Footer: FlatFooter }}
+                itemContent={(_i, row) => (
+                    <div className={rowClass} style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+                        {row.map(renderCard)}
+                    </div>
+                )}
+            />
+        </div>
+    );
+};
+const FlatHeader = () => <div className="h-6" />;
+const FlatFooter = () => <div className="h-24" />;
 
 const CharacterGrid: React.FC<CharacterGridProps> = ({ 
     characters, 
@@ -68,15 +110,6 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
   const [editValue, setEditValue] = useState('');
   const [editStartValue, setEditStartValue] = useState('');
 
-  const ListContainer = useMemo(() => forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function ListContainer(props, ref) {
-    const gridClasses = variant === 'overlay'
-        ? "grid grid-cols-2 gap-2 p-2"
-        : (variant === 'compact' 
-            ? "grid grid-cols-[repeat(auto-fill,minmax(5rem,1fr))] gap-2 p-2"
-            : "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 p-2 sm:gap-4 sm:p-4");
-    return <div {...props} ref={ref} className={gridClasses} />;
-  }), [variant]);
-  
   const toggleSelection = useCallback((character: Character) => {
       if (character.unicode === undefined) return;
       
@@ -157,42 +190,34 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
   if (!settings) return null;
 
   // --- Render Mode 1: Flat Grid (Filtered/Search Results) ---
+  // Rows of cards in a plain list. VirtuosoGrid measured its items inside the narrow side panel
+  // and threw "Maximum call stack size exceeded" 13-18 times whenever a letter opened with a
+  // filter on (F41).
   if (isFiltered && characters) {
       return (
-          <VirtuosoGrid
-            style={{ height: '100%' }}
-            totalCount={characters.length}
-            components={{
-                List: ListContainer,
-                Item: ItemContainer,
-                Header: GridHeader,
-                Footer: GridFooter
-            }}
-            itemContent={(index) => {
-                const char = characters[index];
-                return (
-                    <div className="tutorial-glyph-item" data-tour={`grid-item-${char.name}`}>
-                        <UnifiedCard
-                            key={char.unicode || char.name}
-                            character={char}
-                            onSelect={onSelectCharacter}
-                            isSelectionMode={isMetricsSelectionMode}
-                            isSelected={char.unicode !== undefined && metricsSelection.has(char.unicode)}
-                            onToggleSelect={toggleSelection}
-                            variant={variant}
-                            onLongPress={handleLongPress}
-                        />
-                    </div>
-                );
-            }}
-            overscan={400}
+          <FlatGrid
+            characters={characters}
+            variant={variant}
+            renderCard={(char) => (
+                <div key={char.unicode || char.name} className="tutorial-glyph-item min-w-0" data-tour={`grid-item-${char.name}`}>
+                    <UnifiedCard
+                        character={char}
+                        onSelect={onSelectCharacter}
+                        isSelectionMode={isMetricsSelectionMode}
+                        isSelected={char.unicode !== undefined && metricsSelection.has(char.unicode)}
+                        onToggleSelect={toggleSelection}
+                        variant={variant}
+                        onLongPress={handleLongPress}
+                    />
+                </div>
+            )}
           />
       );
   }
 
   // --- Render Mode 2: Grouped List (Default View) ---
   if (characterSets) {
-      const ghostButtonClass = "relative rounded-lg p-2 sm:p-4 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 aspect-square h-full border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-400 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 bg-gray-50 dark:bg-gray-800/40 group";
+      const ghostButtonClass = "w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 relative rounded-lg p-2 sm:p-4 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 aspect-square h-full border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-400 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 bg-gray-50 dark:bg-gray-800/40 group";
       
       const gridClasses = variant === 'overlay'
         ? "grid grid-cols-2 gap-2 p-2"
@@ -310,24 +335,26 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
                             ))}
                             
                             {/* Ghost Button: Add Glyph */}
-                            <div
+                            <button
+                                type="button"
                                 onClick={() => onAddGlyph(group.nameKey)}
                                 className={ghostButtonClass}
                                 title={t('addGlyph')}
                             >
                                 <AddIcon className="w-8 h-8 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
                                 <span className="text-[11px] font-bold uppercase tracking-wide opacity-50 group-hover:opacity-100 text-center transition-opacity">{t('addGlyph')}</span>
-                            </div>
+                            </button>
 
 
-                                <div
+                                <button
+                                    type="button"
                                     onClick={onAddBlock}
                                     className={ghostButtonClass}
                                     title={t('addBlock')}
                                 >
                                     <SwitchScriptIcon className="w-8 h-8 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
                                     <span className="text-[11px] font-bold uppercase tracking-wide opacity-50 group-hover:opacity-100 text-center transition-opacity">{t('addBlock')}</span>
-                                </div>
+                                </button>
                         </div>
                     </div>
                 );

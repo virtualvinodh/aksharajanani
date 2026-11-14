@@ -13,6 +13,8 @@ import { isGlyphDrawn } from '../utils/glyphUtils';
 import { VEC } from '../utils/vectorUtils';
 import { deepClone } from '../utils/cloneUtils';
 import { findCharacterLocations, restoreCharacters, pairEntriesInvolving } from '../utils/undoHelpers';
+import { findDependents, planDetach, withoutSources } from '../utils/deleteHelpers';
+import { useRules } from '../contexts/RulesContext';
 
 // Helper Logic for Transformation
 export const transformGlyphPaths = (
@@ -64,11 +66,12 @@ export const transformGlyphPaths = (
 };
 
 export const useBatchOperations = () => {
-    const { characterSets, dispatch: characterDispatch } = useProject();
+    const { characterSets, dispatch: characterDispatch, allCharsByName, markAttachmentRules, positioningRules } = useProject();
     const { glyphDataMap, dispatch: glyphDataDispatch } = useGlyphData();
     const { kerningMap, dispatch: kerningDispatch } = useKerning();
     const { markPositioningMap, dispatch: positioningDispatch } = usePositioning();
-    const { settings } = useSettings();
+    const { settings, metrics } = useSettings();
+    const { state: rulesState } = useRules();
     const { t } = useLocale();
     const { showNotification } = useLayout();
 
@@ -155,48 +158,63 @@ export const useBatchOperations = () => {
     ) => {
         if (selectedUnicodes.size === 0) return;
 
-        // Undo puts back only the deleted glyphs, characters and their pairs (P13).
-        const removedChars = findCharacterLocations(characterSets, selectedUnicodes);
-        const removedKerning = pairEntriesInvolving(kerningMap, selectedUnicodes);
-        const removedPositioning = pairEntriesInvolving(markPositioningMap, selectedUnicodes);
-        const glyphsToRestore: [number, GlyphData][] = Array.from(selectedUnicodes)
+        // Letters built from the deleted ones keep their current look as separate drawings;
+        // combination-only shapes go with them (F36), as when deleting one letter.
+        const deletedNames = new Set<string>();
+        (characterSets || []).forEach(set => set.characters.forEach(c => { if (c.unicode !== undefined && selectedUnicodes.has(c.unicode)) deletedNames.add(c.name); }));
+        const plan = planDetach(findDependents(characterSets, deletedNames), {
+            glyphDataMap, allCharsByName, markPositioningMap, kerningMap, characterSets: characterSets || [],
+            groups: rulesState.fontRules?.groups || {}, metrics: metrics || undefined, markAttachmentRules,
+            strokeThickness: settings?.strokeThickness || 15, positioningRules,
+        });
+        const deletedSet = new Set([...selectedUnicodes, ...plan.removed]);
+
+        // Undo puts back only the deleted glyphs, characters and their pairs, and the dependents (P13).
+        const removedChars = findCharacterLocations(characterSets, deletedSet);
+        const removedKerning = pairEntriesInvolving(kerningMap, deletedSet);
+        const removedPositioning = pairEntriesInvolving(markPositioningMap, deletedSet);
+        const glyphsToRestore: [number, GlyphData][] = [...deletedSet, ...plan.fieldRestores.keys()]
             .filter(u => glyphDataMap.has(u))
             .map(u => [u, deepClone(glyphDataMap.get(u)!)]);
 
         const undo = () => {
+            plan.newlyDrawn.forEach(u => glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: u } }));
             if (glyphsToRestore.length > 0) glyphDataDispatch({ type: 'BATCH_UPDATE_GLYPHS', payload: glyphsToRestore });
-            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prev => restoreCharacters(prev, removedChars) });
+            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prev => restoreCharacters(prev, removedChars, plan.fieldRestores) });
             if (removedKerning.size > 0) kerningDispatch({ type: 'BATCH_UPDATE', payload: removedKerning });
             if (removedPositioning.size > 0) positioningDispatch({ type: 'MERGE_ENTRIES', payload: removedPositioning });
         };
 
+        if (plan.glyphUpdates.length > 0) glyphDataDispatch({ type: 'BATCH_UPDATE_GLYPHS', payload: plan.glyphUpdates });
+        if (plan.fieldRestores.size > 0) {
+            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prevSets => prevSets
+                ? prevSets.map(set => ({ ...set, characters: set.characters.map(char => char.unicode !== undefined && plan.fieldRestores.has(char.unicode) ? withoutSources(char) : char) }))
+                : null });
+        }
+
         const newKerningMap = new Map(kerningMap);
         newKerningMap.forEach((value, key) => {
             const [left, right] = key.split('-').map(Number);
-            if (selectedUnicodes.has(left) || selectedUnicodes.has(right)) {
-                newKerningMap.delete(key);
-            }
+            if (deletedSet.has(left) || deletedSet.has(right)) newKerningMap.delete(key);
         });
 
         const newPositioningMap = new Map(markPositioningMap);
         newPositioningMap.forEach((value, key) => {
             const [base, mark] = key.split('-').map(Number);
-            if (selectedUnicodes.has(base) || selectedUnicodes.has(mark)) {
-                newPositioningMap.delete(key);
-            }
+            if (deletedSet.has(base) || deletedSet.has(mark)) newPositioningMap.delete(key);
         });
-        
-        selectedUnicodes.forEach(unicode => {
+
+        deletedSet.forEach(unicode => {
              glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode } });
              characterDispatch({ type: 'DELETE_CHARACTER', payload: { unicode } });
         });
-        
+
         kerningDispatch({ type: 'SET_MAP', payload: newKerningMap });
         positioningDispatch({ type: 'SET_MAP', payload: newPositioningMap });
 
-        showNotification(t('glyphDeletedSuccess', { name: `${selectedUnicodes.size} glyphs` }), 'success', { onUndo: undo });
+        showNotification(t('lettersDeletedSuccess', { count: selectedUnicodes.size }), 'success', { onUndo: undo });
         onComplete();
-    }, [glyphDataMap, characterSets, kerningMap, markPositioningMap, glyphDataDispatch, characterDispatch, kerningDispatch, positioningDispatch, showNotification, t]);
+    }, [glyphDataMap, characterSets, kerningMap, markPositioningMap, glyphDataDispatch, characterDispatch, kerningDispatch, positioningDispatch, showNotification, t, allCharsByName, markAttachmentRules, positioningRules, rulesState, metrics, settings]);
 
     return {
         handleBulkTransform,

@@ -1,7 +1,8 @@
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Character, GlyphData, FontMetrics, AppSettings, CharacterSet, MarkAttachmentRules, Point, Path, ComponentTransform } from '../types';
 import { useLayout } from '../contexts/LayoutContext';
+import { useLocale } from '../contexts/LocaleContext';
 import { useProject } from '../contexts/ProjectContext';
 import { useGlyphData as useGlyphDataContext } from '../contexts/GlyphDataContext';
 import { useKerning } from '../contexts/KerningContext';
@@ -15,6 +16,7 @@ import { deepClone } from '../utils/cloneUtils';
 import { isGlyphDrawn } from '../utils/glyphUtils';
 import { GridViewIcon } from '../constants';
 import { useGlyphFilter } from '../hooks/useGlyphFilter';
+import { useMeasurableGlyphs } from '../hooks/kerning/useMeasurableGlyphs';
 
 // Specialized Editor Pages
 import DrawingModal from './DrawingModal';
@@ -53,6 +55,7 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
     onUnlockGlyph, onRelinkGlyph, onUpdateDependencies
 }) => {
   const { showNotification, openNavDrawer } = useLayout();
+  const { t } = useLocale();
   const { 
     allCharsByName, allCharsByUnicode, positioningRules, recommendedKerning, 
     markAttachmentClasses, baseAttachmentClasses, dispatch: characterDispatch 
@@ -62,6 +65,9 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
   const { version: glyphVersion, dispatch: glyphDataDispatch } = useGlyphDataContext();
   const { state: rulesState } = useRules();
   const groups = useMemo(() => rulesState.fontRules?.groups || {}, [rulesState.fontRules]);
+  // For placing accents: own drawings plus built shapes, so an accent can go on a letter that is
+  // itself built (ΰ = ϋ + ́, K19).
+  const placementGlyphs = useMeasurableGlyphs();
 
   const character = useMemo(() => {
     if (propCharacter.unicode !== undefined) {
@@ -88,8 +94,9 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
               const base = allCharsByName.get(c.position[0]);
               const mark = allCharsByName.get(c.position[1]);
               if (!base || !mark || base.unicode === undefined || mark.unicode === undefined) return false;
-              const baseDrawn = isGlyphDrawn(allGlyphData.get(base.unicode));
-              const markDrawn = isGlyphDrawn(allGlyphData.get(mark.unicode));
+              // A base that is itself built (ϋ under ΰ) counts with its built shape (K19).
+              const baseDrawn = isGlyphDrawn(placementGlyphs.get(base.unicode));
+              const markDrawn = isGlyphDrawn(placementGlyphs.get(mark.unicode));
               return baseDrawn && markDrawn;
           }
           if (c.kern) {
@@ -122,8 +129,16 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
   });
 
   const currentIndex = navigationList.findIndex(c => c.unicode === character.unicode);
-  const prevCharacter = currentIndex > 0 ? navigationList[currentIndex - 1] : null;
-  const nextCharacter = currentIndex !== -1 && currentIndex < navigationList.length - 1 ? navigationList[currentIndex + 1] : null;
+  // With a filter such as "Incomplete" on, finishing the open letter takes it out of the list. Carry
+  // on from where it was, so Next opens the letter that took its place (F34, as K1 did for Spacing).
+  const [lastIndex, setLastIndex] = useState(0);
+  useEffect(() => { if (currentIndex !== -1) setLastIndex(currentIndex); }, [currentIndex]);
+  const prevCharacter = currentIndex !== -1
+      ? (currentIndex > 0 ? navigationList[currentIndex - 1] : null)
+      : (lastIndex > 0 ? navigationList[Math.min(lastIndex, navigationList.length) - 1] ?? null : null);
+  const nextCharacter = currentIndex !== -1
+      ? (currentIndex < navigationList.length - 1 ? navigationList[currentIndex + 1] : null)
+      : (navigationList[lastIndex] ?? null);
 
   const handlePageNavigate = useCallback((target: Character | 'prev' | 'next') => {
       if (target === 'prev' && prevCharacter) onNavigate(prevCharacter);
@@ -186,8 +201,8 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
   }, [allCharsByName, allLigaturesByKey, markAttachmentClasses, baseAttachmentClasses, markPositioningMap, allGlyphData, allCharacterSets, positioningRules, markAttachmentRules, groups, settings.strokeThickness, metrics, positioningDispatch, glyphDataDispatch, characterDispatch, showNotification]);
 
   const handleConfirmPosition = useCallback((base: Character, mark: Character, ligature: Character) => {
-    const baseGlyph = allGlyphData.get(base.unicode!);
-    const markGlyph = allGlyphData.get(mark.unicode!);
+    const baseGlyph = placementGlyphs.get(base.unicode!);
+    const markGlyph = placementGlyphs.get(mark.unicode!);
     if (!baseGlyph || !markGlyph || !metrics || !allCharacterSets || !settings) return;
     const rule = positioningRules?.find(r => expandMembers(r.base, groups, allCharacterSets).includes(base.name) && expandMembers(r.mark, groups, allCharacterSets).includes(mark.name));
     const constraint = (rule && (rule.movement === 'horizontal' || rule.movement === 'vertical')) ? rule.movement : 'none';
@@ -267,7 +282,7 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
             const posMarkChar = allCharsByName.get(character.position?.[1] as string) || character;
             return (
                 <PositioningEditorPage
-                    key={pageKey} baseChar={posBaseChar} markChar={posMarkChar} targetLigature={character} glyphDataMap={allGlyphData} markPositioningMap={markPositioningMap}
+                    key={pageKey} baseChar={posBaseChar} markChar={posMarkChar} targetLigature={character} glyphDataMap={placementGlyphs} markPositioningMap={markPositioningMap}
                     onSave={handlePositioningSave} onConfirmPosition={handleConfirmPosition} onClose={() => onClose()} onDelete={() => onDelete(character.unicode!)}
                     onReset={(b, m, _l) => { const key = `${b.unicode}-${m.unicode}`; const newMap = new Map(markPositioningMap); newMap.delete(key); positioningDispatch({ type: 'SET_MAP', payload: newMap }); }}
                     settings={settings} metrics={metrics} markAttachmentRules={markAttachmentRules} positioningRules={positioningRules} allChars={allCharsByName}
@@ -308,7 +323,8 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
             onClick={openNavDrawer}
             data-tour="floating-grid-btn"
             className="absolute top-1/2 -translate-y-1/2 left-0 z-[60] w-6 h-20 bg-indigo-600/80 backdrop-blur-sm text-white rounded-r-lg shadow-lg flex items-center justify-center transition-transform hover:bg-indigo-500 active:translate-x-1"
-            title="Open Character Grid"
+            title={t('showAllLetters')}
+            aria-label={t('showAllLetters')}
         >
             <GridViewIcon className="w-4 h-4" />
         </button>

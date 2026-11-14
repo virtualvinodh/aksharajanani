@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { renderPaths, getAccurateGlyphBBox, getGlyphSubBBoxes } from '../services/glyphRenderService';
 import { useKerningCanvas } from '../hooks/useKerningCanvas';
 import { accentFor } from '../canvasConstants';
+import { IS_DEV_BUILD } from '../utils/buildInfo';
 
 interface KerningCanvasProps {
     width: number;
@@ -108,7 +109,7 @@ const KerningCanvas: React.FC<KerningCanvasProps> = ({
         ctx.restore();
 
         // --- Debug Kerning Bounding Boxes ---
-        if (settings.isDebugKerningEnabled) {
+        if (IS_DEV_BUILD && settings.isDebugKerningEnabled) {
             ctx.save();
             ctx.setLineDash([4 / finalScale, 4 / finalScale]); 
             ctx.lineWidth = 1 / finalScale; // Hairline

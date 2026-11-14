@@ -72,6 +72,11 @@ const PositioningRulesManager: React.FC<PositioningRulesManagerProps> = (props) 
                             baseClasses={props.baseAttachmentClasses}
                             setBaseClasses={props.setBaseAttachmentClasses}
                             characterSets={props.characterSets}
+                            usageSources={[
+                                { label: t('rulesAndAnchors'), value: props.positioningRules },
+                                { label: t('markAttachmentRules'), value: props.markAttachmentRules },
+                                { label: t('kerning'), value: props.recommendedKerning },
+                            ]}
                         />
                     )}
 

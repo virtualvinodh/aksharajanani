@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocale } from '../contexts/LocaleContext';
 import { BackIcon } from '../constants';
 import Footer from './Footer';
+import { appUrl } from '../utils/appUrl';
 
 // Define the structure for test cases
 type TestStatus = 'pending' | 'pass' | 'fail' | 'skip';
@@ -73,7 +74,7 @@ const TestCasePage: React.FC<TestCasePageProps> = ({ onClose }) => {
 
   // Load test cases from JSON file
   useEffect(() => {
-    fetch('/data/test_cases.json')
+    fetch(appUrl('data/test_cases.json'))
         .then(res => res.json())
         .then((data: TestCase[]) => {
             setAllTestCases(data);

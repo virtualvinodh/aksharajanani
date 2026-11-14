@@ -36,7 +36,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
   const { showNotification } = useLayout();
   const { t } = useLocale();
   
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
       if (!isAvailable) {
           if (disabledReason) {
               showNotification(disabledReason, 'info');
@@ -120,6 +120,15 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
       }
   };
 
+  // Letters open from the keyboard too: Tab to a card, then Enter or Space (F32).
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.target !== e.currentTarget) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick(e);
+      }
+  };
+
   const handleClickWrapper = (e: React.MouseEvent) => {
       if (isLongPress.current) {
           e.preventDefault();
@@ -167,7 +176,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
 
   const isCompact = variant === 'compact' || variant === 'overlay';
   const paddingClass = isCompact ? 'p-2' : 'p-2 sm:p-4';
-  const baseContainerClasses = `relative rounded-lg ${paddingClass} flex flex-col items-center justify-between transition-all duration-200 aspect-square h-full group select-none overflow-hidden`;
+  const baseContainerClasses = `relative rounded-lg ${paddingClass} flex flex-col items-center justify-between transition-all duration-200 aspect-square h-full group select-none overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900`;
   
   const isNonSpacingMark = character.glyphClass === 'mark' && (character.advWidth === 0 || character.advWidth === '0');
   const isSpacingMark = character.glyphClass === 'mark' && !isNonSpacingMark;
@@ -187,6 +196,8 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
       stateClasses = `bg-gray-50 dark:bg-gray-900/40 border-2 border-dashed ${typeBorderClass} opacity-70 cursor-pointer`;
   } else if (!isDrawn) {
       stateClasses = `bg-white dark:bg-gray-800 border-2 border-dashed ${typeBorderClass} opacity-90 cursor-pointer`;
+  } else if (character.unfinishedCopy) { // Started as a copy of another letter, not changed yet
+      stateClasses = `bg-white dark:bg-gray-800 border-2 border-dashed ${typeBorderClass} cursor-pointer`;
   } else if (!isManuallySet) { // State 1: Pending Review (suggestion)
       stateClasses = "bg-white dark:bg-gray-800 border-2 border-dashed border-blue-400 dark:border-blue-500 hover:border-blue-600 cursor-pointer";
   } else { // State 3: Manually Drawn or Accepted
@@ -217,10 +228,18 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
     ghostFontSizeClass = isCompact ? "text-2xl sm:text-4xl" : "text-4xl sm:text-6xl";
   }
 
+  const cardStateLabel = !isAvailable ? (disabledReason || '')
+      : !isDrawn ? t('cardStateToDraw')
+      : character.unfinishedCopy ? t('finishMe')
+      : !isManuallySet ? t('cardStateCheck')
+      : t('cardStateDone');
+  const cardLabel = [displayLabel, cardStateLabel].filter(Boolean).join(', ');
+
   let status = 'complete';
   if (!isAvailable) status = 'unavailable';
   else if (character.hidden) status = 'hidden';
   else if (!isDrawn) status = 'undrawn';
+  else if (character.unfinishedCopy) status = 'finish-me';
   else if (!isManuallySet) status = 'review-required';
 
   return (
@@ -234,28 +253,34 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
       onTouchEnd={handleTouchEnd}
       onClick={handleClickWrapper}
       className={`${baseContainerClasses} ${stateClasses}`}
-      title={disabledReason}
+      title={disabledReason || (character.unfinishedCopy ? t('finishMeTip', { name: character.composite?.[0] || '' }) : undefined)}
       data-status={status}
+      role="button"
+      tabIndex={0}
+      aria-label={cardLabel}
+      aria-disabled={!isAvailable || undefined}
+      aria-pressed={isSelectionMode ? isSelected : undefined}
+      onKeyDown={handleKeyDown}
       
     >
       {/* Badge Priority: pos -> kern -> link -> composite */}
       {!isCompact && character.position && (
-          <div className="absolute top-1 left-1 p-1 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full shadow-sm z-10" title={t('syllablePositioned')}>
+          <div className="absolute top-1 left-1 p-1 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full shadow-sm z-10" title={t('cardBadgePositioned')}>
              <PositioningIcon className="w-3 h-3" />
           </div>
       )}
       {!isCompact && character.kern && (
-          <div className="absolute top-1 left-1 p-1 bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-full shadow-sm z-10" title={t('kerningPair')}>
+          <div className="absolute top-1 left-1 p-1 bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-full shadow-sm z-10" title={t('cardBadgePair')}>
              <KerningIcon className="w-3 h-3" />
           </div>
       )}
       {!isCompact && character.link && (
-          <div className="absolute top-1 left-1 p-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full shadow-sm z-10" title={t('linkedGlyph')}>
+          <div className="absolute top-1 left-1 p-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full shadow-sm z-10" title={t('cardBadgeLinked')}>
              <LinkIcon className="w-3 h-3" />
           </div>
       )}
       {!isCompact && isCompositeTemplate && (
-          <div className="absolute top-1 left-1 p-1 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-full shadow-sm z-10" title={t('compositeTemplate')}>
+          <div className="absolute top-1 left-1 p-1 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-full shadow-sm z-10" title={t('cardBadgeCopy')}>
              <PuzzleIcon className="w-3 h-3" />
           </div>
       )}
@@ -263,6 +288,12 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
       {!isCompact && isSelectionMode && isAvailable && (
           <div className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all z-10 ${isSelected ? 'bg-indigo-600 border-indigo-600 scale-110' : 'bg-white/80 dark:bg-gray-800/80 border-gray-400'}`}>
               {isSelected && <CheckCircleIcon className="w-4 h-4 text-white" />}
+          </div>
+      )}
+
+      {isDrawn && character.unfinishedCopy && isAvailable && (
+          <div className={`absolute bottom-1 left-1/2 -translate-x-1/2 z-10 px-1.5 py-0.5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-100 font-semibold whitespace-nowrap ${isCompact ? 'text-[9px]' : 'text-[10px] sm:text-xs'}`}>
+              {t('finishMe')}
           </div>
       )}
 

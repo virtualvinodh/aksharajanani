@@ -1,4 +1,5 @@
 
+import { spacingHandleBands, isOnSpacingHandle } from '../utils/spacingHandles';
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Point, Path, Segment } from '../types';
 import { VEC } from '../utils/vectorUtils';
@@ -275,12 +276,30 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
     const eraserTool = useEraserTool(toolProps);
     const sliceTool = useSliceTool(toolProps);
 
+    // Which spacing line's handle (if any) is under the point (D16): only the handles at the top
+    // and bottom move a line, so a stroke that starts on the line itself draws.
+    const spacingHandleAt = useCallback((point: Point): 'lsb' | 'rsb' | null => {
+        if (!glyphBBox || !metrics) return null;
+        const isNonSpacing = currentCharacter && (currentCharacter.advWidth === 0 || currentCharacter.advWidth === '0');
+        if (isNonSpacing) return null;
+        const PIXELS_PER_FONT_UNIT = 1000 / metrics.unitsPerEm;
+        const lsbX = glyphBBox.x - ((lsb ?? metrics.defaultLSB) * PIXELS_PER_FONT_UNIT);
+        const rsbX = glyphBBox.x + glyphBBox.width + ((rsb ?? metrics.defaultRSB) * PIXELS_PER_FONT_UNIT);
+        const bands = spacingHandleBands(zoomRef.current, viewOffsetRef.current.y, canvasRef.current?.height ?? 1000);
+        if (isOnSpacingHandle(point, lsbX, zoomRef.current, bands)) return 'lsb';
+        if (isOnSpacingHandle(point, rsbX, zoomRef.current, bands)) return 'rsb';
+        return null;
+    }, [glyphBBox, metrics, currentCharacter, lsb, rsb, canvasRef]);
+
     const startInteraction = useCallback((point: Point, viewportPoint: Point, e: React.MouseEvent | React.TouchEvent) => {
-        if (hoveredMetric && glyphBBox && metrics && onMetricsChange) {
-             setDraggingMetric(hoveredMetric);
+        // Decided at the press itself, not from an earlier hover: a finger or stylus never hovers.
+        const handle = spacingHandleAt(point);
+        if (handle && glyphBBox && metrics && onMetricsChange) {
+             setHoveredMetric(handle);
+             setDraggingMetric(handle);
              metricDragStartRef.current = {
                  startX: point.x,
-                 startValue: hoveredMetric === 'lsb' ? (lsb ?? metrics.defaultLSB) : (rsb ?? metrics.defaultRSB)
+                 startValue: handle === 'lsb' ? (lsb ?? metrics.defaultLSB) : (rsb ?? metrics.defaultRSB)
              };
              setIsDrawing(true);
              return;
@@ -296,7 +315,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
             case 'eraser': eraserTool.start(point); break;
             case 'slice': sliceTool.start(point); break;
         }
-    }, [tool, panTool, penTool, shapeTool, curveTool, selectTool, editTool, eraserTool, sliceTool, hoveredMetric, glyphBBox, lsb, rsb, metrics, onMetricsChange]);
+    }, [tool, panTool, penTool, shapeTool, curveTool, selectTool, editTool, eraserTool, sliceTool, spacingHandleAt, glyphBBox, lsb, rsb, metrics, onMetricsChange]);
 
     const moveInteraction = useCallback((point: Point, viewportPoint: Point) => {
         if (draggingMetric && metricDragStartRef.current && onMetricsChange && metrics) {
@@ -314,23 +333,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
              return;
         }
 
-        if (!isDrawing && glyphBBox && metrics) {
-            const isNonSpacing = currentCharacter && (currentCharacter.advWidth === 0 || currentCharacter.advWidth === '0');
-            
-            if (!isNonSpacing) {
-                const PIXELS_PER_FONT_UNIT = 1000 / metrics.unitsPerEm;
-                const lsbVal = lsb ?? metrics.defaultLSB;
-                const rsbVal = rsb ?? metrics.defaultRSB;
-                const lsbX = glyphBBox.x - (lsbVal * PIXELS_PER_FONT_UNIT);
-                const rsbX = glyphBBox.x + glyphBBox.width + (rsbVal * PIXELS_PER_FONT_UNIT);
-                const HIT_TOLERANCE = 8 / zoomRef.current;
-                if (Math.abs(point.x - lsbX) < HIT_TOLERANCE) setHoveredMetric('lsb');
-                else if (Math.abs(point.x - rsbX) < HIT_TOLERANCE) setHoveredMetric('rsb');
-                else setHoveredMetric(null);
-            } else {
-                setHoveredMetric(null);
-            }
-        }
+        if (!isDrawing) setHoveredMetric(spacingHandleAt(point));
 
         if (draggingMetric) return;
 
@@ -344,7 +347,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
             case 'eraser': eraserTool.move(point); break;
             case 'slice': sliceTool.move(point); break;
         }
-    }, [tool, panTool, penTool, shapeTool, curveTool, selectTool, editTool, eraserTool, sliceTool, isDrawing, draggingMetric, glyphBBox, metrics, lsb, rsb, onMetricsChange, currentCharacter]);
+    }, [tool, panTool, penTool, shapeTool, curveTool, selectTool, editTool, eraserTool, sliceTool, isDrawing, draggingMetric, metrics, lsb, rsb, onMetricsChange, spacingHandleAt]);
 
     const endInteraction = useCallback(() => {
         isPinchingRef.current = false;

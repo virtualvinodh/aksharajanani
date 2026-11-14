@@ -13,6 +13,7 @@ import { useRules } from '../contexts/RulesContext';
 import { expandMembers } from '../services/groupExpansionService';
 import { parseSearchQuery, getCharacterMatchScore } from '../utils/searchUtils';
 import { isGlyphDrawn as isGlyphDrawnUtil } from '../utils/glyphUtils';
+import { useMeasurableGlyphs } from '../hooks/kerning/useMeasurableGlyphs';
 
 interface KerningPageProps {
   recommendedKerning: RecommendedKerning[] | null;
@@ -34,7 +35,7 @@ const KerningPage: React.FC<KerningPageProps> = ({
         setWorkspace, selectCharacter
     } = useLayout();
     const { characterSets, allCharsByName, allCharsByUnicode } = useProject();
-    const { glyphDataMap, version: glyphVersion } = useGlyphData();
+    const { version: glyphVersion } = useGlyphData();
     const { kerningMap, suggestedKerningMap, ignoredPairs, dispatch: kerningDispatch } = useKerning();
     const { settings, metrics } = useSettings();
     const { state: rulesState } = useRules();
@@ -46,10 +47,12 @@ const KerningPage: React.FC<KerningPageProps> = ({
     const [selectedLeftChars, setSelectedLeftChars] = useState(new Set<number>());
     const [selectedRightChars, setSelectedRightChars] = useState(new Set<number>());
 
+    // Built letters (கீ, கி, க்) count as drawn once their parts are, measured by their built shape (K20).
+    const measurableGlyphs = useMeasurableGlyphs();
     const isGlyphDrawn = useCallback((unicode: number | undefined): boolean => {
         if (unicode === undefined) return false;
-        return isGlyphDrawnUtil(glyphDataMap.get(unicode));
-    }, [glyphDataMap, glyphVersion]);
+        return isGlyphDrawnUtil(measurableGlyphs.get(unicode));
+    }, [measurableGlyphs]);
 
     // RESET SELECTIONS ON TAB CHANGE
     useEffect(() => {
@@ -325,7 +328,7 @@ const KerningPage: React.FC<KerningPageProps> = ({
         return (
             <KerningEditorPage
                 pair={pair} initialValue={initialValue}
-                glyphDataMap={glyphDataMap} strokeThickness={settings!.strokeThickness}
+                glyphDataMap={measurableGlyphs} strokeThickness={settings!.strokeThickness}
                 metrics={metrics!} settings={settings!} recommendedKerning={recommendedKerning}
                 onSave={(val) => {
                     const newMap = new Map(kerningMap);

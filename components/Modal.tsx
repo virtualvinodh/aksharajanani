@@ -1,4 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useId, useRef } from 'react';
+import { useDialogBehaviour } from '../hooks/useDialogBehaviour';
+import { useLocale } from '../contexts/LocaleContext';
 
 interface ModalProps {
   isOpen: boolean;
@@ -33,6 +35,10 @@ const Modal: React.FC<ModalProps> = ({
   closeOnBackdropClick = true 
 }) => {
   const mouseDownTargetIsBackdrop = useRef(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const { t } = useLocale();
+  const titleId = useId(); // unique, so a dialog over another dialog is still named correctly
+  useDialogBehaviour(isOpen, onClose, dialogRef);
 
   if (!isOpen) return null;
 
@@ -56,24 +62,27 @@ const Modal: React.FC<ModalProps> = ({
     mouseDownTargetIsBackdrop.current = false;
   };
 
+  // A dialog taller than the screen (a phone) scrolls with the backdrop; m-auto keeps shorter ones
+  // centred. The dialog itself doesn't scroll, so menus inside it aren't clipped.
   return (
     <div 
-      className="fixed inset-0 bg-black/60 dark:bg-gray-900/80 z-[100] flex items-center justify-center p-4 animate-fade-in-up" 
+      className="fixed inset-0 bg-black/60 dark:bg-gray-900/80 z-[100] flex overflow-y-auto p-4 animate-fade-in-up" 
       style={{ animationDuration: '0.2s' }}
       onMouseDown={handleBackdropMouseDown}
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
+      aria-labelledby={titleId}
     >
-      <div 
-        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full ${sizeClasses[size]}`} 
+      <div
+        ref={dialogRef}
+        className={`m-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full ${sizeClasses[size]} focus:outline-none`}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="flex justify-between items-center mb-4">
-          <h2 id="modal-title" className={`text-2xl font-bold ${titleClassName || 'text-gray-900 dark:text-white'}`}>{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 dark:hover:text-white text-3xl leading-none" aria-label="Close modal">&times;</button>
+          <h2 id={titleId} className={`text-2xl font-bold ${titleClassName || 'text-gray-900 dark:text-white'}`}>{title}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 dark:hover:text-white text-3xl leading-none" aria-label={t('close')}>&times;</button>
         </header>
         <main className="text-gray-700 dark:text-gray-300 mb-6">
           {children}

@@ -8,6 +8,8 @@ import { useLayout } from '../../../contexts/LayoutContext';
 import { sanitizeIdentifier } from '../../../utils/stringUtils';
 import { useRules } from '../../../contexts/RulesContext';
 import { useProject } from '../../../contexts/ProjectContext';
+import ConfirmRuleItemDeleteModal from '../ConfirmRuleItemDeleteModal';
+import { findGroupUsages } from '../../../utils/ruleUsage';
 
 interface GroupManagerProps {
     groups: Record<string, string[]>;
@@ -17,6 +19,8 @@ interface GroupManagerProps {
     baseClasses: AttachmentClass[];
     setBaseClasses: (classes: AttachmentClass[]) => void;
     characterSets: CharacterSet[];
+    /** Other rules that can use a group, so deleting one can list them (F50). */
+    usageSources?: { label: string; value: unknown }[];
 }
 
 const fontStyle = {
@@ -276,7 +280,7 @@ const EditorPanel: React.FC<{
     );
 };
 
-const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClasses, setMarkClasses, baseClasses, setBaseClasses, characterSets }) => {
+const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClasses, setMarkClasses, baseClasses, setBaseClasses, characterSets, usageSources = [] }) => {
     const { t } = useLocale();
     const { showNotification } = useLayout();
     const { positioningGroupNames } = useProject();
@@ -346,10 +350,28 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
         setEditingState(null);
     };
 
+    // F50: ask first, and list what still uses the group.
+    const [pendingGroupDelete, setPendingGroupDelete] = useState<{ key: string; title: string; message: string; usages: string[] } | null>(null);
+
     const handleDeleteGroup = (key: string) => {
+        const usages = findGroupUsages(key, rulesState.fontRules, [
+            ...usageSources,
+            { label: t('markAttachmentClasses'), value: [markClasses, baseClasses] },
+            ...Object.entries(groups).filter(([k]) => k !== key).map(([k, members]) => ({ label: '$' + k, value: members })),
+        ]);
+        setPendingGroupDelete({
+            key, usages,
+            title: t('deleteGroupConfirmTitle', { name: '$' + key }),
+            message: usages.length ? t('deleteGroupUsedMessage') : t('deleteGroupUnusedMessage'),
+        });
+    };
+
+    const confirmGroupDelete = () => {
+        if (!pendingGroupDelete) return;
         const newGroups = { ...groups };
-        delete newGroups[key];
+        delete newGroups[pendingGroupDelete.key];
         setGroups(newGroups);
+        setPendingGroupDelete(null);
     };
 
     const handleDeleteClass = (type: 'markClass' | 'baseClass', index: number) => {
@@ -573,6 +595,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
                     </div>
                 </div>
             </section>
+            <ConfirmRuleItemDeleteModal item={pendingGroupDelete} onClose={() => setPendingGroupDelete(null)} onConfirm={confirmGroupDelete} />
         </div>
     );
 };

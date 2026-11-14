@@ -52,6 +52,6 @@ export default [
     languageOptions: { globals: globals.worker }
   },
   {
-    ignores: ["dist/**", "tools/**/out/**"]
+    ignores: ["dist/**", "tools/**/out/**", "public/font-builder/**"]
   }
 ];

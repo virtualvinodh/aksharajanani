@@ -4,8 +4,8 @@ import { ScriptConfig, ProjectData } from './types';
 import UnifiedEditorModal from './components/UnifiedEditorModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import IncompleteFontWarningModal from './components/IncompleteFontWarningModal';
+import UseYourFontModal from './components/UseYourFontModal';
 import Footer from './components/Footer';
-import DonateNotice from './components/DonateNotice';
 import AddGlyphModal from './components/AddGlyphModal';
 import UnicodeBlockSelectorModal from './components/UnicodeBlockSelectorModal';
 import PositioningUpdateWarningModal from './components/PositioningUpdateWarningModal';
@@ -75,7 +75,6 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
 
   const isLargeScreen = useMediaQuery('(min-width: 1024px)');
 
-  const [isDonateNoticeVisible, setIsDonateNoticeVisible] = useState(false);
   const [isAnimatingExport, setIsAnimatingExport] = useState(false);
   // The export animation is progress feedback only; the export itself runs independently.
   const handleExportAnimationDone = useCallback(() => setIsAnimatingExport(false), []);
@@ -235,30 +234,19 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
   }, [gridPanelWidth]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!localStorage.getItem('donateNoticeDismissed')) {
-        setIsDonateNoticeVisible(true);
-      }
-    }, 15000);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      // Ctrl/Cmd+S saves in the browser and says "Saved", with or without autosave. It used to
+      // download a backup file when autosave was on (F27); that has its own menu item.
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && !e.shiftKey && !e.altKey) {
         e.preventDefault();
-        if (settings?.isAutosaveEnabled) {
-          handleSaveProject();
-        } else {
-          handleSaveToDB();
-        }
+        handleSaveToDB();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleSaveProject, handleSaveToDB, settings?.isAutosaveEnabled]);
+  }, [handleSaveToDB]);
 
   const {
       drawingProgress,
@@ -582,13 +570,6 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
             />
         )}
       
-      {isDonateNoticeVisible && (
-          <DonateNotice onClose={() => {
-              setIsDonateNoticeVisible(false);
-              localStorage.setItem('donateNoticeDismissed', 'true');
-          }} />
-      )}
-
       {isAnimatingExport && settings && (
         <ExportAnimation
           isOpen={isAnimatingExport}
@@ -622,6 +603,8 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
         />
       )}
       {layout.activeModal?.name === 'confirmChangeScript' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('confirmChangeScriptTitle')} message={t('confirmChangeScriptMessage')} {...layout.activeModal.props} />}
+      {layout.activeModal?.name === 'useYourFont' && <UseYourFontModal isOpen={true} onClose={layout.closeModal} {...layout.activeModal.props} />}
+      {layout.activeModal?.name === 'mismatchedScript' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('mismatchedScriptTitle')} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'confirmLoadProject' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('confirmLoadProjectTitle')} message={t('confirmLoadProjectMessage')} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'incompleteWarning' && <IncompleteFontWarningModal isOpen={true} onClose={layout.closeModal} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'testPage' && (

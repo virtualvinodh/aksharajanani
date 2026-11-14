@@ -1,5 +1,6 @@
 import { UnicodeBlock } from '../types';
 import UnicodeProperties from 'unicode-properties';
+import { appUrl } from '../utils/appUrl';
 
 let blockCache: UnicodeBlock[] | null = null;
 
@@ -9,7 +10,7 @@ export const getUnicodeBlocks = async (): Promise<UnicodeBlock[]> => {
   }
 
   try {
-    const response = await fetch('/data/unicode_blocks.json');
+    const response = await fetch(appUrl('data/unicode_blocks.json'));
     if (!response.ok) {
         throw new Error(`Failed to fetch Unicode blocks data: ${response.statusText}`);
     }

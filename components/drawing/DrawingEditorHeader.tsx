@@ -83,6 +83,8 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
           <button
             onClick={props.onBackClick}
             data-tour="header-back"
+            aria-label={t('back')}
+            title={t('back')}
             className="flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all active:scale-95"
           >
             <BackIcon />
@@ -96,6 +98,7 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
               disabled={!props.prevCharacter}
               data-tour="header-prev"
               title={t('prevGlyph')}
+              aria-label={t('prevGlyph')}
               className="p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
           >
               <LeftArrowIcon />
@@ -113,6 +116,7 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
               disabled={!props.nextCharacter}
               data-tour="header-next"
               title={t('nextGlyph')}
+              aria-label={t('nextGlyph')}
               className="p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
           >
               <RightArrowIcon />
@@ -126,6 +130,7 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
               onClick={() => setIsPropertiesPanelOpen(p => !p)}
               className={`p-2 rounded-lg transition-all active:scale-95 ${isPropertiesPanelOpen ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900' : 'bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-100'}`}
               title={t('glyphProperties')}
+              aria-label={t('glyphProperties')}
           >
               <PropertiesIcon />
           </button>
@@ -155,13 +160,13 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
           )}
 
           {!props.isLocked && (
-              <button onClick={props.onClear} title={t('clear')} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-gray-100 transition-all active:scale-95">
+              <button onClick={props.onClear} title={t('clear')} aria-label={t('clear')} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-gray-100 transition-all active:scale-95">
                   <BroomIcon />
               </button>
           )}
 
           <div className="relative" ref={moreMenuRef}>
-              <button onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 transition-all active:scale-95">
+              <button onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)} title={t('editorMoreActions')} aria-label={t('editorMoreActions')} aria-expanded={isMoreMenuOpen} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 transition-all active:scale-95">
                   <MoreIcon />
               </button>
               {isMoreMenuOpen && (

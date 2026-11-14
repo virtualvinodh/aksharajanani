@@ -8,13 +8,16 @@
 export const cssString = (value: string): string =>
     '"' + value.replace(/[\\"]/g, '\\$&').replace(/[\n\r\f]/g, ' ') + '"';
 
+import { resolveAppUrl } from './appUrl';
+
 const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'data:', 'blob:']);
 
 /** The absolute URL if it's safe to load a font from, otherwise null. */
 export const safeFontUrl = (url: string): string | null => {
     try {
         // Relative URLs resolve against the page (falls back to a dummy base outside a browser).
-        const parsed = new URL(url, globalThis.location?.href ?? 'http://localhost/');
+        // `/fonts/x.ttf` means the app's own file, wherever the app is served from (appUrl).
+        const parsed = new URL(resolveAppUrl(url), globalThis.location?.href ?? 'http://localhost/');
         return ALLOWED_PROTOCOLS.has(parsed.protocol) ? parsed.href : null;
     } catch {
         return null;

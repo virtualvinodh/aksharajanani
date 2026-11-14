@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocale } from '../contexts/LocaleContext';
 import Modal from './Modal';
-import { UnicodeBlock, Character, ScriptConfig, CharacterSet } from '../types';
+import { UnicodeBlock, Character } from '../types';
 import { getUnicodeBlocks, getAssignedCodepointsInBlock } from '../services/unicodeService';
 import { SpinnerIcon } from '../constants';
 import { useLayout } from '../contexts/LayoutContext';
@@ -12,17 +12,17 @@ import UnicodeProperties from 'unicode-properties';
 interface UnicodeBlockSelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mode: 'createScript' | 'addBlocks';
-  // For 'createScript' mode
-  onSelectScript?: (script: ScriptConfig) => void;
-  customScriptTemplate?: ScriptConfig;
+  /** 'pick' hands the characters back (starting an empty project); 'addBlocks' adds them to the open project. */
+  mode: 'pick' | 'addBlocks';
+  // For 'pick' mode
+  onPick?: (chars: Character[], blockNames: string[]) => void;
   // For 'addBlocks' mode
   onAddBlock?: (chars: Character[]) => void;
   onCheckExists?: (unicode: number) => boolean;
 }
 
 const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({ 
-  isOpen, onClose, mode, onSelectScript, customScriptTemplate, onAddBlock, onCheckExists 
+  isOpen, onClose, mode, onPick, onAddBlock, onCheckExists
 }) => {
   const { t } = useLocale();
   const { showNotification } = useLayout();
@@ -33,7 +33,6 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
   
   const [isConfirmingAdd, setIsConfirmingAdd] = useState(false);
   const [pendingCharacters, setPendingCharacters] = useState<Character[] | null>(null);
-  const [pendingScriptConfig, setPendingScriptConfig] = useState<ScriptConfig | null>(null);
   
   const formId = "unicode-block-selector-form";
 
@@ -44,7 +43,6 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
       setSelectedBlocks(new Set());
       setIsConfirmingAdd(false);
       setPendingCharacters(null);
-      setPendingScriptConfig(null);
       getUnicodeBlocks().then(data => {
         setBlocks(data);
         setIsLoading(false);
@@ -70,18 +68,20 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
   };
   
   const handleConfirmAdd = () => {
-    if (mode === 'createScript' && pendingScriptConfig && onSelectScript) {
-      onSelectScript(pendingScriptConfig);
-    } else if (mode === 'addBlocks' && pendingCharacters && onAddBlock) {
-      onAddBlock(pendingCharacters);
-    }
+    if (pendingCharacters) handOver(pendingCharacters);
     onClose();
   };
   
   const handleCancelConfirm = () => {
     setIsConfirmingAdd(false);
     setPendingCharacters(null);
-    setPendingScriptConfig(null);
+  };
+
+  const selectedBlockNames = () => blocks.filter(b => selectedBlocks.has(b.name)).map(b => b.name);
+
+  const handOver = (chars: Character[]) => {
+    if (mode === 'pick') onPick?.(chars, selectedBlockNames());
+    else onAddBlock?.(chars);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -114,51 +114,18 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
 
     const hasMarks = allCharacters.some(c => c.glyphClass === 'mark');
 
-    if (mode === 'createScript') {
-        if (!onSelectScript || !customScriptTemplate) return;
+    if (mode === 'addBlocks' && allCharacters.length === 0) {
+        showNotification(t('allGlyphsFromBlockExist'), 'info');
+        onClose();
+        return;
+    }
 
-        const customCharacterSet: CharacterSet = {
-          nameKey: "customCharacters",
-          characters: allCharacters,
-        };
-
-        const newScriptConfig: ScriptConfig = {
-          ...customScriptTemplate,
-          id: `custom_blocks_${Date.now()}`,
-          nameKey: "customBlockFont",
-          sampleText: "",
-          characterSetData: [customCharacterSet],
-          rulesData: { 'DFLT': {} },
-          defaults: {
-              ...customScriptTemplate.defaults,
-              fontName: 'CustomBlockFont',
-              preferKerningTerm: true,
-          }
-        };
-
-        if (hasMarks) {
-            setPendingScriptConfig(newScriptConfig);
-            setIsConfirmingAdd(true);
-        } else {
-            onSelectScript(newScriptConfig);
-            onClose();
-        }
-    } else { // 'addBlocks' mode
-        if (!onAddBlock) return;
-        
-        if (allCharacters.length === 0) {
-            showNotification(t('allGlyphsFromBlockExist'), 'info');
-            onClose();
-            return;
-        }
-
-        if (hasMarks) {
-            setPendingCharacters(allCharacters);
-            setIsConfirmingAdd(true);
-        } else {
-            onAddBlock(allCharacters);
-            onClose();
-        }
+    if (hasMarks) {
+        setPendingCharacters(allCharacters);
+        setIsConfirmingAdd(true);
+    } else {
+        handOver(allCharacters);
+        onClose();
     }
   };
   
@@ -171,12 +138,12 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
       footer={isConfirmingAdd ? (
           <>
             <button type="button" onClick={handleCancelConfirm} className="px-4 py-2 bg-gray-500 dark:bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors">{t('cancel')}</button>
-            <button type="button" onClick={handleConfirmAdd} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">{mode === 'addBlocks' ? t('addBlockAction') : t('startProject')}</button>
+            <button type="button" onClick={handleConfirmAdd} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">{mode === 'addBlocks' ? t('addBlockAction') : t('unicodeBlockPickAction')}</button>
           </>
         ) : (
           <>
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-500 dark:bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors">{t('cancel')}</button>
-            <button type="submit" form={formId} disabled={isLoading || selectedBlocks.size === 0} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-indigo-400">{mode === 'addBlocks' ? t('addBlockAction') : t('startProject')}</button>
+            <button type="submit" form={formId} disabled={isLoading || selectedBlocks.size === 0} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-indigo-400">{mode === 'addBlocks' ? t('addBlockAction') : t('unicodeBlockPickAction')}</button>
           </>
         )
       }
@@ -197,7 +164,7 @@ const UnicodeBlockSelectorModal: React.FC<UnicodeBlockSelectorModalProps> = ({
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search blocks..."
+                placeholder={t('searchBlocks')}
                 className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-2 mb-2 flex-shrink-0"
               />
               <div className="flex-grow overflow-y-auto border rounded-md p-2 dark:border-gray-600">

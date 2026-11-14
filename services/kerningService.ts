@@ -79,7 +79,9 @@ export async function calculateAutoKerning(
     strokeThickness: number,
     onProgress: (progress: number) => void,
     recommendedKerning: RecommendedKerning[] | null,
-    groupContext?: KerningGroupContext
+    groupContext?: KerningGroupContext,
+    /** Checked between pairs: when it returns true, stop and return what has been measured so far (F43). */
+    shouldStop?: () => boolean
 ): Promise<Map<string, number>> {
 
     const newKerningMap = new Map<string, number>();
@@ -93,6 +95,7 @@ export async function calculateAutoKerning(
 
     // Process each pair provided in the input array.
     for (const [index, pair] of pairsToKern.entries()) {
+        if (shouldStop?.()) break;
         const { left: leftChar, right: rightChar } = pair;
         const leftGlyph = glyphDataMap.get(leftChar.unicode);
         const rightGlyph = glyphDataMap.get(rightChar.unicode);

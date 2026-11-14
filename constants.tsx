@@ -209,9 +209,29 @@ export const RefreshIcon: React.FC<{ className?: string }> = ({ className = 'h-5
 );
 
 export const PenIcon: React.FC<{ className?: string }> = ({ className = 'h-5 w-5' }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-        <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+    // A pencil writing a line: the drawing tool (Edit, which moves points, has its own icon).
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5l4 4L9 19l-5 1 1-5L16.5 3.5zM14 6l4 4" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 21h8" />
+    </svg>
+);
+
+/** A curve with its points and a handle: the tool that moves points of a drawn shape. */
+export const EditPointsIcon: React.FC<{ className?: string }> = ({ className = 'h-5 w-5' }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" d="M5 19C7 9 15 7 19 6" />
+        <path strokeLinecap="round" strokeWidth={1.5} d="M5 19L11 5" />
+        <rect x="3" y="17" width="4" height="4" fill="currentColor" stroke="none" />
+        <rect x="17" y="4" width="4" height="4" fill="currentColor" stroke="none" />
+        <circle cx="11" cy="5" r="1.8" fill="currentColor" stroke="none" />
+    </svg>
+);
+
+/** Four corners: show the whole drawing area again. */
+export const FitViewIcon: React.FC<{ className?: string }> = ({ className = 'h-5 w-5' }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+        <rect x="9" y="9" width="6" height="6" rx="1" />
     </svg>
 );
 
@@ -241,7 +261,9 @@ export const EllipseIcon: React.FC<{ className?: string }> = ({ className = 'h-5
 
 export const CalligraphyIcon: React.FC<{ className?: string }> = ({ className = 'h-5 w-5' }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-        <rect x="5.636" y="-1.828" width="8.728" height="3.636" transform="rotate(45 10 2)" />
+        {/* A flat-nib pen: a broad stroke, drawn at its slant. */}
+        <path d="M4.5 13.5L11.5 3.5L15.5 6.5L8.5 16.5Z" />
+        <path d="M3 18h14" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
     </svg>
 );
 
@@ -474,8 +496,9 @@ export const BrokenLinkIcon: React.FC<{ className?: string }> = ({
 );
 
 export const SearchIcon: React.FC<{ className?: string }> = ({ className = 'h-5 w-5' }) => (
+    // A plain magnifier (Zoom In has the one with a plus).
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
 );
 
@@ -563,3 +586,5 @@ export const ChevronDownIcon = ({ className = "w-6 h-6" }) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
   </svg>
 );
+
+export const DONATE_URL = "https://www.paypal.com/donate?token=YWBpb_jURmkXX4Yh3cHdhZ_ovPEVBSvFSKel-86NfowUil2tyOqW-2t11MxcXAcedyH-INjfCQJTvd92";

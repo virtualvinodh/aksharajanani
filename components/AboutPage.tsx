@@ -1,9 +1,10 @@
 
 
-import React from 'react';
+import React, { useRef } from 'react';
+import { useDialogBehaviour } from '../hooks/useDialogBehaviour';
 import { useLocale } from '../contexts/LocaleContext';
 import { renderFormattedText } from '../utils/formattedText';
-import { BackIcon, DonateIcon } from '../constants';
+import { BackIcon, DonateIcon, DONATE_URL } from '../constants';
 import Footer from './Footer';
 
 interface AboutPageProps {
@@ -25,10 +26,11 @@ const ContentBlock: React.FC<{ titleKey: string; contentKey: string }> = ({ titl
 
 const AboutPage: React.FC<AboutPageProps> = ({ onClose }) => {
   const { t } = useLocale();
-  const DONATE_URL = "https://www.paypal.com/donate?token=YWBpb_jURmkXX4Yh3cHdhZ_ovPEVBSvFSKel-86NfowUil2tyOqW-2t11MxcXAcedyH-INjfCQJTvd92";
+  const pageRef = useRef<HTMLDivElement>(null);
+  useDialogBehaviour(true, onClose, pageRef);
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col">
+    <div ref={pageRef} className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col focus:outline-none">
       <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-4 flex justify-between items-center shadow-md w-full flex-shrink-0">
         <button
           onClick={onClose}
@@ -75,6 +77,18 @@ const AboutPage: React.FC<AboutPageProps> = ({ onClose }) => {
               <span>{t('donateAction')}</span>
             </a>
           </div>
+
+          {/* Data and fonts the app ships or loads, with the notices their licences ask for. */}
+          <section className="mt-10 text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">{t('aboutCreditsTitle')}</h3>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>{renderFormattedText(t('aboutCreditsCldr'))}</li>
+              <li>{renderFormattedText(t('aboutCreditsUdhr'))}</li>
+              <li>{renderFormattedText(t('aboutCreditsNoto'))}</li>
+              <li>{renderFormattedText(t('aboutCreditsBuilder'))}</li>
+            </ul>
+            <p className="mt-4">{renderFormattedText(t('aboutLicense'))}</p>
+          </section>
 
         </div>
       </main>

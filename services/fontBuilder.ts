@@ -12,6 +12,7 @@ import { curveToPolyline, quadraticCurveToPolyline, getStrokeOutlinePoints, gene
 // Not '../constants': that is a .tsx module, which breaks inside the worker in dev (see canvasConstants.ts).
 import { DRAWING_CANVAS_SIZE } from '../canvasConstants';
 import { isGlyphDrawn, getGlyphExportNameByUnicode, getBlankAdvanceWidth } from '../utils/glyphUtils';
+import { normalizeFontVersion } from '../utils/fontVersion';
 import opentype from 'opentype.js';
 import paper from 'paper';
 
@@ -425,6 +426,7 @@ export const createFont = (
         throw new Error(t("errorNoGlyphs"));
     }
 
+    const fontVersion = normalizeFontVersion(settings.fontVersion);
     const font = new opentype.Font({
       familyName: settings.fontName,
       styleName: metrics.styleName,
@@ -438,8 +440,14 @@ export const createFont = (
       manufacturerURL: settings.vendorURL, // Mapped from vendorURL
       license: settings.licenseDescription, // Mapped
       licenseURL: settings.licenseInfoURL, // Mapped
-      description: settings.description
+      description: settings.description,
+      // The same version everywhere (M10): name ID 5 here, the CFF version (opentype.js copies
+      // name ID 5), the unique ID below (name ID 3), and head.fontRevision, which the Python step
+      // sets from name ID 5 (opentype.js always writes 1.0 there).
+      version: `Version ${fontVersion}`
     });
-    
+    // "1.001;FamilyStyle": a new version gets a new unique ID, so a reinstalled font is seen as new.
+    font.names.uniqueID = { en: `${fontVersion};${(settings.fontName + metrics.styleName).replace(/\s/g, '')}` };
+
     return font;
 };

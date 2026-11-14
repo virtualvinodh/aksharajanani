@@ -29,3 +29,6 @@ tools/**/out/
 
 # End-to-end test recordings (large; kept out of git)
 videos/
+
+# The font builder (Pyodide + fontTools), downloaded by scripts/fetch-font-builder.mjs
+public/font-builder/

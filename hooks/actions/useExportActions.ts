@@ -1,4 +1,5 @@
 
+import { shouldShowUseYourFont } from '../../components/UseYourFontModal';
 import React, { useState, useCallback } from 'react';
 import { useProject } from '../../contexts/ProjectContext';
 import { useGlyphData } from '../../contexts/GlyphDataContext';
@@ -13,6 +14,8 @@ import * as dbService from '../../services/dbService';
 import { ProjectData } from '../../types';
 import { useProgressCalculators } from '../useProgressCalculators';
 import { simpleHash } from '../../utils/stringUtils';
+import { nextFontVersion } from '../../utils/fontVersion';
+import { findRulesWithMissingGroups } from '../../services/ruleGroupCheck';
 
 export type ExportingType = 'export' | 'test' | 'create' | null;
 
@@ -29,7 +32,7 @@ export const useExportActions = ({
     
     const { t } = useLocale();
     const layout = useLayout();
-    const { settings, metrics } = useSettings();
+    const { settings, metrics, dispatch: settingsDispatch } = useSettings();
     const { characterSets, allCharsByUnicode, allCharsByName, isEditMode, baseFontBinary } = useProject();
     const { glyphDataMap, version: glyphVersion } = useGlyphData();
     const { kerningMap, suggestedKerningMap, ignoredPairs } = useKerning();
@@ -50,7 +53,7 @@ export const useExportActions = ({
         allCharsByName, fontRules, kerningMap, positioningRules, glyphVersion 
     });
 
-    const downloadFontBlob = useCallback((blob: Blob, fileNameBase: string) => {
+    const downloadFontBlob = useCallback((blob: Blob, fileNameBase: string): string => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -58,6 +61,7 @@ export const useExportActions = ({
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         a.download = `${safeFileName}_${timestamp}.otf`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        return a.download;
     }, []);
 
     const handleSaveProject = useCallback(async () => {
@@ -131,7 +135,12 @@ export const useExportActions = ({
 
     }, [settings, getProjectState, projectName, layout, guideFont]);
 
-    const getCachedOrGeneratedFont = useCallback(async (): Promise<{ blob: Blob; feaError: string | null } | null> => {
+    /**
+     * The built font, from the cache when nothing changed. The version number goes up after every
+     * download, so it's kept out of the "did anything change" hash: Test and Creator can reuse the
+     * font just exported. A download needs a font built with the current version (`forDownload`).
+     */
+    const getCachedOrGeneratedFont = useCallback(async (forDownload = false): Promise<{ blob: Blob; feaError: string | null } | null> => {
         const projectState = getProjectState();
 
         if (!projectState || !settings || !metrics || !characterSets) {
@@ -139,8 +148,10 @@ export const useExportActions = ({
             return null;
         }
     
-        const projectString = JSON.stringify(projectState);
-        const currentHash = simpleHash(projectString);
+        const version = projectState.settings?.fontVersion ?? '';
+        const projectString = JSON.stringify({ ...projectState, settings: projectState.settings && { ...projectState.settings, fontVersion: undefined } });
+        const contentHash = simpleHash(projectString);
+        const currentHash = `${contentHash}|${version}`;
         let feaError: string | null = null;
         let fontBlob: Blob | null = null;
 
@@ -150,7 +161,7 @@ export const useExportActions = ({
             if (projectId) {
                 try {
                     const cachedData = await dbService.getFontCache(projectId);
-                    if (cachedData && cachedData.hash === currentHash) {
+                    if (cachedData && (forDownload ? cachedData.hash === currentHash : String(cachedData.hash).split('|')[0] === String(contentHash))) {
                         fontBlob = cachedData.fontBinary;
                     }
                 } catch (cacheError) {
@@ -201,21 +212,35 @@ export const useExportActions = ({
         
         try {
             // Resolves to null after notifying the user of the specific failure.
-            const result = await getCachedOrGeneratedFont();
+            const result = await getCachedOrGeneratedFont(true);
             if (result) {
                 const { blob, feaError } = result;
                 if (feaError) {
                     setFeaErrorState({ error: feaError, blob });
                     layout.openModal('feaError');
                 } else {
-                    downloadFontBlob(blob, projectName);
-                    layout.showNotification(t('fontExportedSuccess'));
+                    const fileName = downloadFontBlob(blob, projectName);
+                    // The next export gets the next version number (1.000 → 1.001), so a reinstalled font is seen as newer.
+                    // (Not for an imported font being edited: its own name table and version are kept.)
+                    if (!isEditMode) settingsDispatch({ type: 'UPDATE_SETTINGS', payload: prev => prev && { ...prev, fontVersion: nextFontVersion(prev.fontVersion) } });
+                    // Say how to use the file (UX §8): Windows, Mac, Word, Canva, phone, web. The dialog also
+                    // reminds people to keep a backup, since the project lives only in this browser.
+                    // Rules that use a group that no longer exists were left out of the font: say so (F50).
+                    const missing = findRulesWithMissingGroups(fontRules, characterSets);
+                    const warning = missing.rules > 0
+                        ? t('exportRulesLeftOut', { count: missing.rules, groups: missing.groups.join(', ') })
+                        : undefined;
+                    if (shouldShowUseYourFont()) {
+                        layout.closeNotification(); // the "building your font" message would cover the dialog
+                        layout.openModal('useYourFont', { fileName, warning });
+                    }
+                    else layout.showNotification([t('fontExportedSuccess'), warning, t('backupReminderAfterExport')].filter(Boolean).join(' '), 'success', { duration: warning ? 15000 : 8000 });
                 }
             }
         } finally {
             setExportingType(null);
         }
-    }, [getCachedOrGeneratedFont, downloadFontBlob, layout, t, projectName]);
+    }, [getCachedOrGeneratedFont, downloadFontBlob, layout, t, projectName, settingsDispatch, fontRules, characterSets, isEditMode]);
 
     // Shared logic to check for completeness and warn if necessary
     const checkAndExecute = useCallback((onProceed: () => void) => {
@@ -224,17 +249,18 @@ export const useExportActions = ({
             return;
         }
 
-        const isIncomplete = {
-            drawing: drawingProgress.completed < drawingProgress.total,
-            positioning: positioningProgress.completed < positioningProgress.total,
-            kerning: kerningProgress.completed < kerningProgress.total,
+        // How much is left in each step, so the warning can say it in numbers.
+        const remaining = {
+            drawing: Math.max(0, drawingProgress.total - drawingProgress.completed),
+            positioning: Math.max(0, positioningProgress.total - positioningProgress.completed),
+            kerning: Math.max(0, kerningProgress.total - kerningProgress.completed),
         };
-        
-        const shouldWarn = isIncomplete.drawing || isIncomplete.positioning || isIncomplete.kerning;
+
+        const shouldWarn = remaining.drawing > 0 || remaining.positioning > 0 || remaining.kerning > 0;
 
         if (shouldWarn) {
             layout.openModal('incompleteWarning', {
-                status: isIncomplete,
+                status: remaining,
                 onConfirm: () => {
                     layout.closeModal();
                     onProceed();
@@ -259,6 +285,11 @@ export const useExportActions = ({
     }, [checkAndExecute, performExport, setIsAnimatingExport]);
 
     const handleTestClick = useCallback(async () => {
+        // Like Export and Create: with nothing drawn there is nothing to try (F23).
+        if (drawingProgress.completed === 0) {
+            layout.showNotification(t('errorNoGlyphs'), 'error');
+            return;
+        }
         setExportingType('test');
         layout.showNotification(t('exportingNotice'), 'info');
         let result: Awaited<ReturnType<typeof getCachedOrGeneratedFont>> = null;
@@ -270,9 +301,10 @@ export const useExportActions = ({
         }
         if (result) {
             setTestPageFont(result);
+            layout.closeNotification(); // "Building your font…" is done
             layout.openModal('testPage');
         }
-    }, [getCachedOrGeneratedFont, layout, t]);
+    }, [getCachedOrGeneratedFont, layout, t, drawingProgress.completed]);
     
     // New handler moved from useAppActions
     const handleCreatorClick = useCallback(() => {
@@ -284,6 +316,7 @@ export const useExportActions = ({
                 // Resolves to null after notifying the user of the specific failure.
                 if (result) {
                     setCreatorFont(result);
+                    layout.closeNotification(); // "Building your font…" is done
                     layout.setCurrentView('creator');
                 }
             } finally {

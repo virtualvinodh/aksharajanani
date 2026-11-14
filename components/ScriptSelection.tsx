@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { ScriptConfig, ScriptRegion, CharacterSet, CharacterDefinition, ProjectData, Character, GlyphData } from '../types';
 import { useLocale } from '../contexts/LocaleContext';
-import { AboutIcon, HelpIcon, LoadIcon, SwitchScriptIcon, SpinnerIcon, TrashIcon, DRAWING_CANVAS_SIZE, AddIcon, ImportIcon, CodeBracketsIcon } from '../constants';
+import { AboutIcon, HelpIcon, LoadIcon, SearchIcon, SwitchScriptIcon, SpinnerIcon, TrashIcon, DRAWING_CANVAS_SIZE, AddIcon, ImportIcon, CodeBracketsIcon } from '../constants';
 import LanguageSelector from './LanguageSelector';
 import ThemeSwitch from './ThemeSwitch';
 import Footer from './Footer';
@@ -10,7 +10,7 @@ import { useLayout } from '../contexts/LayoutContext';
 // import ScriptCreator from './ScriptCreator'; // Deprecated for Phase 4 removal
 import CustomScriptLoader from './CustomScriptLoader';
 import ScriptVariantModal, { VariantGroup } from './ScriptVariantModal';
-import UnicodeBlockSelectorModal from './UnicodeBlockSelectorModal';
+import LanguagePickerModal from './LanguagePickerModal';
 import * as dbService from '../services/dbService';
 import DeleteProjectConfirmationModal from './DeleteProjectConfirmationModal';
 import { useTheme } from '../contexts/ThemeContext';
@@ -22,6 +22,7 @@ import { safeJsonParse } from '../utils/safeJson';
 import { fontFaceRule } from '../utils/cssFont';
 import { migrateLegacySettings } from '../utils/legacySettings';
 import { fetchOptionalJson } from '../utils/optionalFetch';
+import { appUrl } from '../utils/appUrl';
 
 interface ScriptSelectionProps {
     scripts: ScriptConfig[];
@@ -196,7 +197,10 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     const [isLoadingProjects, setIsLoadingProjects] = useState(true);
     const [projectToDelete, setProjectToDelete] = useState<ProjectData | null>(null);
     
-    const [isBlockSelectorOpen, setIsBlockSelectorOpen] = useState(false);
+    // "Can't find it?" in the language list opens the empty project with the Unicode table already open.
+    const [newProjectOpensTable, setNewProjectOpensTable] = useState(false);
+    const openNewProject = (withTable: boolean) => { setNewProjectOpensTable(withTable); setIsNewProjectModalOpen(true); };
+    const [isLanguagePickerOpen, setIsLanguagePickerOpen] = useState(false);
     const customScriptTemplate = useMemo(() => scripts.find(s => s.id === 'latin'), [scripts]);
 
     // The tutorial gets its own banner; every other script is listed under its region,
@@ -352,17 +356,17 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
             if (scriptWithAddons.characterSetData) {
                 originalCharDefs = scriptWithAddons.characterSetData;
             } else {
-                const charactersPath = `/data/characters_${script.id}.json`;
+                const charactersPath = appUrl(`data/characters_${script.id}.json`);
                 const originalRes = await fetch(charactersPath);
                 if (!originalRes.ok) throw new Error(`Could not fetch original characters for ${script.nameKey}`);
                 originalCharDefs = await originalRes.json();
 
                 // Optional: not every script has positioning data.
-                positioningDefs = await fetchOptionalJson<CharacterDefinition[]>(`/data/positioning_${script.id}.json`) ?? [];
+                positioningDefs = await fetchOptionalJson<CharacterDefinition[]>(appUrl(`data/positioning_${script.id}.json`)) ?? [];
             }
             
             const fetchPromises = [
-                fetch('/data/characters_basic.json').then(res => {
+                fetch(appUrl('data/characters_basic.json')).then(res => {
                     if (!res.ok) throw new Error(`Failed to fetch character data from ${res.url}`);
                     return res.json();
                 })
@@ -370,7 +374,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     
             if (includeLatin) {
                 fetchPromises.push(
-                    fetch('/data/characters_latin.json').then(res => {
+                    fetch(appUrl('data/characters_latin.json')).then(res => {
                         if (!res.ok) throw new Error(`Failed to fetch character data from ${res.url}`);
                         return res.json();
                     })
@@ -467,13 +471,13 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     };
     
     const handleCreateEmptyProject = async (data: NewProjectData) => {
-        const { projectName, fontFamily, upm, ascender, descender, includeLatin } = data;
+        const { projectName, fontFamily, upm, ascender, descender, includeLatin, extraCharacters } = data;
         
         let charDefs: CharacterDefinition[] = [];
         
         // Always include basic characters (numbers etc) if available, or at least ensure an empty structure
         try {
-             const res = await fetch('/data/characters_basic.json');
+             const res = await fetch(appUrl('data/characters_basic.json'));
              if (res.ok) {
                  const basicData = await res.json();
                  charDefs = [...charDefs, ...basicData];
@@ -482,12 +486,19 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
 
         if (includeLatin) {
             try {
-                const res = await fetch('/data/characters_latin.json');
+                const res = await fetch(appUrl('data/characters_latin.json'));
                 if (res.ok) {
                     const latinData = await res.json();
                     charDefs = [...charDefs, ...latinData];
                 }
             } catch(e) { console.error("Failed to fetch Latin characters", e); }
+        }
+
+        // Characters picked from the Unicode table, minus any already in the sets above.
+        if (extraCharacters.length) {
+            const have = new Set(charDefs.flatMap(d => 'characters' in d ? d.characters.map(c => c.unicode) : []));
+            const extra = extraCharacters.filter(c => c.unicode === undefined || !have.has(c.unicode));
+            if (extra.length) charDefs = [...charDefs, { nameKey: 'customCharacters', characters: extra }];
         }
         
         // Construct a new ScriptConfig based on the Latin template but customized
@@ -558,6 +569,32 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         fileInputRef.current?.click();
     };
 
+    /** Opens a project read from a file (its projectId already removed). */
+    const openProjectFile = (projectData: ProjectData) => {
+        if (projectData.scriptId) {
+            const scriptToLoad = scripts.find(s => s.id === projectData.scriptId);
+            if (scriptToLoad) {
+                onSelectScript(scriptToLoad, projectData);
+            } else if (projectData.scriptConfig || projectData.scriptId.startsWith('custom_') || projectData.scriptId.startsWith('project_')) {
+                 // Handle custom scripts loaded from file
+                 handleProjectClick(projectData);
+            } else {
+                showNotification(`Error: Project file is for a script ('${projectData.scriptId}') that is not available in this version of the app.`, 'error');
+            }
+        } else {
+            showNotification('Error: Project file is missing a script identifier (scriptId). It may be an old or invalid format.', 'error');
+        }
+    };
+
+    // A file chosen inside another language's project arrives here to open as its own project (F35).
+    const { projectToRestore, setProjectToRestore } = layout;
+    useEffect(() => {
+        if (!projectToRestore) return;
+        setProjectToRestore(null);
+        openProjectFile(projectToRestore);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once per handed-over file
+    }, [projectToRestore]);
+
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -569,20 +606,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                 // The file's projectId is the exporting browser's local IndexedDB key. Never reuse it:
                 // adopting it would make the next autosave overwrite whichever local project has that id.
                 const { projectId: _fileProjectId, ...projectData }: ProjectData = safeJsonParse<ProjectData>(text);
-
-                if (projectData.scriptId) {
-                    const scriptToLoad = scripts.find(s => s.id === projectData.scriptId);
-                    if (scriptToLoad) {
-                        onSelectScript(scriptToLoad, projectData);
-                    } else if (projectData.scriptConfig || projectData.scriptId.startsWith('custom_') || projectData.scriptId.startsWith('project_')) {
-                         // Handle custom scripts loaded from file
-                         handleProjectClick(projectData);
-                    } else {
-                        showNotification(`Error: Project file is for a script ('${projectData.scriptId}') that is not available in this version of the app.`, 'error');
-                    }
-                } else {
-                    showNotification('Error: Project file is missing a script identifier (scriptId). It may be an old or invalid format.', 'error');
-                }
+                openProjectFile(projectData);
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 showNotification(t('errorLoadingProject', { error: errorMessage }), 'error');
@@ -737,7 +761,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                          ) : (
                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                  {(showAllProjects ? recentProjects : recentProjects.slice(0, 6)).map(p => {
-                                     const scriptForSubtitle = scripts.find(s => s.id === p.scriptId) || (p.scriptId?.startsWith('custom_blocks_') ? { nameKey: 'customBlockFont' } : (p.scriptId?.startsWith('project_') ? { nameKey: 'customProject' } : { nameKey: '' }));
+                                     const scriptForSubtitle = scripts.find(s => s.id === p.scriptId) || (p.scriptId?.startsWith('custom_blocks_') ? { nameKey: 'customBlockFont' } : (p.scriptId?.startsWith('project_') ? { nameKey: 'customProject' } : (p.scriptConfig?.nameKey ? { nameKey: p.scriptConfig.nameKey } : { nameKey: '' })));
                                      const isDeleteVisible = longPressedProjectId === p.projectId;
                                      // Use the new 'name' field if available, otherwise fallback to fontName for backward compatibility
                                      const displayName = p.name || p.settings.fontName;
@@ -794,36 +818,17 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                             <p className="text-sm sm:text-base text-indigo-900 dark:text-indigo-100">{t('tutorialBannerText')}</p>
                             <button
                                 type="button"
-                                onClick={() => handleScriptSelection(tutorialScript)}
+                                onClick={() => {
+                                    // Asking for the tutorial overrides an earlier "Exit Tutorial" (F2).
+                                    try { localStorage.removeItem('tutorial_dismissed'); } catch { /* storage blocked */ }
+                                    handleScriptSelection(tutorialScript);
+                                }}
                                 className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors"
                             >
                                 {t('tutorialBannerButton')}
                             </button>
                         </div>
                     )}
-
-                    {/* Secondary ways to start: kept out of the script grid so they don't compete with it. */}
-                    <p className="sm:hidden mb-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400">{t('otherWaysToStart')}:</p>
-                    <div className="mb-10 flex flex-nowrap sm:flex-wrap items-center sm:justify-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-                        <span className="hidden sm:inline text-sm font-medium text-gray-500 dark:text-gray-400 mr-1">{t('otherWaysToStart')}:</span>
-                        {[
-                            { label: t('loadproject'), icon: <LoadIcon className="w-4 h-4" />, onClick: handleLoadProjectClick },
-                            { label: t('importFont') || 'Import Font', icon: <ImportIcon className="w-4 h-4" />, onClick: () => layout.openModal('importFont') },
-                            { label: t('createScript'), icon: <AddIcon className="w-4 h-4" />, onClick: () => setIsNewProjectModalOpen(true) },
-                            { label: t('createFromBlocks'), icon: <SwitchScriptIcon className="w-4 h-4" />, onClick: () => setIsBlockSelectorOpen(true) },
-                            { label: t('createCustomProject'), icon: <CodeBracketsIcon className="w-4 h-4" />, onClick: () => setIsUploadingScript(true) },
-                        ].map(action => (
-                            <button
-                                key={action.label}
-                                type="button"
-                                onClick={action.onClick}
-                                className="flex-shrink-0 whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-200 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                            >
-                                {action.icon}
-                                {action.label}
-                            </button>
-                        ))}
-                    </div>
 
                     <h2 className="text-2xl font-semibold text-center mb-2 text-indigo-600 dark:text-indigo-400">{t('selectScriptTitle')}</h2>
                     <div className="flex justify-center items-center mb-6">
@@ -888,6 +893,41 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                         );
                     })}
                     </div>
+
+                    {/* Languages without a ready-made set: pick one and its letters are set up from CLDR. */}
+                    <button
+                        type="button"
+                        onClick={() => setIsLanguagePickerOpen(true)}
+                        className="w-full flex items-center gap-3 text-left rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 px-4 py-3 hover:border-indigo-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-accent"
+                    >
+                        <SearchIcon className="w-6 h-6 flex-shrink-0 text-indigo-600 dark:text-indigo-400" />
+                        <span>
+                            <span className="block font-bold text-gray-900 dark:text-white">{t('languagePickerTileTitle')}</span>
+                            <span className="block text-sm text-gray-500 dark:text-gray-400">{t('languagePickerTileText')}</span>
+                        </span>
+                    </button>
+
+                    {/* Secondary ways to start: below the language tiles, so a newcomer reads the languages first (F10). */}
+                    <p className="sm:hidden mt-8 mb-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400">{t('otherWaysToStart')}:</p>
+                    <div className="sm:mt-8 flex flex-nowrap sm:flex-wrap items-center sm:justify-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                        <span className="hidden sm:inline text-sm font-medium text-gray-500 dark:text-gray-400 mr-1">{t('otherWaysToStart')}:</span>
+                        {[
+                            { label: t('loadproject'), icon: <LoadIcon className="w-4 h-4" />, onClick: handleLoadProjectClick },
+                            { label: t('importFont') || 'Import Font', icon: <ImportIcon className="w-4 h-4" />, onClick: () => layout.openModal('importFont') },
+                            { label: t('createScript'), icon: <AddIcon className="w-4 h-4" />, onClick: () => openNewProject(false) },
+                            { label: t('createCustomProject'), icon: <CodeBracketsIcon className="w-4 h-4" />, onClick: () => setIsUploadingScript(true) },
+                        ].map(action => (
+                            <button
+                                key={action.label}
+                                type="button"
+                                onClick={action.onClick}
+                                className="flex-shrink-0 whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-200 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                            >
+                                {action.icon}
+                                {action.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </main>
             
@@ -902,18 +942,21 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                 variantGroups={variantGroups}
             />
             
-            <UnicodeBlockSelectorModal 
-                isOpen={isBlockSelectorOpen}
-                onClose={() => setIsBlockSelectorOpen(false)}
-                mode="createScript"
-                onSelectScript={onSelectScript}
-                customScriptTemplate={customScriptTemplate}
+            <LanguagePickerModal
+                isOpen={isLanguagePickerOpen}
+                onClose={() => setIsLanguagePickerOpen(false)}
+                scripts={scripts}
+                template={customScriptTemplate}
+                onStart={startProject}
+                onUseBuiltIn={handleScriptSelection}
+                onOpenUnicodeTable={() => openNewProject(true)}
             />
-            
+
             <NewProjectModal 
                 isOpen={isNewProjectModalOpen}
                 onClose={() => setIsNewProjectModalOpen(false)}
                 onConfirm={handleCreateEmptyProject}
+                openTableOnStart={newProjectOpensTable}
             />
 
             {layout.activeModal?.name === 'importFont' && (

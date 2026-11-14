@@ -18,6 +18,7 @@ import { usePositioning } from '../contexts/PositioningContext';
 import { useRules } from '../contexts/RulesContext';
 import { useLayout } from '../contexts/LayoutContext';
 import Notification from './Notification';
+import { appUrl } from '../utils/appUrl';
 
 const AppContainer: React.FC = () => {
     const [scriptsFile, setScriptsFile] = useState<ScriptsFile | null>(null);
@@ -42,9 +43,12 @@ const AppContainer: React.FC = () => {
     const [projectDataToRestore, setProjectDataToRestore] = useState<ProjectData | null>(null);
 
 
+    // The font builder (about 19 MB, from the app's own site) starts downloading when a project
+    // opens, not on the start page, so someone just looking around doesn't pay for it (MASTER_LIST 80).
+    // Importing a font from the start page starts it on demand.
     useEffect(() => {
-        initializePyodide();
-    }, []);
+        if (script) initializePyodide();
+    }, [script]);
 
     useEffect(() => {
         const LOGO_FONT_STYLE_ID = 'logo-font-face-style';
@@ -62,7 +66,7 @@ const AppContainer: React.FC = () => {
     useEffect(() => {
         const fetchScripts = async () => {
             try {
-                const response = await fetch('/scripts.json');
+                const response = await fetch(appUrl('scripts.json'));
                 if (!response.ok) throw new Error('Could not load scripts.json configuration.');
                 const data: ScriptsFile = await response.json();
                 setScriptsFile(data);

@@ -229,7 +229,7 @@ const DrawingModal: React.FC<any> = ({
         character={liveCharacter} glyphData={glyphData} prevCharacter={prevCharacter} nextCharacter={nextCharacter}
         onBackClick={() => handleNavigationAttempt(null)} onNavigate={handleNavigationAttempt}
         settings={settings} metrics={metrics} lsb={lsb} setLsb={setLsb} rsb={rsb} setRsb={setRsb}
-        onDeleteClick={() => setIsDeleteConfirmOpen(true)} onClear={() => handlePathsChange([])} onSave={handleSave} 
+        onDeleteClick={() => setIsDeleteConfirmOpen(true)} onClear={() => { handlePathsChange([]); setZoom(1); setViewOffset({ x: 0, y: 0 }); /* a built letter may have opened zoomed out */ }} onSave={handleSave} 
         isLocked={isLocked} isComposite={isComposite} onRefresh={handleRefresh}
         onReset={handleResetGlyph}
         allCharacterSets={allCharacterSets} onSaveConstruction={handleSaveConstruction}
@@ -282,6 +282,7 @@ const DrawingModal: React.FC<any> = ({
         isRelinkConfirmOpen={isRelinkConfirmOpen} setIsRelinkConfirmOpen={setIsRelinkConfirmOpen} onRelink={handleConfirmRelink}
         isConstructionWarningOpen={isConstructionWarningOpen} setIsConstructionWarningOpen={setIsConstructionWarningOpen} pendingConstruction={pendingConstruction} executeConstructionUpdate={executeConstructionUpdate}
         isTracerModalOpen={isTracerModalOpen} setIsTracerModalOpen={setIsTracerModalOpen} tracerImageSrc={tracerImageSrc} handleInsertTracedSVG={handleInsertTracedSVG} metrics={metrics}
+        guideSize={settings.gridGhostSize ?? gridConfig.characterNameSize}
       />
     </div>
   );

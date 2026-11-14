@@ -633,7 +633,7 @@ export const updateComponentInPaths = (
  * Master path resolver for any character item.
  * Assembles virtual syllables or kerning pairs based on their 'position' or 'kern' properties.
  */
-export const getUnifiedPaths = (item: Character, ctx: UnifiedRenderContext): Path[] => {
+export const getUnifiedPaths = (item: Character, ctx: UnifiedRenderContext, depth = 0): Path[] => {
     
     // PRIORITY CHECK: If there is actual drawing data for this glyph, and it's NOT a live link, use the actual data.
     // This fixes the issue where Composite glyphs ignored manual edits in the UnifiedCard.
@@ -672,8 +672,16 @@ export const getUnifiedPaths = (item: Character, ctx: UnifiedRenderContext): Pat
         
         if (!baseChar || !markChar) return [];
 
-        const baseGlyph = ctx.glyphDataMap.get(baseChar.unicode!);
-        const markGlyph = ctx.glyphDataMap.get(markChar.unicode!);
+        // A part with no drawing of its own may itself be built (ΰ is ϋ + ́, and ϋ is υ + ̈):
+        // use its built shape then (K19).
+        const shapeOf = (c: Character): GlyphData | undefined => {
+            const own = c.unicode !== undefined ? ctx.glyphDataMap.get(c.unicode) : undefined;
+            if (isGlyphDrawn(own) || depth >= 4 || !(c.position || c.link)) return own;
+            const paths = getUnifiedPaths(c, ctx, depth + 1);
+            return paths.length > 0 ? { paths } : own;
+        };
+        const baseGlyph = shapeOf(baseChar);
+        const markGlyph = shapeOf(markChar);
 
         if (!isGlyphDrawn(baseGlyph) && !isGlyphDrawn(markGlyph)) return [];
 
@@ -820,4 +828,50 @@ export const calculateUnifiedTransform = (
     }
 
     return { scale, tx, ty };
+};
+
+/**
+ * The glyph data to measure letters by: each letter's own drawing, or, for a letter the app builds
+ * (placed accent, linked or composite letter) that has none, its built shape (K19, K20). Spacing
+ * uses this so pairs with built letters (Tamil கீ, கி, க்) are listed and auto-spaced like any other.
+ * Built letters made of other built letters are resolved over a few passes.
+ */
+export const withBuiltGlyphs = (characters: Iterable<Character>, ctx: UnifiedRenderContext): Map<number, GlyphData> => {
+    const map = new Map(ctx.glyphDataMap);
+    let pending = Array.from(characters).filter(c =>
+        c.unicode !== undefined && (c.position || c.link || c.composite) && !isGlyphDrawn(map.get(c.unicode)));
+    // Built only once every part has a shape, so a letter is never measured from half of itself
+    // (கி with only ி drawn) and the result doesn't depend on the order letters come in.
+    const partsReady = (c: Character): boolean => {
+        const parts = c.position ?? c.link ?? c.composite ?? [];
+        return parts.every(name => {
+            const part = ctx.allCharsByName.get(name);
+            return !part || part.unicode === undefined || isGlyphDrawn(map.get(part.unicode));
+        });
+    };
+    for (let pass = 0; pass < 6 && pending.length > 0; pass++) {
+        const passCtx: UnifiedRenderContext = { ...ctx, glyphDataMap: map };
+        const stillPending: Character[] = [];
+        const built: [number, Path[]][] = [];
+        for (const c of pending) {
+            if (!partsReady(c)) { stillPending.push(c); continue; }
+            let paths: Path[] = [];
+            if (c.position) {
+                paths = getUnifiedPaths(c, passCtx);
+            } else if (ctx.metrics) {
+                paths = generateCompositeGlyphData({
+                    character: c, allCharsByName: ctx.allCharsByName, allGlyphData: map,
+                    settings: { strokeThickness: ctx.strokeThickness } as AppSettings, metrics: ctx.metrics,
+                    markAttachmentRules: ctx.markAttachmentRules ?? null, allCharacterSets: ctx.characterSets ?? [], groups: ctx.groups,
+                })?.paths ?? [];
+            }
+            if (paths.length > 0) built.push([c.unicode!, paths]);
+            else stillPending.push(c);
+        }
+        // Added after the pass, so every letter in a pass sees the same parts.
+        for (const [u, paths] of built) map.set(u, { ...(map.get(u) ?? {}), paths });
+        if (built.length === 0) break;
+        pending = stillPending;
+    }
+    return map;
 };

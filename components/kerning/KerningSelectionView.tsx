@@ -1,9 +1,10 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Character, RecommendedKerning, KerningMap } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
-import { SparklesIcon, UndoIcon, CheckCircleIcon, SearchIcon, GridViewIcon } from '../../constants';
+import { SparklesIcon, UndoIcon, CheckCircleIcon, SearchIcon, GridViewIcon, SettingsIcon } from '../../constants';
 import { calculateAutoKerning } from '../../services/kerningService';
+import { useMeasurableGlyphs } from '../../hooks/kerning/useMeasurableGlyphs';
 import PairCard from '../PairCard';
 import CharacterSelectionPanel from './CharacterSelectionPanel';
 import CharacterSelectionRow from './CharacterSelectionRow';
@@ -16,6 +17,7 @@ import { useLayout } from '../../contexts/LayoutContext';
 import AutoKerningProgressModal from '../AutoKerningProgressModal';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import Modal from '../Modal';
+import SpacingDefaultsPanel from './SpacingDefaultsPanel';
 
 interface KerningSelectionViewProps {
     filteredPairs: { left: Character, right: Character }[];
@@ -44,7 +46,9 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
     const { dispatch: kerningDispatch, discoverKerning } = useKerning();
     const { characterSets, allCharsByUnicode, setRecommendedKerning, recommendedKerning } = useProject();
     const { state: rulesState } = useRules();
-    const { glyphDataMap, version: glyphVersion } = useGlyphData();
+    const { version: glyphVersion } = useGlyphData();
+    // Own drawings plus the built shape of letters the app makes, so their pairs can be spaced (K20).
+    const glyphDataMap = useMeasurableGlyphs();
     const { settings, metrics } = useSettings();
 
     const [isAutoKerning, setIsAutoKerning] = useState(false);
@@ -52,6 +56,10 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
     const [kerningProgressValue, setKerningProgressValue] = useState(0);
     const [isResetVisibleConfirmOpen, setIsResetVisibleConfirmOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isSpacingPanelOpen, setIsSpacingPanelOpen] = useState(false);
+    // Set by the progress dialog's Stop button; each run checks it (F43).
+    const stopRequested = useRef(false);
+    const [stopRun, setStopRun] = useState<(() => void) | null>(null);
 
     const isLargeScreen = useMediaQuery('(min-width: 1024px)');
     const PAGE_SIZE = isLargeScreen ? 100 : 20;
@@ -61,7 +69,7 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
             // Marks attach to their base (mark positioning), so they're never kerned (as in Detect new pairs).
             .filter(c => !c.hidden && c.unicode !== undefined && glyphDataMap.has(c.unicode) && c.glyphClass !== 'mark')
             .sort((a,b) => a.unicode! - b.unicode!) || [];
-    }, [characterSets, glyphDataMap, glyphVersion]);
+    }, [characterSets, glyphDataMap]);
 
     const totalPages = Math.ceil(filteredPairs.length / PAGE_SIZE);
     // A narrower search can leave us past the last page; snap back so results stay visible.
@@ -81,14 +89,21 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
             return;
         }
 
+        setKerningProgressValue(0);
         setIsProgressModalOpen(true);
-        const results = await calculateAutoKerning(pairsToKern, glyphDataMap, metrics, settings.strokeThickness, setKerningProgressValue, recommendedKerning, { groups: rulesState.fontRules?.groups || {}, characterSets });
-        if (results.size > 0) {
-            kerningDispatch({ type: 'MERGE_SUGGESTIONS', payload: results });
-            showNotification(t('autoKerningComplete', { count: results.size }), 'success');
+        stopRequested.current = false;
+        setStopRun(() => () => { stopRequested.current = true; });
+        try {
+            const results = await calculateAutoKerning(pairsToKern, glyphDataMap, metrics, settings.strokeThickness, setKerningProgressValue, recommendedKerning, { groups: rulesState.fontRules?.groups || {}, characterSets }, () => stopRequested.current);
+            // Stopping keeps what was measured so far.
+            if (results.size > 0) kerningDispatch({ type: 'MERGE_SUGGESTIONS', payload: results });
+            if (stopRequested.current) showNotification(t('autoKerningStopped', { count: results.size }), 'info');
+            else if (results.size > 0) showNotification(t('autoKerningComplete', { count: results.size }), 'success');
+        } finally {
+            setStopRun(null);
+            setIsProgressModalOpen(false);
+            setIsAutoKerning(false);
         }
-        setIsProgressModalOpen(false);
-        setIsAutoKerning(false);
     };
     
     const handleDiscoverKerning = async () => {
@@ -99,12 +114,18 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
         // Determine calculation mode based on settings
         const shouldCalculateValues = settings?.isBackgroundAutoKerningEnabled ?? false;
 
+        // The search runs in a worker that can't be interrupted; Stop closes the dialog at once and
+        // its result is then ignored (nothing is added).
+        let stopped = false;
+        const finish = () => { setStopRun(null); setIsProgressModalOpen(false); setIsAutoKerning(false); };
+        setStopRun(() => () => { stopped = true; finish(); showNotification(t('detectPairsStopped'), 'info'); });
+
         const resultsMap = await discoverKerning((progress) => {
-            setKerningProgressValue(progress);
+            if (!stopped) setKerningProgressValue(progress);
         }, shouldCalculateValues, true); // Return results, do NOT dispatch to suggestions
 
-        setIsProgressModalOpen(false);
-        setIsAutoKerning(false);
+        if (stopped) return;
+        finish();
         
         if (resultsMap.size > 0) {
             // Merge results into recommendedKerning list
@@ -229,19 +250,24 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
                     <div className="p-4 border-b dark:border-gray-700 flex items-center gap-4 flex-wrap bg-white dark:bg-gray-800">
                         <button onClick={handleAutoKern} disabled={isAutoKerning} data-tour="auto-kern-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"><SparklesIcon /> {t('autoKern')}</button>
                         
-                        <button onClick={handleDiscoverKerning} disabled={isAutoKerning} data-tour="detect-pairs-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors" title="Scan all characters for geometric collisions">
+                        <button onClick={handleDiscoverKerning} disabled={isAutoKerning} data-tour="detect-pairs-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors" title={t('detectNewPairsHint')}>
                              <SearchIcon className="w-4 h-4" />
-                             <span>Detect new pairs</span>
+                             <span>{t('detectNewPairs')}</span>
                         </button>
 
                         {unreviewedCount > 0 && (
                             <button onClick={handleAcceptVisibleSuggestions} data-tour="accept-batch-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors">
                                 <CheckCircleIcon className="w-4 h-4" />
-                                Accept Suggestions ({unreviewedCount})
+                                {t('acceptSuggestions', { count: unreviewedCount })}
                             </button>
                         )}
+                        <button onClick={() => setIsSpacingPanelOpen(o => !o)} aria-expanded={isSpacingPanelOpen} data-tour="spacing-defaults-btn" className={`inline-flex items-center gap-2 px-4 py-2 ring-1 ring-inset font-semibold rounded-lg transition-colors ${isSpacingPanelOpen ? 'bg-indigo-50 ring-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:ring-indigo-500 dark:text-indigo-200' : 'bg-white ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600'}`}><SettingsIcon className="w-4 h-4" /> {t('spacingDefaultsButton')}</button>
                         <button onClick={() => setIsResetVisibleConfirmOpen(true)} disabled={kerningMap.size === 0 && suggestedKerningMap.size === 0} className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 font-semibold rounded-lg disabled:opacity-50 transition-colors"><UndoIcon /> {t('resetVisible')}</button>
                     </div>
+
+                    {isSpacingPanelOpen && (
+                        <SpacingDefaultsPanel letters={drawnCharacters} glyphDataMap={glyphDataMap} kerningMap={kerningMap} suggestedKerningMap={suggestedKerningMap} glyphVersion={glyphVersion} />
+                    )}
 
                     <div className="flex-grow">
                         {paginatedPairs.length > 0 ? (
@@ -306,7 +332,7 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
                 )}
             </div>
 
-            <AutoKerningProgressModal isOpen={isProgressModalOpen} progress={kerningProgressValue} />
+            <AutoKerningProgressModal isOpen={isProgressModalOpen} progress={kerningProgressValue} onStop={stopRun ?? undefined} />
             <Modal isOpen={isResetVisibleConfirmOpen} onClose={() => setIsResetVisibleConfirmOpen(false)} title={t('resetVisibleTitle')} footer={<><button onClick={() => setIsResetVisibleConfirmOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded">{t('cancel')}</button><button onClick={handleResetVisible} className="px-4 py-2 bg-red-600 text-white rounded">{t('reset')}</button></>}><p>{t('resetVisibleMessage', { count: filteredPairs.length })}</p></Modal>
         </div>
     );

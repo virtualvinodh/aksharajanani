@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { AppSettings, TestPageConfig } from '../types';
 import { useLocale } from '../contexts/LocaleContext';
 import { BackIcon, TEST_PAGE_RANGES, UndoIcon } from '../constants';
 import Footer from './Footer';
+import { readFontCharacters, splitByCoverage, missingLetters } from '../utils/fontCoverage';
 
 interface FontTestPageProps {
   fontBlob: Blob | null;
@@ -36,6 +37,17 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
   const lineHeight = settings.testPage?.lineHeight.default ?? defaults.lineHeight;
 
   const fontUrlRef = useRef<string | null>(null);
+
+  // Which characters the font has, so letters that aren't drawn yet show as missing (UX §7, F23).
+  const [available, setAvailable] = useState<Set<number> | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setAvailable(null);
+    if (fontBlob) readFontCharacters(fontBlob).then(set => { if (!cancelled) setAvailable(set); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [fontBlob]);
+  const missing = useMemo(() => available ? missingLetters(testText, available) : [], [available, testText]);
+  const runs = useMemo(() => available ? splitByCoverage(testText, available) : [{ text: testText, missing: false }], [available, testText]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -128,7 +140,7 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
     if (error) {
        return (
           <div className="bg-red-100 dark:bg-red-900/50 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 p-4 rounded-lg m-4">
-            <p className="font-bold mb-2">Error</p>
+            <p className="font-bold mb-2">{t('testPageErrorTitle')}</p>
             <p>{error}</p>
           </div>
        );
@@ -138,8 +150,8 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
       <>
         {feaWarning && (
             <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 p-4 rounded-lg mb-6">
-                <p className="font-bold mb-2">Warning: OpenType Feature Compilation Failed</p>
-                <p className="text-sm mb-2">The font preview is using basic character shapes, but advanced features like ligatures or special positioning may not work as expected.</p>
+                <p className="font-bold mb-2">{t('testPageRulesWarningTitle')}</p>
+                <p className="text-sm mb-2">{t('testPageRulesWarningBody')}</p>
                 <pre className="text-xs whitespace-pre-wrap bg-yellow-50 dark:bg-yellow-800/50 p-2 rounded">{feaWarning}</pre>
             </div>
         )}
@@ -155,7 +167,7 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
               value={testText}
               onChange={(e) => onTestTextChange(e.target.value)}
               className="w-full min-h-[160px] bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-4 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-accent focus:border-accent resize-y"
-              placeholder="Type here..."
+              placeholder={t('inputTextLabel')}
               rows={6}
               style={{
                 fontFamily: 'var(--guide-font-family)',
@@ -167,6 +179,12 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t('fontPreviewLabel')}
             </label>
+            {missing.length > 0 && (
+              <p data-testid="test-missing-letters" className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                {t('testMissingLetters', { count: missing.length })}{' '}
+                <span className="text-gray-500" style={{ fontFamily: 'var(--guide-font-family)' }}>{missing.slice(0, 30).join(' ')}{missing.length > 30 ? ' …' : ''}</span>
+              </p>
+            )}
             <div
               aria-live="polite"
               className="w-full min-h-[160px] p-4 text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md"
@@ -178,7 +196,9 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
                 wordBreak: 'break-word',
               }}
             >
-              {testText || '\u00A0'}
+              {testText ? runs.map((run, i) => run.missing
+                ? <span key={i} data-missing="true" className="text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 outline-1 outline-dashed outline-gray-300 dark:outline-gray-600 rounded-sm" style={{ fontFamily: 'var(--guide-font-family)' }}>{run.text}</span>
+                : <React.Fragment key={i}>{run.text}</React.Fragment>) : '\u00A0'}
             </div>
           </div>
         </div>
@@ -203,7 +223,7 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
         <div className="w-24 flex justify-end">
              <button 
                 onClick={handleReset}
-                title="Reset to Default"
+                title={t('reset')}
                 className="flex items-center gap-2 px-3 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm"
             >
                 <UndoIcon className="w-4 h-4" />

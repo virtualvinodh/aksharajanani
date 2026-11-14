@@ -169,8 +169,8 @@ export const isGlyphComplete = (
 
     let result = false;
 
-    // 1. Manually drawn in the editor
-    if (character.unicode !== undefined && isGlyphDrawn(glyphDataMap.get(character.unicode))) {
+    // 1. Manually drawn in the editor (a copy of another letter saved unchanged isn't finished yet)
+    if (character.unicode !== undefined && !character.unfinishedCopy && isGlyphDrawn(glyphDataMap.get(character.unicode))) {
         result = true;
     }
     
@@ -196,8 +196,9 @@ export const isGlyphComplete = (
         }
     }
     
-    // 4. A linked or composite glyph whose source components are drawn
-    if (!result) {
+    // 4. A linked or composite glyph whose source components are drawn. Not a copy of a single
+    // letter (ஆ from அ): it looks exactly like its source until something is added (UX §5).
+    if (!result && !isSingleCopyTemplate(character)) {
         const components = character.link || character.composite;
         if (components) {
              result = components.every(name => {
@@ -209,4 +210,28 @@ export const isGlyphComplete = (
 
     memo.set(character.name, result);
     return result;
+};
+
+/**
+ * True when the copy can't be a finished letter: started from exactly one other letter, as is.
+ * A copy that is resized or moved (Kannada ್ಖ, Telugu ్ష: a smaller letter below the line) is a
+ * finished form of its own, so it doesn't count.
+ */
+export const isSingleCopyTemplate = (c: Pick<Character, 'composite' | 'link' | 'position' | 'kern' | 'compositeTransform'>): boolean =>
+    !!c.composite && c.composite.length === 1 && !c.link && !c.position && !c.kern && !hasTransform(c.compositeTransform);
+
+const hasTransform = (list: Character['compositeTransform']): boolean =>
+    !!list && list.some(t => !!t && (
+        [t.scale, t.scaleX, t.scaleY].some(v => v !== undefined && v !== 1) ||
+        [t.rotation, t.x, t.y].some(v => v !== undefined && v !== 0)));
+
+/** Same outlines, ignoring ids and tiny rounding differences. */
+export const sameShape = (a: GlyphData['paths'], b: GlyphData['paths']): boolean => {
+    const r = (n: number) => Math.round(n * 10) / 10;
+    const key = (paths: GlyphData['paths']) => JSON.stringify(paths.map(p => [
+        p.type, p.angle ?? null,
+        (p.points || []).map(pt => [r(pt.x), r(pt.y)]),
+        (p.segmentGroups || []).map(g => g.map(s => [r(s.point.x), r(s.point.y), r(s.handleIn.x), r(s.handleIn.y), r(s.handleOut.x), r(s.handleOut.y)])),
+    ]));
+    return a.length === b.length && key(a) === key(b);
 };

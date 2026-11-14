@@ -1,5 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocale } from '../contexts/LocaleContext';
 import { useProgressCalculators } from '../hooks/useProgressCalculators';
 import { useProject } from '../contexts/ProjectContext';
 import { useGlyphData } from '../contexts/GlyphDataContext';
@@ -17,14 +18,12 @@ const CelebrationManager: React.FC = () => {
     const { kerningMap } = useKerning();
     const { markPositioningMap } = usePositioning();
     const { state: rulesState } = useRules();
-    const { setWorkspace, checkAndSetFlag } = useLayout();
+    const { setWorkspace, showNotification } = useLayout();
+    const { t } = useLocale();
 
     // Use specific states to track which overlay to show
     // 'drawing' | 'positioning' | 'kerning'
     const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
-    const [hasCelebratedDrawing, setHasCelebratedDrawing] = useState(() => {
-        return localStorage.getItem('celebration_drawing_seen_session') === 'true';
-    });
 
     const { drawingProgress, positioningProgress, kerningProgress } = useProgressCalculators({
         characterSets,
@@ -51,40 +50,66 @@ const CelebrationManager: React.FC = () => {
     const isSimple = !requiresPositioning;
     const isComplex = !!requiresPositioning && !requiresKerning;
 
+    // Celebrate a step only when it goes from unfinished to finished while someone works on this
+    // project (F6). This component mounts when a project has loaded, so what is already finished
+    // then (a project opened again) stays quiet. Each step celebrates at most once per opening.
+    const complete = { drawing: isDrawingComplete, positioning: isPositioningComplete, kerning: isKerningComplete };
+    const completeRef = useRef(complete);
+    completeRef.current = complete;
+    const finishedAtOpen = useRef<typeof complete | null>(null);
+    const celebrated = useRef(new Set<keyof typeof complete>());
+    useEffect(() => {
+        const timer = window.setTimeout(() => { finishedAtOpen.current = { ...completeRef.current }; }, 1000);
+        return () => window.clearTimeout(timer);
+    }, []);
+    const justFinished = (step: keyof typeof complete) =>
+        finishedAtOpen.current !== null && !finishedAtOpen.current[step] && complete[step] && !celebrated.current.has(step);
+    const celebrate = (step: keyof typeof complete) => {
+        celebrated.current.add(step);
+        setActiveOverlay(step);
+    };
+
+    // Work lives in this browser (UX §9): once someone has drawn 10 letters in this sitting, ask
+    // the browser to keep the app's storage (Safari clears it after a week away) and remind them
+    // to download a backup. Firefox asks the person about storage, so this waits until they've
+    // clearly invested in the font.
+    const BACKUP_REMINDER_AT = 10;
+    const drawnAtOpen = useRef<number | null>(null);
+    const remindedBackup = useRef(false);
+    useEffect(() => {
+        const timer = window.setTimeout(() => { drawnAtOpen.current = drawingProgress.completed; }, 1000);
+        return () => window.clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- the count when the project opened
+    }, []);
+    useEffect(() => {
+        if (remindedBackup.current || drawnAtOpen.current === null || script?.isImportedFont) return;
+        if (drawnAtOpen.current < BACKUP_REMINDER_AT && drawingProgress.completed >= BACKUP_REMINDER_AT) {
+            remindedBackup.current = true;
+            navigator.storage?.persist?.().catch(() => { /* not supported */ });
+            showNotification(t('backupReminder'), 'info', { duration: 10000 });
+        }
+    }, [drawingProgress.completed, script?.isImportedFont, showNotification, t]);
+
     useEffect(() => {
         // Trigger 1: Drawing Complete
         if (script?.isImportedFont) return;
-        if (isDrawingComplete && !hasCelebratedDrawing) {
-            const hasCelebratedPermanently = checkAndSetFlag('celebration_drawing_seen');
-            if (!hasCelebratedPermanently) {
-                setActiveOverlay('drawing');
-                localStorage.setItem('celebration_drawing_seen_session', 'true');
-                setHasCelebratedDrawing(true);
-            }
-        }
-    }, [isDrawingComplete, checkAndSetFlag]);
+        if (justFinished('drawing')) celebrate('drawing');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- fires on the change to complete
+    }, [isDrawingComplete]);
 
     useEffect(() => {
-        // Trigger 2: Positioning Complete
+        // Trigger 2: Positioning Complete (after drawing, so it doesn't interrupt it)
         if (script?.isImportedFont) return;
-        if (requiresPositioning && isPositioningComplete) {
-            const hasCelebrated = checkAndSetFlag('celebration_positioning_seen');
-            if (!hasCelebrated) {
-                setActiveOverlay('positioning');
-            }
-        }
-    }, [isPositioningComplete, requiresPositioning, checkAndSetFlag]);
+        if (requiresPositioning && isDrawingComplete && justFinished('positioning')) celebrate('positioning');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- fires on the change to complete
+    }, [isPositioningComplete, isDrawingComplete, requiresPositioning]);
 
     useEffect(() => {
         // Trigger 3: Kerning Complete
         if (script?.isImportedFont) return;
-        if (requiresKerning && isKerningComplete) {
-            const hasCelebrated = checkAndSetFlag('celebration_kerning_seen');
-            if (!hasCelebrated) {
-                setActiveOverlay('kerning');
-            }
-        }
-    }, [isKerningComplete, requiresKerning, checkAndSetFlag]);
+        if (requiresKerning && isDrawingComplete && justFinished('kerning')) celebrate('kerning');
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- fires on the change to complete
+    }, [isKerningComplete, isDrawingComplete, requiresKerning]);
 
     const handleClose = () => {
         setActiveOverlay(null);
@@ -108,10 +133,10 @@ const CelebrationManager: React.FC = () => {
                 <CelebrationOverlay
                     glyphDataMap={glyphDataMap}
                     nextStep="final"
-                    customTitle="Congratulations! Font Ready!"
-                    customMessage="You've drawn every character. Your font is ready to use!"
-                    primaryActionLabel="Finish"
-                    secondaryActionLabel="Fine-tune Spacing"
+                    customTitle={t('celebrateFontReadyTitle')}
+                    customMessage={t('celebrateFontReadyMessage')}
+                    primaryActionLabel={t('celebrateDone')}
+                    secondaryActionLabel={t('celebrateFineTuneSpacing')}
                     onProceed={() => handleProceed('final')}
                     onClose={() => handleProceed('kerning')}
                 />
@@ -122,6 +147,10 @@ const CelebrationManager: React.FC = () => {
                 <CelebrationOverlay
                     glyphDataMap={glyphDataMap}
                     nextStep="positioning"
+                    customTitle={t('celebrateDrawingTitle')}
+                    customMessage={t('celebrateDrawingMessage')}
+                    primaryActionLabel={t('celebrateGoToPositioning')}
+                    secondaryActionLabel={t('celebrateStayHere')}
                     onProceed={() => handleProceed('positioning')}
                     onClose={handleClose}
                 />

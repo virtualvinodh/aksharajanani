@@ -112,7 +112,7 @@ export const useGlyphFilter = ({
                      isComplete = kerningMap.has(key);
                  }
             } else if (char.unicode !== undefined) {
-                 isComplete = isGlyphDrawn(glyphDataMap.get(char.unicode));
+                 isComplete = !char.unfinishedCopy && isGlyphDrawn(glyphDataMap.get(char.unicode));
             }
 
             const matchesStatus = filterMode === 'all' || filterMode === 'none' || (filterMode === 'completed' && isComplete) || (filterMode === 'incomplete' && !isComplete);

@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { CallBackProps, STATUS, EVENTS, ACTIONS, Step, Placement } from 'react-joyride';
 import { useProject } from '../../contexts/ProjectContext';
 import { useGlyphData } from '../../contexts/GlyphDataContext';
 import { useLayout } from '../../contexts/LayoutContext';
 import { isGlyphDrawn } from '../../utils/glyphUtils';
 import { renderFormattedText } from '../../utils/formattedText';
+import { toolTourTarget } from '../drawing/compactToolbar';
 
 export const useJITHints = (
     translations: Record<string, string> | null,
@@ -22,7 +23,18 @@ export const useJITHints = (
     // tip (the canvas, Back, another glyph…) just ends it.
     const nonBlocking = (list: Step[]): Step[] =>
         list.map(step => ({ ...step, disableOverlay: true, data: { ...step.data, nonBlocking: true } }));
-    const isNonBlockingRun = run && !!steps[0]?.data?.nonBlocking;
+    // Every just-in-time tip is non-blocking (U14): a tip must never swallow a stroke or a click.
+    const shownSteps = useMemo(() => nonBlocking(steps), [steps]);
+
+    // Tips shouldn't arrive one on top of the other: after one closes, wait a little before the next.
+    const TIP_GAP_MS = 8000;
+    const lastTipEndedAt = useRef(0);
+    const wasRunning = useRef(false);
+    useEffect(() => {
+        if (wasRunning.current && !run) lastTipEndedAt.current = Date.now();
+        wasRunning.current = run;
+    }, [run]);
+    const isNonBlockingRun = run && steps.length > 0;
     useEffect(() => {
         if (!isNonBlockingRun) return;
         const onPointerDown = (e: PointerEvent) => {
@@ -50,10 +62,12 @@ export const useJITHints = (
     // Triggers
     useEffect(() => {
         if (!translations || isTutorialActive || activeModal || run) return;
+        if (Date.now() - lastTipEndedAt.current < TIP_GAP_MS) return;
         
-        // Global Header Hints: Test & Export
+        // Global Header Hints: Test & Export. Only on the grid, never while a letter is open: they
+        // used to arrive mid-letter and eat the next strokes (U14).
         const isHeaderVisible = !['creator', 'settings', 'comparison', 'rules'].includes(currentView);
-        const canShowHeaderHints = isHeaderVisible && (isLargeScreen || !selectedCharacter);
+        const canShowHeaderHints = isHeaderVisible && !selectedCharacter;
 
         if (canShowHeaderHints) {
             const exportUnseen = drawnCount >= 3 && !localStorage.getItem('hint_export_seen');
@@ -78,7 +92,7 @@ export const useJITHints = (
                         }]);
                         setStepIndex(0);
                         setRun(true);
-                    }, 1000);
+                    }, 2500);
                     return () => clearTimeout(timer);
                  }
             } else if (testUnseen) {
@@ -100,7 +114,7 @@ export const useJITHints = (
                         }]);
                         setStepIndex(0);
                         setRun(true);
-                    }, 1000);
+                    }, 2500);
                     return () => clearTimeout(timer);
                  }
             }
@@ -120,7 +134,11 @@ export const useJITHints = (
                         // 1. Priority Check: Review Required (Dotted)
                         // We check this FIRST so it takes precedence over the generic select hint
                         if (!hasSeenDotted) {
-                             const dashedCard = document.querySelector('.tutorial-glyph-item [data-status="review-required"]');
+                             // Only a card that's on screen: a tip pointing off screen is cut off (F16).
+                             const dashedCard = Array.from(document.querySelectorAll('.tutorial-glyph-item [data-status="review-required"]')).find(el => {
+                                 const r = el.getBoundingClientRect();
+                                 return r.width > 0 && r.top >= 0 && r.left >= 0 && r.bottom <= window.innerHeight && r.right <= window.innerWidth;
+                             });
                              if (dashedCard) {
                                  clearInterval(checkGridHints);
                                  setSteps([{
@@ -211,79 +229,79 @@ export const useJITHints = (
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="tool-select"]',
+                                    target: toolTourTarget('tool-select'),
                                     content: <div>{renderFormattedText(translations.toolSelect)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="tool-pan"]',
+                                    target: toolTourTarget('tool-pan'),
                                     content: <div>{renderFormattedText(translations.toolPan)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="toolbar-pen"]',
+                                    target: toolTourTarget('toolbar-pen'),
                                     content: renderFormattedText(translations.toolbarPenContent),
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="tool-calligraphy"]',
+                                    target: toolTourTarget('tool-calligraphy'),
                                     content: <div>{renderFormattedText(translations.toolCalligraphy)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="tool-eraser"]',
+                                    target: toolTourTarget('tool-eraser'),
                                     content: <div>{renderFormattedText(translations.toolEraser)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="tool-slice"]',
+                                    target: toolTourTarget('tool-slice'),
                                     content: <div>{renderFormattedText(translations.toolSlice)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-undo"]',
+                                    target: toolTourTarget('action-undo'),
                                     content: <div>{renderFormattedText(translations.actionUndo)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-redo"]',
+                                    target: toolTourTarget('action-redo'),
                                     content: <div>{renderFormattedText(translations.actionRedo)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-cut"]',
+                                    target: toolTourTarget('action-cut'),
                                     content: <div>{renderFormattedText(translations.actionCut)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-copy"]',
+                                    target: toolTourTarget('action-copy'),
                                     content: <div>{renderFormattedText(translations.actionCopy)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-paste"]',
+                                    target: toolTourTarget('action-paste'),
                                     content: <div>{renderFormattedText(translations.actionPaste)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-group"]',
+                                    target: toolTourTarget('action-group'),
                                     content: <div>{renderFormattedText(translations.actionGroup)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
                                 {
-                                    target: '[data-tour="action-ungroup"]',
+                                    target: toolTourTarget('action-ungroup'),
                                     content: <div>{renderFormattedText(translations.actionUngroup)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
@@ -300,7 +318,8 @@ export const useJITHints = (
                 }
 
                 // New Hint: Metrics (Side Bearings) - Delayed until 2nd char is drawn
-                if (drawnCount >= 2 && isCurrentDrawn) {
+                // After a few letters, not on the second: that's when people draw near the lines.
+                if (drawnCount >= 5 && isCurrentDrawn) {
                     const metricsStorageKey = 'hint_metrics_seen';
                     if (!localStorage.getItem(metricsStorageKey)) {
                         const timer = setTimeout(() => {
@@ -772,5 +791,5 @@ export const useJITHints = (
         }
     }, [isTutorialActive]);
 
-    return { run, steps, stepIndex, handleCallback };
+    return { run, steps: shownSteps, stepIndex, handleCallback };
 };

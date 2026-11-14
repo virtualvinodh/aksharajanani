@@ -42,7 +42,7 @@ const PositioningRulesView: React.FC<PositioningRulesViewProps> = ({
     pagedRulePairs, rulePage, setRulePage, ruleTotalPages, markPositioningMap,
     getPairClassKey, classCounts, setEditingPair, setEditingIndex, setEditingContextList,
     handleConfirmPosition, glyphDataMap, strokeThickness, markAttachmentRules, positioningRules, characterSets,
-    groups, glyphVersion, metrics, ITEMS_PER_PAGE, handleAcceptAllDefaults, handleResetPage,
+    groups, glyphVersion, metrics, handleAcceptAllDefaults, handleResetPage,
     uniqueRepPairs,
     isPairEligible
 }) => {
@@ -82,11 +82,14 @@ const PositioningRulesView: React.FC<PositioningRulesViewProps> = ({
 
     // Level 2: Drill-down Grid
     // Filter eligible unpositioned items
-    const unpositionedOnPageCount = pagedRulePairs.filter((p: any) => {
-        const isPositioned = markPositioningMap.has(`${p.base.unicode}-${p.mark.unicode}`);
-        if (isPositioned) return false;
-        return isPairEligible(p.base, p.mark);
-    }).length;
+    const isWaiting = (p: any) => !markPositioningMap.has(`${p.base.unicode}-${p.mark.unicode}`) && isPairEligible(p.base, p.mark);
+    const unpositionedOnPageCount = pagedRulePairs.filter(isWaiting).length;
+    // The whole rule, every page (K21: a big rule took 16 pages of "Accept Page").
+    // Counted in pairs, like the header and the progress bar: accepting a card places the pairs synced with it too.
+    const hasWaitingInRule = uniqueRepPairs.some(isWaiting);
+    const unpositionedInRuleCount = hasWaitingInRule && activeRuleGroup
+        ? activeRuleGroup.pairs.filter((p: any) => !markPositioningMap.has(`${p.base.unicode}-${p.mark.unicode}`)).length
+        : 0;
 
     return (
         <div className="animate-fade-in-up">
@@ -104,7 +107,7 @@ const PositioningRulesView: React.FC<PositioningRulesViewProps> = ({
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t('ruleDetails')}</h3>
                         {activeRuleGroup && (
                             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                {activeRuleGroup.pairs.length} {t('pairsTotal')} • {t('pageOf', { current: rulePage, total: Math.ceil(activeRuleGroup.pairs.length / ITEMS_PER_PAGE) })}
+                                {activeRuleGroup.pairs.length} {t('pairsTotal')} • {t('pageOf', { current: rulePage, total: Math.max(1, ruleTotalPages) })}
                             </div>
                         )}
                     </div>
@@ -112,7 +115,7 @@ const PositioningRulesView: React.FC<PositioningRulesViewProps> = ({
                 
                 {/* Accept Page Button */}
                 {activeRuleGroup && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap justify-end gap-2">
                         <button
                             onClick={() => handleResetPage(pagedRulePairs)}
                             disabled={pagedRulePairs.length - unpositionedOnPageCount === 0}
@@ -121,13 +124,25 @@ const PositioningRulesView: React.FC<PositioningRulesViewProps> = ({
                             <RefreshIcon className="h-4 w-4" />
                             <span>{t('resetPage')}</span>
                         </button>
+                        {ruleTotalPages > 1 && (
+                            <button
+                                onClick={() => handleAcceptAllDefaults(pagedRulePairs)}
+                                disabled={unpositionedOnPageCount === 0}
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white ring-1 ring-inset ring-green-600 text-green-700 dark:bg-gray-700 dark:text-green-300 dark:ring-green-500 font-semibold rounded-md hover:bg-green-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <CheckCircleIcon className="h-4 w-4" />
+                                <span>{t('acceptPage')}</span>
+                            </button>
+                        )}
                         <button
-                            onClick={() => handleAcceptAllDefaults(pagedRulePairs)}
-                            disabled={unpositionedOnPageCount === 0}
+                            onClick={() => handleAcceptAllDefaults(uniqueRepPairs)}
+                            disabled={unpositionedInRuleCount === 0}
+                            title={t('acceptAllInRuleHint')}
+                            data-tour="accept-all-in-rule"
                             className="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             <CheckCircleIcon className="h-4 w-4" />
-                            <span>{t('acceptPage')}</span>
+                            <span>{unpositionedInRuleCount > 0 ? t('acceptAllInRule', { count: unpositionedInRuleCount }) : t('acceptPage')}</span>
                         </button>
                     </div>
                 )}

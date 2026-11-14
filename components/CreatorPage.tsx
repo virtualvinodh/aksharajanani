@@ -1,17 +1,18 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useLocale } from '../contexts/LocaleContext';
 import { BackIcon, DownloadIcon, ShareIcon, ImageIcon, TrashIcon } from '../constants';
 import { useSettings } from '../contexts/SettingsContext';
 import { useLayout } from '../contexts/LayoutContext';
 import { CreatorSettings } from '../types';
+import { readFontCharacters, splitByCoverage, missingLetters } from '../utils/fontCoverage';
 
 interface CreatorPageProps {
     fontBlob: Blob | null;
 }
 
 const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
-    useLocale();
+    const { t } = useLocale();
     const { settings, dispatch: settingsDispatch } = useSettings();
     const { handleBack } = useLayout();
     const saved = settings?.creatorSettings;
@@ -38,6 +39,21 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
     const lastPointerPos = useRef<{x: number, y: number} | null>(null);
 
     const fontName = "CreatorFont";
+
+    // Which characters the font has: letters that aren't drawn yet are drawn faded (UX §7).
+    const [available, setAvailable] = useState<Set<number> | null>(null);
+    useEffect(() => {
+        let cancelled = false;
+        if (fontBlob) readFontCharacters(fontBlob).then(set => { if (!cancelled) setAvailable(set); }).catch(() => {});
+        return () => { cancelled = true; };
+    }, [fontBlob]);
+    const missing = useMemo(() => available ? missingLetters(text, available) : [], [available, text]);
+    const missingNote = missing.length > 0 && (
+        <p data-testid="creator-missing-letters" className="text-xs text-gray-600 dark:text-gray-400">
+            {t('creatorMissingLetters', { count: missing.length })}{' '}
+            <span style={{ fontFamily: 'var(--guide-font-family)' }}>{missing.slice(0, 20).join(' ')}{missing.length > 20 ? ' …' : ''}</span>
+        </p>
+    );
 
     // Initialize Font
     useEffect(() => {
@@ -178,10 +194,29 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
         const totalTextHeight = finalLines.length * lineHeight;
         let startY = centerY - (totalTextHeight / 2) + (lineHeight / 2);
 
-        // 5. Draw Lines
-        ctx.textAlign = textAlign;
+        // 5. Draw Lines. Letters that aren't drawn yet come out faded, in the guide font,
+        // so they can't be mistaken for the person's own letters.
+        const mainFont = ctx.font;
+        const guideFamily = getComputedStyle(document.documentElement).getPropertyValue('--guide-font-family').trim() || 'sans-serif';
+        const missingFont = `${fontSize * 2}px ${guideFamily}`;
+        const drawLine = (line: string, x: number, y: number) => {
+            const runs = available ? splitByCoverage(line, available) : [];
+            if (!runs.some(r => r.missing)) { ctx.textAlign = textAlign; ctx.fillText(line, x, y); return; }
+            const widths = runs.map(r => { ctx.font = r.missing ? missingFont : mainFont; return ctx.measureText(r.text).width; });
+            const total = widths.reduce((a, b) => a + b, 0);
+            let cursor = textAlign === 'left' ? x : textAlign === 'right' ? x - total : x - total / 2;
+            ctx.textAlign = 'left';
+            runs.forEach((r, i) => {
+                ctx.font = r.missing ? missingFont : mainFont;
+                ctx.globalAlpha = r.missing ? 0.3 : 1;
+                ctx.fillText(r.text, cursor, y);
+                cursor += widths[i];
+            });
+            ctx.globalAlpha = 1;
+            ctx.font = mainFont;
+        };
         finalLines.forEach(line => {
-            ctx.fillText(line, anchorX, startY);
+            drawLine(line, anchorX, startY);
             startY += lineHeight;
         });
 
@@ -200,7 +235,7 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
         const padding = width * 0.025;
         ctx.fillText(watermarkText, width - padding, height - padding);
 
-    }, [text, fontSize, textColor, bgColor, bgImage, overlayOpacity, textAlign, fontLoaded, aspectRatio, addShadow, textPos]);
+    }, [text, fontSize, textColor, bgColor, bgImage, overlayOpacity, textAlign, fontLoaded, aspectRatio, addShadow, textPos, available]);
 
     useEffect(() => {
         draw();
@@ -440,6 +475,7 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                         rows={4}
                         placeholder="Your text..."
                     />
+                    {missingNote}
                     {controls}
                     <div className="mt-auto text-xs text-gray-400 text-center">
                         Pro Tip: Use transparent backgrounds for stickers.
@@ -474,6 +510,7 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                         rows={2}
                         placeholder="Type here..."
                     />
+                    {missingNote}
                     {controls}
                 </div>
             </div>

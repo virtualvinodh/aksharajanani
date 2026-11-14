@@ -25,9 +25,9 @@
   "clickNextForT": "You've seen the main tools. Click Next to continue to 'T'.",
   "selectLineTool": "The toolbar has **Shape Tools** for precise forms like lines, curves, and circles. Select the **Line Tool** now, then click 'Next'.",
   "drawT": "Use the Line Tool to construct the letter 'T' with two straight lines.",
-  "explainBearings": "These yellow dashed lines are the **Side Bearing** guides. They control the spacing around your character.",
-  "dragLSB": "Try dragging the **LSB (Left Side Bearing)** line to change the space on the left side of your 'T'. Then click Next.",
-  "dragRSB": "Good. Now adjust the **RSB (Right Side Bearing)** line. This spacing is crucial for how letters fit together. When you're done, click Next.",
+  "explainBearings": "These two dashed upright lines set the **space on each side** of your letter.",
+  "dragLSB": "Drag the small **handle** at the top or bottom of the **left** line to change the space on the left of your ‘T’. Then click Next.",
+  "dragRSB": "Good. Now drag a handle of the **right** line. This space decides how close the next letter comes. When you’re done, click Next.",
   "clickBackToDashboard": "Click Back to return to the dashboard.",
   "clickAAgain": "Select 'A' again to return to the editor.",
   "openGrid": "On smaller screens, click the floating **Grid button** to open the character list.",
@@ -140,7 +140,7 @@
   "hintExportTitle": "Export Font",
   "hintExportContent": "Ready to use your font? Click here to generate the OTF file.",
   "hintMetricsTitle": "Adjusting Spacing",
-  "hintMetricsContent": "The vertical lines are your **Side Bearings**. Drag the **LSB** (Left) or **RSB** (Right) lines to adjust the whitespace around this character.",
+  "hintMetricsContent": "The two upright lines set the **space on each side** of the letter. To change it, drag the small **handle** at the top or bottom of a line.",
   "hintGridDottedTitle": "Pending Characters",
   "hintGridDottedContent": "Cards with **dashed borders** are placeholders or auto-generated suggestions. Select them to review, draw, or accept them into your font."
 }

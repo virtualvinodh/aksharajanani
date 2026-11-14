@@ -8,11 +8,12 @@ import { useKerning, QueuedPair } from '../../contexts/KerningContext';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useLocale } from '../../contexts/LocaleContext';
 import { Character, GlyphData, Point, ComponentTransform } from '../../types';
-import { isGlyphDrawn } from '../../utils/glyphUtils';
+import { isGlyphDrawn, isSingleCopyTemplate, sameShape } from '../../utils/glyphUtils';
 import { generateCompositeGlyphData, getAccurateGlyphBBox, calculateDefaultMarkOffset } from '../../services/glyphRenderService';
 import * as dbService from '../../services/dbService';
 import { deepClone } from '../../utils/cloneUtils';
 import { findCharacterLocations, restoreCharacters, pairEntriesInvolving } from '../../utils/undoHelpers';
+import { findDependents, planDetach, withoutSources } from '../../utils/deleteHelpers';
 import { resolveRecommendedTarget } from '../../services/kerningService';
 import { useRules } from '../../contexts/RulesContext';
 import { expandMembers } from '../../services/groupExpansionService';
@@ -247,6 +248,31 @@ export const useGlyphActions = (
             characterDispatch({ type: 'UPDATE_CHARACTER_METADATA', payload: { unicode, ...newMetadata } });
         }
 
+        // A letter started as a copy of one other letter (ஆ from அ) and saved unchanged isn't
+        // finished: it shows "Finish me" and doesn't count as done until something is added (UX §5).
+        if (hasPathChanges || hasMetadataChanges) {
+            const after = { ...charToSave, ...newMetadata };
+            let unfinished = false;
+            if (isSingleCopyTemplate(after) && isGlyphDrawn(newGlyphData) && settings && metrics) {
+                const copy = generateCompositeGlyphData({
+                    character: after as Character, allCharsByName, allGlyphData: glyphDataMap, settings, metrics,
+                    markAttachmentRules, allCharacterSets: characterSets || [], groups,
+                });
+                unfinished = !!copy && sameShape(copy.paths, newGlyphData.paths);
+            }
+            if (unfinished !== !!charToSave.unfinishedCopy) {
+                characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prev => prev ? prev.map(set => ({
+                    ...set,
+                    characters: set.characters.map(c => {
+                        if (c.unicode !== unicode) return c;
+                        const n = { ...c };
+                        if (unfinished) n.unfinishedCopy = true; else delete n.unfinishedCopy;
+                        return n;
+                    }),
+                })) : null });
+            }
+        }
+
         if (hasPathChanges || (hasMetadataChanges && (newMetadata.lsb !== undefined || newMetadata.rsb !== undefined))) {
              triggerAutoKernForChar(unicode);
         }
@@ -303,95 +329,65 @@ export const useGlyphActions = (
         if (script?.isImportedFont) return;
         const charToDelete = allCharsByUnicode.get(unicode); if (!charToDelete) return;
         
-        // Undo puts back only what this delete removed or changed (P13): the glyph, its character,
-        // its kerning/positioning pairs, and its dependents' drawings and links. Later edits stay.
-        const dependents = dependencyMap.current.get(unicode);
-        const dependentUnicodes = dependents ? Array.from(dependents) : [];
-        const removedChars = findCharacterLocations(characterSets, new Set([unicode]));
-        const removedKerning = pairEntriesInvolving(kerningMap, new Set([unicode]));
-        const removedPositioning = pairEntriesInvolving(markPositioningMap, new Set([unicode]));
-        const glyphsToRestore: [number, GlyphData][] = [unicode, ...dependentUnicodes]
+        // Everything built from this letter (linked, copied, or letter + accent) keeps its current
+        // look as a separate drawing; combination-only shapes go with it (F36).
+        const dependents = findDependents(characterSets, new Set([charToDelete.name]));
+        const plan = planDetach(dependents, {
+            glyphDataMap, allCharsByName, markPositioningMap, kerningMap, characterSets: characterSets || [], groups,
+            metrics: metrics || undefined, markAttachmentRules, strokeThickness: settings?.strokeThickness || 15, positioningRules,
+        });
+        const deletedSet = new Set([unicode, ...plan.removed]);
+
+        // Undo puts back only what this delete removed or changed (P13): the glyphs, characters,
+        // their kerning/positioning pairs, and the dependents' drawings and links. Later edits stay.
+        const removedChars = findCharacterLocations(characterSets, deletedSet);
+        const removedKerning = pairEntriesInvolving(kerningMap, deletedSet);
+        const removedPositioning = pairEntriesInvolving(markPositioningMap, deletedSet);
+        const glyphsToRestore: [number, GlyphData][] = [...deletedSet, ...plan.fieldRestores.keys()]
             .filter(u => glyphDataMap.has(u))
             .map(u => [u, deepClone(glyphDataMap.get(u)!)]);
-        const dependentFields = new Map<number, Partial<Character>>();
-        dependentUnicodes.forEach(u => {
-            const c = allCharsByUnicode.get(u);
-            if (c) dependentFields.set(u, { link: c.link, composite: c.composite, compositeTransform: c.compositeTransform, sourceLink: c.sourceLink });
-        });
-        const dependencyEntry = dependents ? new Set(dependents) : undefined;
+        const dependencyEntry = dependencyMap.current.get(unicode);
+        const savedDependencyEntry = dependencyEntry ? new Set(dependencyEntry) : undefined;
 
         const undo = () => {
+            plan.newlyDrawn.forEach(u => glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: u } }));
             if (glyphsToRestore.length > 0) glyphDataDispatch({ type: 'BATCH_UPDATE_GLYPHS', payload: glyphsToRestore });
-            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prev => restoreCharacters(prev, removedChars, dependentFields) });
+            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prev => restoreCharacters(prev, removedChars, plan.fieldRestores) });
             if (removedKerning.size > 0) kerningDispatch({ type: 'BATCH_UPDATE', payload: removedKerning });
             if (removedPositioning.size > 0) positioningDispatch({ type: 'MERGE_ENTRIES', payload: removedPositioning });
-            if (dependencyEntry) dependencyMap.current.set(unicode, dependencyEntry);
+            if (savedDependencyEntry) dependencyMap.current.set(unicode, savedDependencyEntry);
         };
 
-        if (dependentUnicodes.length > 0) {
-            const batchUpdates: [number, GlyphData][] = [];
-            
-            dependentUnicodes.forEach((depUni: number) => {
-                const depChar = allCharsByUnicode.get(depUni);
-                if (depChar && (depChar.link || depChar.composite)) {
-                    const compositeData = generateCompositeGlyphData({
-                        character: depChar,
-                        allCharsByName,
-                        allGlyphData: glyphDataMap,
-                        settings: settings!,
-                        metrics: metrics!,
-                        markAttachmentRules,
-                        allCharacterSets: characterSets!,
-                        groups
-                    });
-                    if (compositeData) batchUpdates.push([depUni, compositeData]);
-                }
-            });
-            
-            if (batchUpdates.length > 0) {
-                glyphDataDispatch({ type: 'BATCH_UPDATE_GLYPHS', payload: batchUpdates });
-            }
-
-            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: (prevSets) => {
-                if (!prevSets) return null;
-                return prevSets.map(set => ({
-                    ...set,
-                    characters: set.characters.map(char => {
-                        if (dependentUnicodes.includes(char.unicode!)) {
-                            const newChar = { ...char };
-                            delete newChar.link;
-                            delete newChar.composite;
-                            delete newChar.compositeTransform;
-                            delete newChar.sourceLink;
-                            return newChar;
-                        }
-                        return char;
-                    })
-                }));
-            }});
-            dependencyMap.current.delete(unicode);
+        if (plan.glyphUpdates.length > 0) glyphDataDispatch({ type: 'BATCH_UPDATE_GLYPHS', payload: plan.glyphUpdates });
+        if (plan.fieldRestores.size > 0) {
+            characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: prevSets => prevSets
+                ? prevSets.map(set => ({ ...set, characters: set.characters.map(char => char.unicode !== undefined && plan.fieldRestores.has(char.unicode) ? withoutSources(char) : char) }))
+                : null });
         }
+        dependencyMap.current.delete(unicode);
 
         const newKerningMap = new Map<string, number>();
         kerningMap.forEach((value, key) => {
             const [left, right] = key.split('-').map(Number);
-            if (left !== unicode && right !== unicode) newKerningMap.set(key, value);
+            if (!deletedSet.has(left) && !deletedSet.has(right)) newKerningMap.set(key, value);
         });
 
         const newPositioningMap = new Map<string, Point>();
         markPositioningMap.forEach((value, key) => {
             const [base, mark] = key.split('-').map(Number);
-            if (base !== unicode && mark !== unicode) newPositioningMap.set(key, value);
+            if (!deletedSet.has(base) && !deletedSet.has(mark)) newPositioningMap.set(key, value);
         });
 
-        glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode }});
-        characterDispatch({ type: 'DELETE_CHARACTER', payload: { unicode } });
+        deletedSet.forEach(u => {
+            glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: u }});
+            characterDispatch({ type: 'DELETE_CHARACTER', payload: { unicode: u } });
+        });
         kerningDispatch({ type: 'SET_MAP', payload: newKerningMap });
         positioningDispatch({ type: 'SET_MAP', payload: newPositioningMap });
         
         layout.closeCharacterModal();
         layout.showNotification(t('glyphDeletedSuccess', { name: charToDelete.name }), 'success', { onUndo: undo });
-    }, [allCharsByUnicode, t, glyphDataDispatch, characterDispatch, kerningDispatch, positioningDispatch, layout, glyphDataMap, characterSets, kerningMap, markPositioningMap, dependencyMap, allCharsByName, settings, metrics, markAttachmentRules, groups]);
+    }, [allCharsByUnicode, t, glyphDataDispatch, characterDispatch, kerningDispatch, positioningDispatch, layout, glyphDataMap, characterSets, kerningMap, markPositioningMap, dependencyMap, allCharsByName, settings, metrics, markAttachmentRules, groups, positioningRules, script]);
 
     const handleAddGlyph = useCallback((charData: { unicode?: number; name: string }, targetSetName?: string) => {
         let finalUnicode = charData.unicode;

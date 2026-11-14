@@ -38,6 +38,8 @@ interface DrawingConfirmationStackProps {
     tracerImageSrc: string | null;
     handleInsertTracedSVG: (paths: Path[]) => void;
     metrics: FontMetrics;
+    /** Size of the faint guide letter, so a traced photo can be placed over it. */
+    guideSize?: number;
 }
 
 const DrawingConfirmationStack: React.FC<DrawingConfirmationStackProps> = (props) => {
@@ -98,6 +100,8 @@ const DrawingConfirmationStack: React.FC<DrawingConfirmationStackProps> = (props
                 onInsertSVG={props.handleInsertTracedSVG} 
                 drawingCanvasSize={DRAWING_CANVAS_SIZE} 
                 metrics={props.metrics} 
+                letter={props.character.label || props.character.name}
+                guideSize={props.guideSize}
             />
         </>
     );

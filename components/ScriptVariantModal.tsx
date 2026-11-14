@@ -43,11 +43,18 @@ const ScriptVariantModal: React.FC<ScriptVariantModalProps> = ({ isOpen, onClose
     onConfirm(selections);
   };
 
+  const guideStyle: React.CSSProperties = {
+    fontFamily: script.guideFont?.fontName ? `'${script.guideFont.fontName}', sans-serif` : 'sans-serif',
+    fontFeatureSettings: script.guideFont?.stylisticSet || 'normal',
+  };
+  const languageName = t(script.languagesKey || script.nameKey);
+
+  // F11: a plain question with big samples, instead of "Configure Variants" and an unlabelled code.
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t('configureVariantsForScript', { scriptName: t(script.nameKey) })}
+      title={t('variantQuestionTitle')}
       size="md"
       footer={
         <>
@@ -60,44 +67,36 @@ const ScriptVariantModal: React.FC<ScriptVariantModalProps> = ({ isOpen, onClose
         </>
       }
     >
+      <p className="mb-4 text-gray-700 dark:text-gray-300">{t('variantQuestionText', { language: languageName })}</p>
       <div className="space-y-6">
-        {variantGroups.map(group => (
-          <div key={group.optionKey}>
-            <h3
-              className="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2"
-              style={{
-                fontFamily: script.guideFont?.fontName ? `'${script.guideFont.fontName}', sans-serif` : 'sans-serif',
-                fontFeatureSettings: script.guideFont?.stylisticSet || 'normal',
-              }}
-            >
-              {group.optionKey}
-            </h3>
-            <div className="space-y-2">
-              {group.variants.map(variant => (
-                <label key={variant.name} className="flex items-center p-3 rounded-lg bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={group.optionKey}
-                    value={variant.name}
-                    checked={selections.get(group.optionKey) === variant.name}
-                    onChange={() => handleSelectionChange(group.optionKey, variant.name)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-accent border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:checked:bg-indigo-500"
-                  />
-                  <span
-                    className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-100"
-                    style={{
-                        fontFamily: script.guideFont?.fontName ? `'${script.guideFont.fontName}', sans-serif` : 'sans-serif',
-                        fontFeatureSettings: script.guideFont?.stylisticSet || 'normal',
-                    }}
-                  >
-                    {variant.desc?.split(':')[1] || variant.desc}
-                  </span>
-                </label>
-              ))}
+        {variantGroups.map((group, groupIndex) => (
+          <fieldset key={group.optionKey}>
+            <legend className="sr-only">{t('variantQuestionTitle')} {variantGroups.length > 1 ? groupIndex + 1 : ''}</legend>
+            <div className="grid grid-cols-2 gap-3">
+              {group.variants.map(variant => {
+                const checked = selections.get(group.optionKey) === variant.name;
+                return (
+                  <label key={variant.name} className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-colors ${checked ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 hover:border-indigo-300'}`}>
+                    <span className="text-6xl leading-tight text-gray-900 dark:text-gray-100" style={guideStyle}>
+                      {variant.desc?.split(':')[1] || variant.desc}
+                    </span>
+                    <input
+                      type="radio"
+                      name={group.optionKey}
+                      value={variant.name}
+                      checked={checked}
+                      onChange={() => handleSelectionChange(group.optionKey, variant.name)}
+                      aria-label={variant.desc?.split(':')[1] || variant.desc || variant.name}
+                      className="h-5 w-5 text-indigo-600 focus:ring-accent border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:checked:bg-indigo-500"
+                    />
+                  </label>
+                );
+              })}
             </div>
-          </div>
+          </fieldset>
         ))}
       </div>
+      <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{t('variantQuestionNote')}</p>
     </Modal>
   );
 };

@@ -4,11 +4,14 @@ import { AppSettings, ScriptConfig, PositioningRules, KerningMap, Character, Rec
 import { useLocale } from '../contexts/LocaleContext';
 import { useLayout, Workspace } from '../contexts/LayoutContext';
 import { useProject } from '../contexts/ProjectContext';
-import { SaveIcon, ExportIcon, SettingsIcon, CompareIcon, TestIcon, EditIcon, KerningIcon, PositioningIcon, RulesIcon, TestCaseIcon, CheckCircleIcon, SpinnerIcon, CodeBracketsIcon, CopyIcon, WrenchIcon, ImportIcon, SearchIcon, BatchIcon, CameraIcon, HistoryIcon, CreatorIcon, MoreIcon } from '../constants';
+import { SaveIcon, ExportIcon, SettingsIcon, CompareIcon, TestIcon, EditIcon, KerningIcon, PositioningIcon, RulesIcon, TestCaseIcon, CheckCircleIcon, SpinnerIcon, CodeBracketsIcon, CopyIcon, WrenchIcon, ImportIcon, SearchIcon, BatchIcon, CameraIcon, HistoryIcon, CreatorIcon, MoreIcon, BackIcon } from '../constants';
+import { IS_DEV_BUILD } from '../utils/buildInfo';
 import CommandPalette from './CommandPalette';
 import { ExportingType } from '../hooks/actions/useExportActions';
 import { FilterMenu } from './FilterMenu';
 import ThemeSwitch from './ThemeSwitch';
+import { FeedbackModal } from './FeedbackLinks';
+import { MessageSquare } from 'lucide-react';
 
 interface Progress {
     completed: number;
@@ -102,6 +105,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     const { projectName, setProjectName } = useProject();
     const [isEditingFontName, setIsEditingFontName] = useState(false);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const { isPaletteOpen, setIsPaletteOpen } = useLayout();
     const moreMenuRef = useRef<HTMLDivElement>(null);
     
@@ -172,7 +176,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             {/* From xl up the project row joins the top row ([logo | project | actions]) so the header takes two rows instead of three. */}
             <div className="w-full flex flex-wrap items-center justify-between md:justify-center gap-y-2 md:gap-x-8 md:gap-y-4 lg:gap-y-1 xl:gap-x-6">
                 <div className="order-1 flex flex-1 md:flex-none items-center justify-center md:justify-center gap-3">
-                    <button onClick={onChangeScriptClick} title={t('changeScript')} aria-label={t('appTitle')} className="flex items-center justify-center gap-2 sm:gap-3 group">
+                    <button onClick={onChangeScriptClick} title={t('changeScript')} aria-label={t('changeScript')} className="flex items-center justify-center gap-2 sm:gap-3 group">
                         <div className="w-10 h-10 rounded-full border-2 border-indigo-500 dark:border-indigo-400 flex items-center justify-center flex-shrink-0 group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors">
                             <span className="logo-emboss text-3xl text-indigo-600 dark:text-indigo-400" style={{ fontFamily: 'Purnavarman_1' }} aria-hidden="true">ꦄ</span>
                         </div>
@@ -191,7 +195,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                         </button>
                     )}
                     
-                    <button onClick={onExportClick} disabled={isAnyExporting} data-tour="header-export" className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-wait text-sm sm:text-base">
+                    <button onClick={onExportClick} disabled={isAnyExporting} data-tour="header-export" aria-label={t('exportOtf')} title={t('exportOtf')} className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-wait text-sm sm:text-base">
                         {exportingType === 'export' ? <SpinnerIcon /> : <ExportIcon />}
                         <span className="hidden md:inline">{exportingType === 'export' ? t('exporting') : t('exportOtf')}</span>
                     </button>
@@ -214,23 +218,27 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                     
                     <button onClick={onSettingsClick} data-tour="header-settings" title={t('settings')} className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm sm:text-base"><SettingsIcon /><span className="hidden md:inline">{t('settings')}</span></button>
                     
-                    <ThemeSwitch className="hidden md:inline-flex" />
+                    {/* Wrapped: the switch's own inline-flex would override "hidden". On phones it lives in Settings. */}
+                    <div className="hidden md:block"><ThemeSwitch /></div>
 
                     <div className="relative" ref={moreMenuRef}>
                         <button onClick={() => setIsMoreMenuOpen(prev => !prev)} aria-label={t('more')} title={t('more')} aria-expanded={isMoreMenuOpen} className="p-2 sm:p-2.5 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"><MoreIcon /></button>
                         {isMoreMenuOpen && (
                             <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-30 max-h-[80vh] overflow-y-auto">
-                                <button onClick={() => { onSaveProject(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CodeBracketsIcon /> {t('exportJson')}</button>
-                                <button onClick={() => { onExportTemplate(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ExportIcon /> {t('exportTemplate')}</button>
+                                {/* Saving is automatic (autosave), so only the two ways to keep a copy are in plain view; the rest sit under "Advanced" (UX §9, F27). */}
+                                <button onClick={() => { onChangeScriptClick(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><BackIcon /> {t('changeScript')}</button>
+                                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                <button onClick={() => { onSaveProject(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CodeBracketsIcon /> {t('downloadBackup')}</button>
                                 <button onClick={() => { onSaveAs(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CopyIcon /> {t('saveCopy')}</button>
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                                 <button onClick={() => { onImportGlyphsClick(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ImportIcon /> {t('importFromProject')}</button>
                                 <button onClick={() => { onImportGlyphsClick(true); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ImportIcon /> {t('importFromFont') || 'Import from Font'}</button>
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                <p className="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{t('advanced')}</p>
                                 <button onClick={() => { onTakeSnapshot(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CameraIcon /> {t('takeSnapshot')}</button>
                                 <button onClick={() => { onRestoreSnapshot(); setIsMoreMenuOpen(false); }} disabled={!hasSnapshot} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"><HistoryIcon /> {t('restoreSnapshot')}</button>
-                                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                                <button 
+                                <button onClick={() => { onExportTemplate(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ExportIcon /> {t('exportTemplate')}</button>
+                                <button
                                     onClick={() => { setCurrentView('rules'); setIsMoreMenuOpen(false); }} 
                                     disabled={script.isImportedFont}
                                     title={script.isImportedFont ? "Character Behavior cannot be edited for imported fonts." : ""}
@@ -246,7 +254,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                     <WrenchIcon /> {t('managePositioningRules')}
                                 </button>
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                                <button onClick={() => { onShowTestCases(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><TestCaseIcon /> {t('testCases')}</button>
+                                <button onClick={() => { setIsFeedbackOpen(true); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><MessageSquare className="w-5 h-5" aria-hidden="true" /> {t('feedbackTitle')}</button>
+                                {/* The app's own QA checklist: development builds only (F33). */}
+                                {IS_DEV_BUILD && <>
+                                    <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                    <button onClick={() => { onShowTestCases(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><TestCaseIcon /> {t('testCases')}</button>
+                                </>}
                             </div>
                         )}
                     </div>
@@ -313,6 +326,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                 </nav>
             </div>
         </header>
+        <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
         <CommandPalette 
             isOpen={isPaletteOpen} 
             onClose={() => setIsPaletteOpen(false)} 

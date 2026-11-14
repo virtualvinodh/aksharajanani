@@ -143,8 +143,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
 
             // 2. Actions
             items.push({ id: 'act-save', type: 'action', title: t('save'), icon: <SaveIcon />, onExecute: () => onAction('save') });
-            items.push({ id: 'act-save-as', type: 'action', title: 'Save Copy...', aliases: ['Duplicate Project', 'Branch'], icon: <CopyIcon />, onExecute: () => onAction('save-as') });
-            items.push({ id: 'act-export-json', type: 'action', title: t('exportJson'), icon: <CodeBracketsIcon />, onExecute: () => onAction('export-json') });
+            items.push({ id: 'act-save-as', type: 'action', title: t('saveCopy'), aliases: ['Duplicate Project', 'Branch'], icon: <CopyIcon />, onExecute: () => onAction('save-as') });
+            items.push({ id: 'act-export-json', type: 'action', title: t('downloadBackup'), icon: <CodeBracketsIcon />, onExecute: () => onAction('export-json') });
             items.push({ id: 'act-load-json', type: 'action', title: t('load'), icon: <LoadIcon />, onExecute: () => onAction('load-json') });
             items.push({ id: 'act-export', type: 'action', title: t('exportOtf'), icon: <ExportIcon />, onExecute: () => onAction('export') });
             items.push({ id: 'act-test', type: 'action', title: t('testFont'), icon: <TestIcon />, onExecute: () => onAction('test') });

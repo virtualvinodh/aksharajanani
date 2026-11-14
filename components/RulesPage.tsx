@@ -15,6 +15,8 @@ import { useLayout } from '../contexts/LayoutContext';
 import { isGlyphDrawn } from '../utils/glyphUtils';
 import GroupsPane from './rules/GroupsPane';
 import LookupsPane from './rules/LookupsPane';
+import ConfirmRuleItemDeleteModal from './rules/ConfirmRuleItemDeleteModal';
+import { findGroupUsages, findLookupUsages, countLookupRules } from '../utils/ruleUsage';
 
 interface RulesPageProps {
   allCharacterSets: CharacterSet[];
@@ -135,6 +137,8 @@ const RulesPage = forwardRef<({ saveChanges: () => void }), RulesPageProps>(({
   const { showNotification } = useLayout();
   const [activeSubTab, setActiveSubTab] = useState<'gui' | 'lookups' | 'groups' | 'fea'>(isFeaOnlyMode ? 'fea' : 'gui');
   const [isRevertConfirmOpen, setIsRevertConfirmOpen] = useState(false);
+  // F50: deleting a group or lookup asks first and lists what still uses it.
+  const [pendingDelete, setPendingDelete] = useState<{ kind: 'group' | 'lookup'; name: string; title: string; message: string; usages: string[] } | null>(null);
   const [isFeaCodeLocked, setIsFeaCodeLocked] = useState(isFeaOnlyMode);
 
   const {
@@ -155,6 +159,34 @@ const RulesPage = forwardRef<({ saveChanges: () => void }), RulesPageProps>(({
   useImperativeHandle(ref, () => ({
       saveChanges
   }));
+
+  const requestDeleteGroup = (key: string) => {
+      const usages = findGroupUsages(key, localRules, [
+          { label: t('positioningRules'), value: positioningRules },
+          { label: t('markAttachmentRules'), value: markAttachmentRules },
+      ]);
+      setPendingDelete({
+          kind: 'group', name: key, usages,
+          title: t('deleteGroupConfirmTitle', { name: '$' + key }),
+          message: usages.length ? t('deleteGroupUsedMessage') : t('deleteGroupUnusedMessage'),
+      });
+  };
+
+  const requestDeleteLookup = (name: string) => {
+      const usages = findLookupUsages(name, localRules);
+      const count = countLookupRules(localRules.lookups?.[name]);
+      setPendingDelete({
+          kind: 'lookup', name, usages,
+          title: t('deleteLookupConfirmTitle', { name }),
+          message: t(usages.length ? 'deleteLookupUsedMessage' : 'deleteLookupUnusedMessage', { count: String(count) }),
+      });
+  };
+
+  const confirmPendingDelete = () => {
+      if (pendingDelete?.kind === 'group') handleDeleteGroup(pendingDelete.name);
+      else if (pendingDelete?.kind === 'lookup') handleDeleteLookup(pendingDelete.name);
+      setPendingDelete(null);
+  };
 
   const [isEditingScriptTag, setIsEditingScriptTag] = useState(false);
   const [scriptTagInput, setScriptTagInput] = useState(scriptTag);
@@ -568,7 +600,7 @@ const RulesPage = forwardRef<({ saveChanges: () => void }), RulesPageProps>(({
                 onToggleLookup={handleToggleLookupExpansion}
                 onAddLookup={handleAddLookup}
                 onUpdateLookup={handleUpdateLookup}
-                onDeleteLookup={handleDeleteLookup}
+                onDeleteLookup={requestDeleteLookup}
                 onSaveRule={handleSaveNewRule}
                 onUpdateRule={handleUpdateRule}
                 onDeleteRule={handleDeleteRule}
@@ -585,7 +617,7 @@ const RulesPage = forwardRef<({ saveChanges: () => void }), RulesPageProps>(({
             <GroupsPane
                 groups={groups}
                 onSave={handleSaveGroup}
-                onDelete={handleDeleteGroup}
+                onDelete={requestDeleteGroup}
                 characterSets={allCharacterSets}
                 hiddenGroups={lockedGroupNames} // Use the new prop
             />
@@ -609,6 +641,7 @@ const RulesPage = forwardRef<({ saveChanges: () => void }), RulesPageProps>(({
       <AddFeatureModal isOpen={isAddFeatureModalOpen} onClose={() => setIsAddFeatureModalOpen(false)} onAdd={handleConfirmAddFeature} existingFeatures={features}/>
       <DeleteRuleConfirmationModal isOpen={isDeleteConfirmOpen} onClose={() => setIsDeleteConfirmOpen(false)} onConfirm={handleConfirmDelete}/>
       <RevertToGuiModal isOpen={isRevertConfirmOpen} onClose={() => setIsRevertConfirmOpen(false)} onConfirm={handleConfirmRevert}/>
+      <ConfirmRuleItemDeleteModal item={pendingDelete} onClose={() => setPendingDelete(null)} onConfirm={confirmPendingDelete} />
     </div>
   );
 });

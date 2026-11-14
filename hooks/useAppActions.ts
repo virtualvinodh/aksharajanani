@@ -172,7 +172,9 @@ export const useAppActions = ({
 
     // --- Coordinator Logic (Navigation, Shortcuts) ---
 
-    const handleChangeScriptClick = useCallback(() => {
+    const handleChangeScriptClick = useCallback(async () => {
+        // "My fonts": with autosave on, save quietly and go; ask only if that save fails (F13).
+        if (hasUnsavedChanges && settings?.isAutosaveEnabled && await saveProjectToDB()) { onBackToSelection(); return; }
         if (hasUnsavedChanges) {
             layout.openModal('confirmChangeScript', {
                 onConfirm: onBackToSelection, 
@@ -181,8 +183,29 @@ export const useAppActions = ({
                 saveAndConfirmActionText: t('saveAndChange')
             });
         } else { onBackToSelection(); }
-    }, [layout, onBackToSelection, handleSaveToDB, hasUnsavedChanges, t]);
+    }, [layout, onBackToSelection, handleSaveToDB, saveProjectToDB, hasUnsavedChanges, settings?.isAutosaveEnabled, t]);
   
+    // Open a project file of another language as its own project (F35): leave this one the way
+    // "My fonts" does (save quietly with autosave on, otherwise ask), go back to the start page,
+    // and hand the file over (ScriptSelection opens it from projectToRestore).
+    useEffect(() => {
+        const onOpenElsewhere = async (e: Event) => {
+            const project = (e as CustomEvent<ProjectData>).detail;
+            if (!project) return;
+            const go = () => { layout.setProjectToRestore(project); onBackToSelection(); };
+            if (!hasUnsavedChanges) { go(); return; }
+            if (settings?.isAutosaveEnabled && await saveProjectToDB().catch(() => false)) { go(); return; }
+            layout.openModal('confirmChangeScript', {
+                onConfirm: go,
+                onSaveAndConfirm: async () => { if (await handleSaveToDB()) go(); },
+                confirmActionText: t('changeWithoutSaving'),
+                saveAndConfirmActionText: t('saveAndChange')
+            });
+        };
+        window.addEventListener('aksharajanani:open-project-elsewhere', onOpenElsewhere);
+        return () => window.removeEventListener('aksharajanani:open-project-elsewhere', onOpenElsewhere);
+    }, [layout, handleSaveToDB, saveProjectToDB, onBackToSelection, hasUnsavedChanges, settings?.isAutosaveEnabled, t]);
+
     const handleWorkspaceChange = useCallback((newWorkspace: Workspace) => {
         if (workspace === 'rules' && newWorkspace !== 'rules' && hasUnsavedRules && !settings?.isAutosaveEnabled) {
             layout.openModal('unsavedRules', { pendingWorkspace: newWorkspace });

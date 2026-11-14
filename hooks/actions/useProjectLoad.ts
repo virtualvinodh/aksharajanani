@@ -15,6 +15,7 @@ import { FONT_META_DEFAULTS } from '../../constants';
 import { safeJsonParse, isSafeKey } from '../../utils/safeJson';
 import { migrateLegacySettings } from '../../utils/legacySettings';
 import { fetchOptionalJson, fetchOptionalText } from '../../utils/optionalFetch';
+import { appUrl, resolveAppUrl } from '../../utils/appUrl';
 
 /**
  * `composite` and `link` must be string arrays, but hand-written data (script files,
@@ -107,7 +108,7 @@ export const useProjectLoad = ({
             } else if (currentScript.characterSetData) {
                 characterDefinitions = currentScript.characterSetData.filter(d => 'characters' in d);
             } else {
-                const charactersPath = `/data/characters_${currentScript.id}.json`;
+                const charactersPath = appUrl(`data/characters_${currentScript.id}.json`);
                 const charResponse = await fetch(charactersPath);
                 if (!charResponse.ok) throw new Error(`Failed to load character set from ${charactersPath}`);
                 characterDefinitions = await charResponse.json();
@@ -117,7 +118,7 @@ export const useProjectLoad = ({
                  positioningDefinitions = currentScript.characterSetData.filter(d => !('characters' in d));
             } else {
                  // Optional: not every script has positioning data.
-                 positioningDefinitions = await fetchOptionalJson<CharacterDefinition[]>(`/data/positioning_${currentScript.id}.json`) ?? [];
+                 positioningDefinitions = await fetchOptionalJson<CharacterDefinition[]>(appUrl(`data/positioning_${currentScript.id}.json`)) ?? [];
             }
             
             const charDefinition = [...characterDefinitions, ...positioningDefinitions];
@@ -125,7 +126,7 @@ export const useProjectLoad = ({
             if (projectToLoad?.fontRules) {
                 rulesData = projectToLoad.fontRules;
             } else if (isStandardScript) {
-                const rulesPath = currentScript.rulesPath || `/data/rules_${currentScript.id}.json`;
+                const rulesPath = currentScript.rulesPath ? resolveAppUrl(currentScript.rulesPath) : appUrl(`data/rules_${currentScript.id}.json`);
                 const rulesFeaPath = currentScript.rulesFeaPath;
                 
                 if (rulesFeaPath) {
@@ -310,7 +311,7 @@ export const useProjectLoad = ({
             
             // A sample_<id>.txt file wins over the script's own sampleText, but only when it
             // exists and has content; otherwise keep the curated text from scripts.json.
-            const sampleFileText = await fetchOptionalText(`/data/sample_${currentScript.id}.txt`);
+            const sampleFileText = await fetchOptionalText(appUrl(`data/sample_${currentScript.id}.txt`));
             let sampleText = sampleFileText?.trim() ? sampleFileText : currentScript.sampleText;
 
             if (!sampleText && processedCharSets) {
@@ -420,11 +421,25 @@ export const useProjectLoad = ({
                 const { projectId: _fileProjectId, ...projectData }: ProjectData = parsed;
                 const currentScript = scriptRef.current;
                 
-                if (projectData.scriptId && projectData.scriptId !== currentScript?.id && !projectData.characterSets) {
-                    const loadedScript = allScripts.find(s => s.id === projectData.scriptId);
-                    const loadedScriptName = loadedScript ? t(loadedScript.nameKey) : `'${projectData.scriptId}'`;
-                    const currentScriptName = currentScript ? t(currentScript.nameKey) : 'unknown';
-                    layout.showNotification(t('mismatchedScriptError', { loadedScript: loadedScriptName, currentScript: currentScriptName }), 'error');
+                // A backup of another language's project must not be poured into this one (F35): it
+                // would keep this project's letters and settings with the other's drawings. Offer to
+                // open it as its own project instead; the one that's open stays as it is.
+                if (projectData.scriptId && currentScript && projectData.scriptId !== currentScript.id) {
+                    const nameOf = (id: string, config?: { nameKey?: string }) => {
+                        const known = allScripts.find(s => s.id === id);
+                        return known ? t(known.languagesKey || known.nameKey) : (config?.nameKey ? t(config.nameKey) : id);
+                    };
+                    layout.openModal('mismatchedScript', {
+                        message: t('mismatchedScriptMessage', {
+                            loadedScript: nameOf(projectData.scriptId, projectData.scriptConfig),
+                            currentScript: nameOf(currentScript.id, currentScript),
+                        }),
+                        confirmActionText: t('openAsOwnProject'),
+                        onConfirm: () => {
+                            layout.closeModal();
+                            window.dispatchEvent(new CustomEvent('aksharajanani:open-project-elsewhere', { detail: projectData }));
+                        },
+                    });
                     return;
                 }
                 initializeProjectState(projectData);

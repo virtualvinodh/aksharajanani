@@ -9,6 +9,8 @@ import { renderPaths } from '../services/glyphRenderService';
 import { useDrawingCanvas } from '../hooks/useDrawingCanvas';
 import type { Handle, DraggedPointInfo } from '../hooks/useDrawingCanvas';
 import { accentFor } from '../canvasConstants';
+import { SPACING_HANDLE, spacingHandleBands } from '../utils/spacingHandles';
+import { IS_DEV_BUILD } from '../utils/buildInfo';
 
 
 interface DrawingCanvasProps {
@@ -369,6 +371,19 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
             ctx.moveTo(rsbX, guideStart); ctx.lineTo(rsbX, guideStart + guideWidth); 
             ctx.stroke();
 
+            // The handles that move the lines (D16): pills at the top and bottom of the visible canvas.
+            const bands = spacingHandleBands(zoom, viewOffset.y, height);
+            const handleW = SPACING_HANDLE.width / zoom;
+            ctx.setLineDash([]);
+            for (const [x, active] of [[lsbX, isLsbActive], [rsbX, isRsbActive]] as const) {
+                ctx.fillStyle = active ? accentFor(theme) : (theme === 'dark' ? 'rgba(212, 212, 212, 0.85)' : 'rgba(82, 82, 82, 0.85)');
+                for (const band of bands) {
+                    ctx.beginPath();
+                    ctx.roundRect(x - handleW / 2, band.start, handleW, band.end - band.start, handleW / 2);
+                    ctx.fill();
+                }
+            }
+
             if (draggingMetric) {
                 const activeX = draggingMetric === 'lsb' ? lsbX : rsbX;
                 const activeVal = draggingMetric === 'lsb' ? lsbVal : rsbVal;
@@ -401,7 +416,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
     }
 
     // --- Visual Bounding Box Overlay ---
-    if (settings.showBoundingBox && glyphBBox) {
+    if (IS_DEV_BUILD && settings.showBoundingBox && glyphBBox) {
         ctx.save();
         const cyan = '#737373'; // was cyan; neutral grey in the monochrome theme
         ctx.strokeStyle = cyan;

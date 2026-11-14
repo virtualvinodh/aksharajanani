@@ -2,8 +2,9 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Character, GlyphData, KerningMap } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLocale } from '../contexts/LocaleContext';
 import { renderPaths, getAccurateGlyphBBox } from '../services/glyphRenderService';
-import { DRAWING_CANVAS_SIZE, RightArrowIcon } from '../constants';
+import { DRAWING_CANVAS_SIZE } from '../constants';
 
 interface KerningCelebrationOverlayProps {
     glyphDataMap: Map<number, GlyphData>;
@@ -25,10 +26,11 @@ interface AnimationPair {
 }
 
 const KerningCelebrationOverlay: React.FC<KerningCelebrationOverlayProps> = ({ 
-    glyphDataMap, kerningMap, onProceed, onClose, allCharsByUnicode 
+    glyphDataMap, kerningMap, onProceed, allCharsByUnicode 
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { theme } = useTheme();
+    const { t } = useLocale();
     const [opacity, setOpacity] = useState(0);
 
     // Easing: elastic snap
@@ -194,17 +196,13 @@ const KerningCelebrationOverlay: React.FC<KerningCelebrationOverlayProps> = ({
                 <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-3xl">🎯</span>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Visual Rhythm Mastered!</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('celebrateSpacingTitle')}</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                    You&apos;ve adjusted the spacing for your pairs. Your font now reads with professional flow and balance.
+                    {t('celebrateSpacingMessage')}
                 </p>
                 <div className="flex flex-col gap-3">
                     <button onClick={onProceed} className="w-full py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
-                        <span>Finish & Export</span>
-                        <RightArrowIcon className="w-5 h-5" />
-                    </button>
-                    <button onClick={onClose} className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline">
-                        One Last Test
+                        <span>{t('celebrateDone')}</span>
                     </button>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { useLocale } from '../../contexts/LocaleContext';
 import ThemeSwitch from '../ThemeSwitch';
 import LanguageSelector from '../LanguageSelector';
 import { EyeOffIcon, SparklesIcon } from '../../constants';
+import { IS_DEV_BUILD } from '../../utils/buildInfo';
 
 interface EditorSettingsProps {
     settings: AppSettings;
@@ -154,7 +155,8 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                 </div>
             </div>
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-8 space-y-8">
+            {/* Tools for testing the app itself: development builds only (F33). */}
+            {IS_DEV_BUILD && <div className="border-t border-gray-200 dark:border-gray-700 pt-8 space-y-8">
                 <h4 className="text-lg font-bold text-yellow-600 dark:text-yellow-400">Debugging Tools</h4>
                 <div>
                     <label className="flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
@@ -193,7 +195,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                         Displays the exact extents (8 points) of the glyph to assist with optical alignment.
                     </p>
                 </div>
-            </div>
+            </div>}
         </div>
     );
 };

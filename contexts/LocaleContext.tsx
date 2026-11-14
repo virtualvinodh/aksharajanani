@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { Locale, LocaleInfo } from '../types';
+import { appUrl } from '../utils/appUrl';
 
 type Translations = {
     [key: string]: string;
@@ -29,8 +30,28 @@ const FONT_FACE_STYLE_ID = 'locale-font-face';
 const SANS_SERIF_FALLBACK = `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`;
 
 
+const LOCALE_STORAGE_KEY = 'interfaceLocale';
+
+/** The interface language chosen before, else the browser's own if the app has it, else English (F7). */
+const initialLocale = (): Locale => {
+  const isAvailable = (code: string | null | undefined): code is Locale => !!code && availableLocales.some(l => l.code === code);
+  try {
+    const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (isAvailable(saved)) return saved;
+  } catch { /* storage blocked */ }
+  const fromBrowser = (globalThis.navigator?.languages ?? []).map(l => l.split('-')[0].toLowerCase()).find(isAvailable);
+  return fromBrowser ?? 'en';
+};
+
 export const LocaleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [locale, setLocale] = useState<Locale>('en');
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
+  const setLocale = useCallback((next: Locale) => {
+    setLocaleState(next);
+    try { localStorage.setItem(LOCALE_STORAGE_KEY, next); } catch { /* storage blocked */ }
+  }, []);
+
+  // Screen readers and the browser's hyphenation should know the interface language.
+  useEffect(() => { document.documentElement.lang = locale; }, [locale]);
   // Initialize translations state to null to signify they haven't been loaded yet.
   const [translations, setTranslations] = useState<FetchedTranslations | null>(null);
 
@@ -38,7 +59,7 @@ export const LocaleProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const fetchTranslations = async () => {
         try {
             const promises = availableLocales.map(loc => 
-                fetch(`/locales/${loc.code}.json`).then(res => {
+                fetch(appUrl(`locales/${loc.code}.json`)).then(res => {
                     if (!res.ok) {
                         // For newly added locales, the file might not exist yet.
                         // We can ignore this error and it will fall back to the key.

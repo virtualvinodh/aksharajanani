@@ -1,6 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import { isGlyphDrawn, getGlyphExportNameByUnicode } from './glyphUtils';
+import { isGlyphDrawn, getGlyphExportNameByUnicode, isSingleCopyTemplate } from './glyphUtils';
 import { GlyphData } from '../types';
 
 describe('glyphUtils', () => {
@@ -56,5 +56,20 @@ describe('glyphUtils', () => {
         it('returns uXXXXX format for SMP characters', () => {
             expect(getGlyphExportNameByUnicode(0x1F600)).toBe('u1F600'); // Grinning Face
         });
+    });
+});
+
+describe('isSingleCopyTemplate', () => {
+    it('is true for a plain copy of one letter (ஆ from அ)', () => {
+        expect(isSingleCopyTemplate({ composite: ['அ'] })).toBe(true);
+    });
+    it('is false for a resized or moved copy (Kannada ್ಖ: a smaller ಖ below the line)', () => {
+        expect(isSingleCopyTemplate({ composite: ['ಖ'], compositeTransform: [{ scale: 0.6, y: 200 }] })).toBe(false);
+    });
+    it('ignores a transform that changes nothing', () => {
+        expect(isSingleCopyTemplate({ composite: ['அ'], compositeTransform: [{ scale: 1, x: 0, y: 0, mode: 'relative' }] })).toBe(true);
+    });
+    it('is false for letters built from two parts', () => {
+        expect(isSingleCopyTemplate({ composite: ['ெ', 'ா'] })).toBe(false);
     });
 });

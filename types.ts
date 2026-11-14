@@ -93,6 +93,8 @@ export interface Character {
   hidden?: boolean;
   optional?: boolean;
   isAutoAccepted?: boolean;
+  /** A letter started as a copy of another (ஆ from அ) and saved unchanged: shown as "Finish me", not done. */
+  unfinishedCopy?: boolean;
 }
 
 export interface CharacterSet {
@@ -171,6 +173,8 @@ export interface AppSettings {
   designerURL?: string;
   licenseDescription?: string;
   licenseInfoURL?: string;
+  /** "1.000", raised by 0.001 after every export (utils/fontVersion.ts). Missing in older projects = 1.000. */
+  fontVersion?: string;
   testPage?: TestPageConfig;
   isDebugKerningEnabled?: boolean;
   showBoundingBox?: boolean;

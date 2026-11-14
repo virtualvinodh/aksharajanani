@@ -1,3 +1,5 @@
+import { appUrl } from '../utils/appUrl';
+
 
 
 
@@ -15,9 +17,23 @@ let initTimer: ReturnType<typeof setTimeout> | null = null;
 const INIT_TIMEOUT_MS = 5 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 5 * 60 * 1000;
 
+/**
+ * The font builder's files. They are served from the app's own site (public/font-builder/,
+ * downloaded and hash-checked by scripts/fetch-font-builder.mjs); the original sites are the
+ * fallback for a build that doesn't have them. Keep in step with that script.
+ */
+const FONT_BUILDER_FILES = {
+    fonttools: 'fonttools-4.61.1-py3-none-any.whl',
+    fontfeatures: 'fontfeatures-1.9.0-py3-none-any.whl',
+};
+const FONT_BUILDER_FALLBACK = {
+    pyodide: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/',
+    fonttools: 'https://www.piwheels.org/simple/fonttools/' + FONT_BUILDER_FILES.fonttools,
+    fontfeatures: 'https://files.pythonhosted.org/packages/87/26/a0369ad3be7c74fa13cd2dc687c083b26d65380310957f5736c1a32395b0/' + FONT_BUILDER_FILES.fontfeatures,
+};
+
 const workerCode = `
-// Self-contained worker code
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js');
+// Self-contained worker code. pyodide.js is loaded when 'init' says where from.
 
 let pyodide = null;
 
@@ -59,6 +75,17 @@ def _add_unicode_cmap_to_font_object(font):
 
     return font
 
+def _sync_font_revision(font):
+    """head.fontRevision follows the version in name ID 5 ("Version 1.001"); opentype.js always writes 1.0."""
+    try:
+        rec = font["name"].getName(5, 3, 1, 0x409) or font["name"].getName(5, 1, 0, 0)
+        if rec is None:
+            return
+        text = rec.toUnicode().replace("Version", "").strip().split(";")[0].split()[0]
+        font["head"].fontRevision = round(float(text), 3)
+    except Exception as e:
+        print(f"Could not set the font revision: {e}")
+
 def compile_fea_and_patch(font_data, fea_text):
     """Compiles FEA features, applies them, and adds a Unicode cmap."""
     font_bytes = font_data.to_py()
@@ -82,6 +109,8 @@ def compile_fea_and_patch(font_data, fea_text):
 
     # Add Unicode CMAP
     font = _add_unicode_cmap_to_font_object(font)
+
+    _sync_font_revision(font)
     
     # Save the modified font
     buffer = io.BytesIO()
@@ -322,32 +351,40 @@ def extract_fea(font_data):
         return f"# Error extracting FEA: {str(e)}"
 \`;
 
-async function initializePyodide() {
+async function setUpFrom(src) {
     self.postMessage({ type: 'status', payload: 'loadingPyodide' });
-    pyodide = await loadPyodide({
-        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
-    });
+    importScripts(src.pyodide + 'pyodide.js');
+    pyodide = await loadPyodide({ indexURL: src.pyodide });
 
     self.postMessage({ type: 'status', payload: 'loadingMicropip' });
     await pyodide.loadPackage("micropip");
     const micropip = pyodide.pyimport("micropip");
 
     self.postMessage({ type: 'status', payload: 'installingFonttools' });
-    // await micropip.install('fonttools');
-    const fonttools_url = "https://www.piwheels.org/simple/fonttools/fonttools-4.61.1-py3-none-any.whl#sha256=018b2aa0b159683474b21d3a96e53f870115700525445e84c15726bbc2b552ef";
-    await micropip.install(fonttools_url);
-    
-    self.postMessage({ type: 'status', payload: 'installingFontFeatures' });
-    // Pinned to an exact wheel (content-addressed URL + hash), like fontTools above, so a new
-    // PyPI release can't change font compilation underneath us. Its other dependency, lxml,
-    // comes from Pyodide's own package set.
-    const fontfeatures_url = "https://files.pythonhosted.org/packages/87/26/a0369ad3be7c74fa13cd2dc687c083b26d65380310957f5736c1a32395b0/fontfeatures-1.9.0-py3-none-any.whl#sha256=d7fcf48b77fa4f61fdffb5e28d588be05255fff0b54693c62de4013b129c3f1b";
-    await micropip.install(fontfeatures_url);
+    // Exact wheels, checked by hash, so a new release can't change font compilation underneath us.
+    await micropip.install(src.fonttools + "#sha256=018b2aa0b159683474b21d3a96e53f870115700525445e84c15726bbc2b552ef");
 
-    
+    self.postMessage({ type: 'status', payload: 'installingFontFeatures' });
+    // Its other dependency, lxml, comes from Pyodide's own package set (same place as Pyodide).
+    await micropip.install(src.fontfeatures + "#sha256=d7fcf48b77fa4f61fdffb5e28d588be05255fff0b54693c62de4013b129c3f1b");
+
     micropip.destroy();
-    
+    // Pyodide only logs a package that failed to load; importing them all makes it an error,
+    // so a broken local copy falls back to the original sites instead of failing at export.
+    pyodide.runPython("import fontTools.ttLib, fontTools.feaLib.builder, fontFeatures, lxml.etree");
     pyodide.runPython(pythonCode);
+}
+
+async function initializePyodide(sources) {
+    // The app's own copy first. If any part of it is missing or broken (a build without it, a
+    // host that answers missing files with the app page), start over from the original sites.
+    try {
+        await setUpFrom(sources.local);
+    } catch (e) {
+        console.warn('Font builder: the local copy failed, using the CDN.', e);
+        pyodide = null;
+        await setUpFrom(sources.fallback);
+    }
     self.postMessage({ type: 'status', payload: 'ready' });
 }
 
@@ -356,7 +393,7 @@ self.onmessage = async (event) => {
 
     if (type === 'init') {
         try {
-            await initializePyodide();
+            await initializePyodide(payload);
         } catch (error) {
             self.postMessage({
                 type: 'init_error',
@@ -547,7 +584,12 @@ export function initializePyodide() {
             : compilerUnavailable(error.message || undefined));
     };
 
-    worker.postMessage({ type: 'init' });
+    // The worker runs from a blob: URL, so it gets absolute URLs.
+    const local = new URL(appUrl('font-builder/'), location.href).href;
+    worker.postMessage({ type: 'init', payload: {
+        local: { pyodide: local, fonttools: local + FONT_BUILDER_FILES.fonttools, fontfeatures: local + FONT_BUILDER_FILES.fontfeatures },
+        fallback: FONT_BUILDER_FALLBACK,
+    } });
 }
 
 /** Starts the worker if needed and waits until Python is ready; rejects if it can't start. */
@@ -593,8 +635,11 @@ export async function patchFont(
     showNotification: (message: string, type?: 'success' | 'info') => void,
     t: (key: string) => string
 ): Promise<Blob> {
-    const activeWorker = await ensurePyodideReady(() => showNotification(t('preparingPythonEnv'), 'info'));
-    showNotification(t('patchingFont'), 'info');
+    // One message for the whole build ("Building your font…", shown by the caller). Only when the
+    // font builder had to be fetched first (its own message) do we switch back to it (F26).
+    let announcedSetup = false;
+    const activeWorker = await ensurePyodideReady(() => { announcedSetup = true; showNotification(t('preparingPythonEnv'), 'info'); });
+    if (announcedSetup) showNotification(t('patchingFont'), 'info');
     const baseFontBuffer = await baseFontBlob.arrayBuffer();
     const deltaFontBuffer = await deltaFontBlob.arrayBuffer();
     return sendRequest<Blob>(activeWorker, 'patch', { baseFontBuffer, deltaFontBuffer }, [baseFontBuffer, deltaFontBuffer], res => res.blob);
@@ -606,8 +651,10 @@ export async function compileFeaturesAndPatch(
     showNotification: (message: string, type?: 'success' | 'info') => void,
     t: (key: string) => string
 ): Promise<{ blob: Blob; feaError: string | null }> {
-    const activeWorker = await ensurePyodideReady(() => showNotification(t('preparingPythonEnv'), 'info'));
-    showNotification(t('applyingOtfFeatures'), 'info');
+    // See patchFont: one message for the build, unless the font builder had to be fetched first.
+    let announcedSetup = false;
+    const activeWorker = await ensurePyodideReady(() => { announcedSetup = true; showNotification(t('preparingPythonEnv'), 'info'); });
+    if (announcedSetup) showNotification(t('applyingOtfFeatures'), 'info');
     const fontBuffer = await fontBlob.arrayBuffer();
     return sendRequest<{ blob: Blob; feaError: string | null }>(activeWorker, 'compile', { fontBuffer, feaContent }, [fontBuffer]);
 }

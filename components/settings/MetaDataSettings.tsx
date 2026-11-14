@@ -2,6 +2,7 @@
 import React from 'react';
 import { AppSettings } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
+import { DEFAULT_FONT_VERSION, normalizeFontVersion } from '../../utils/fontVersion';
 
 interface MetaDataSettingsProps {
     settings: AppSettings;
@@ -33,6 +34,17 @@ const MetaDataSettings: React.FC<MetaDataSettingsProps> = ({ settings, onSetting
                     className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-lg font-semibold text-gray-900 dark:text-white focus:ring-2 focus:ring-accent focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">This name will be used inside the exported OTF file.</p>
+                <label htmlFor="font-version" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-4 mb-1">{t('fontVersionLabel')}</label>
+                <input
+                    type="text"
+                    inputMode="decimal"
+                    id="font-version"
+                    value={settings.fontVersion ?? DEFAULT_FONT_VERSION}
+                    onChange={handleSettingChange('fontVersion')}
+                    onBlur={() => onSettingsChange(prev => ({ ...prev, fontVersion: normalizeFontVersion(prev.fontVersion) }))}
+                    className="w-32 p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-accent focus:outline-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('fontVersionHint')}</p>
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 space-y-4">

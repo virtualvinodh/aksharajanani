@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { GlyphData, MarkPositioningMap, Path, Point } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLocale } from '../contexts/LocaleContext';
 import { renderPaths } from '../services/glyphRenderService';
 import { DRAWING_CANVAS_SIZE, RightArrowIcon } from '../constants';
 
@@ -27,6 +28,7 @@ const PositioningCelebrationOverlay: React.FC<PositioningCelebrationOverlayProps
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { theme } = useTheme();
+    const { t } = useLocale();
     const [opacity, setOpacity] = useState(0);
 
     const easeOutBack = (x: number): number => {
@@ -159,13 +161,11 @@ const PositioningCelebrationOverlay: React.FC<PositioningCelebrationOverlayProps
         };
     }, [pairsToAnimate, theme]);
 
-    const title = isFinalMilestone ? "Engineering Complete!" : "Perfect Alignment!";
-    const message = isFinalMilestone 
-        ? "Your marks and base letters are perfectly aligned. Your font works, but you can make it beautiful by checking spacing."
-        : "Your marks are now correctly anchored to their base characters. The script is taking shape!";
-    
-    const buttonText = isFinalMilestone ? "Finish & Export" : "Next: Kerning";
-    const secondaryText = isFinalMilestone ? "Fine-tune Spacing" : "Stay here for now";
+    // The last step's buttons can't export from here: "Done" closes, and the message says where Export is (F44).
+    const title = t('celebratePositioningTitle');
+    const message = isFinalMilestone ? t('celebratePositioningFinalMessage') : t('celebratePositioningMessage');
+    const buttonText = isFinalMilestone ? t('celebrateDone') : t('celebrateGoToSpacing');
+    const secondaryText = isFinalMilestone ? t('celebrateFineTuneSpacing') : t('celebrateStayHere');
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center transition-opacity duration-1000" style={{ opacity }}>

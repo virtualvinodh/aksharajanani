@@ -41,6 +41,9 @@ function copyRuntimeAssets(): Plugin {
 
 export default defineConfig(() => {
     return {
+      // Where the app is served from: `/` locally and on its own domain, `/Aksharajanani/` on
+      // GitHub Pages (set by .github/workflows/pages.yml). App files are fetched via utils/appUrl.
+      base: process.env.BASE_PATH || '/',
       server: {
         port: 3000,
         host: '0.0.0.0',

@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useDialogBehaviour } from '../hooks/useDialogBehaviour';
 import { useLocale } from '../contexts/LocaleContext';
 import { renderFormattedText } from '../utils/formattedText';
 import { BackIcon } from '../constants';
 import Footer from './Footer';
 import { ScriptConfig } from '../types';
+import { appUrl } from '../utils/appUrl';
 
 interface HelpPageProps {
   onClose: () => void;
@@ -50,6 +52,8 @@ AccordionItem.displayName = 'AccordionItem';
 
 const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
   const { locale, t: appT } = useLocale();
+  const pageRef = useRef<HTMLDivElement>(null);
+  useDialogBehaviour(true, onClose, pageRef);
   const [helpTranslations, setHelpTranslations] = useState<Record<string, string> | null>(null);
   const [fallbackTranslations, setFallbackTranslations] = useState<Record<string, string> | null>(null);
 
@@ -57,8 +61,8 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
     const fetchHelpTranslations = async () => {
         try {
             const [localeRes, fallbackRes] = await Promise.all([
-                fetch(`/locales/help/${locale}.json`),
-                fetch(`/locales/help/en.json`) // Always fetch English as fallback
+                fetch(appUrl(`locales/help/${locale}.json`)),
+                fetch(appUrl('locales/help/en.json')) // Always fetch English as fallback
             ]);
 
             if (localeRes.ok) {
@@ -101,7 +105,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col">
+    <div ref={pageRef} className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col focus:outline-none">
       <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-4 flex justify-between items-center shadow-md w-full flex-shrink-0">
         <button
           onClick={onClose}

@@ -2,13 +2,16 @@
   "name": "aksharajanani",
   "private": true,
   "version": "0.0.0",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "packageManager": "npm@11.21.2",
   "engines": {
     "node": "^20.0.0 || ^22.0.0 || >=24.0.0"
   },
   "scripts": {
+    "predev": "node scripts/fetch-font-builder.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/fetch-font-builder.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -21,7 +24,6 @@
   },
   "dependencies": {
     "idb": "8.0.0",
-    "imagetracerjs": "^1.2.6",
     "lucide-react": "^0.575.0",
     "opentype.js": "^1.3.4",
     "paper": "0.12.18",
