@@ -16,7 +16,7 @@ const fs = require('fs'), path = require('path');
 const SCRIPT = process.env.SCRIPT || 'english';
 const RESUME = process.env.RESUME ? require('path').resolve(process.env.RESUME) : null; // a project file to start from
 // Each script: its data file id, a sample for the Test page and a line for Creator.
-const CONFIG = {
+const CONFIGS = {
     english: { id: 'latin', creator: 'Hello World',
         sample: 'The quick brown fox jumps over the lazy dog.\nPack my box with five dozen liquor jugs.\nAVATAR  Wave  Type  LOVE  Toy' },
     spanish: { id: 'spanish', creator: '¡Hola, Mañana!',
@@ -37,17 +37,44 @@ const CONFIG = {
         sample: 'யாமறிந்த மொழிகளிலே தமிழ்மொழி போல்\nஇனிதாவது எங்கும் காணோம். கூடு, பூ, தீ, ஸ்ரீ ௧௨௩' },
     cyrillic: { id: 'cyrillic', creator: 'Привет, мир!',
         sample: 'Съешь же ещё этих мягких французских булок, да выпей чаю.\nЇжак і ґудзик, Єва. Ђак, Љубав, Њива, Ћерка, Џеп. ЁЛКА  Йод  Ўзбек  Қазақ  Әже' },
-}[SCRIPT];
-if (!CONFIG) { console.error(`Unknown SCRIPT ${SCRIPT}; one of ${['english', 'spanish', 'french', 'portuguese', 'german', 'greek', 'cyrillic', 'tamil', 'malayalam', 'telugu'].join(', ')}`); process.exit(1); }
+    hebrew: { id: 'hebrew', creator: 'שָׁלוֹם!',
+        sample: 'כל בני האדם נולדו בני חורין ושווים בערכם ובזכויותיהם.\nשָׁלוֹם עוֹלָם  בְּרֵאשִׁית  ך ם ן ף ץ' },
+    gurmukhi: { id: 'gurmukhi', creator: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ!',
+        sample: 'ਸਾਰਾ ਮਨੁੱਖੀ ਪਰਿਵਾਰ ਆਪਣੀ ਮਹਿਮਾ, ਸ਼ਾਨ ਅਤੇ ਹੱਕਾਂ ਦੇ ਪੱਖੋਂ\nਜਨਮ ਤੋਂ ਹੀ ਆਜ਼ਾਦ ਹੈ। ਪ੍ਰ ਕ੍ਰ ਸ੍ਵ ਗੁ ਕੂ' },
+    lao: { id: 'lao', creator: 'ສະບາຍດີ!',
+        sample: 'ມະນຸດທຸກຄົນເກີດມາມີກຽດ ແລະ ສິດເທົ່າທຽມກັນ\nສະບາຍດີ ໜ້າ ໝາ ຫຼາຍ ກິ່ ກູ້' },
+    thai: { id: 'thai', creator: 'สวัสดี!',
+        sample: 'มนุษย์ทั้งหลายเกิดมามีอิสระและเสมอภาคกันในเกียรติศักดิ์และสิทธิ\nสวัสดีครับ น้ำ กี่ ปู่ ปั้ ฎุ ญู' },
+    devanagari: { id: 'devanagari', creator: 'नमस्ते!',
+        sample: 'सभी मनुष्यों को गौरव और अधिकारों के मामले में\nजन्मजात स्वतन्त्रता और समानता प्राप्त है। क्ष त्र ज्ञ श्र द्ध र्क कि कु कृ' },
+    kannada: { id: 'kannada', creator: 'ನಮಸ್ಕಾರ!',
+        sample: 'ಎಲ್ಲಾ ಮಾನವರೂ ಸ್ವತಂತ್ರರಾಗಿಯೇ ಜನಿಸಿದ್ದಾರೆ.\nಘನತೆ ಮತ್ತು ಹಕ್ಕುಗಳಲ್ಲಿ ಸಮಾನರಾಗಿದ್ದಾರೆ. ಕ್ಷ ರ್ಕ ಕ್ರ ಸ್ತ್ರ ಕೈ ಕೊ' },
+    sinhala: { id: 'sinhala', creator: 'ආයුබෝවන්!',
+        sample: 'සියලු මනුෂ්‍යයෝ නිදහස්ව උපත ලබා ඇත.\nශ්‍රී ලංකාව ආයුබෝවන් ක්‍ෂ ක්‍ය ක්‍ර කු කූ කෘ' },
+    malayalam_traditional: { id: 'malayalam_traditional', creator: 'നമസ്കാരം!',
+        sample: 'മനുഷ്യരെല്ലാവരും തുല്യാവകാശങ്ങളോടും അന്തസ്സോടും\nസ്വാതന്ത്ര്യത്തോടുംകൂടി ജനിച്ചിട്ടുള്ളവരാണ്. ക്ക ങ്ങ ച്ച ട്ട ത്ത ന്ന പ്പ ള്ള റ്റ ക്ര കു കൂ' },
+    iast: { id: 'latin_indic', creator: 'Namaste!',
+        sample: 'saṃskṛtaṃ bhāratasya gauravam |\ntathāgatasya śāsanaṃ akṣaraiḥ eva jñāyate || ĀĪŪ ṚṜ ṄÑ ṬḌṆ ŚṢ' },
+    // Languages without a ready-made set, started from "Don't see your language?" (tools/e2e/language.cjs).
+    norwegian: { language: 'nb', creator: 'Hei, blåbær!',
+        sample: 'Alle mennesker er født frie og med samme menneskeverd og menneskerettigheter.\nVår sære Zulu fra badeøya spilte jo whist og quickstep i min taxi. ÆRE  Øl  Åpen  Café  Fôr' },
+    japanese: { language: 'ja', creator: 'こんにちは！',
+        sample: 'いろはにほへと ちりぬるを わかよたれそ つねならむ\nイロハニホヘト チリヌルヲ ワカヨタレソ ツネナラム がぎぐげご パピプペポ ゞ ヴ ー' },
+    georgian: { language: 'ka', creator: 'გამარჯობა!',
+        sample: 'ყოველი ადამიანი იბადება თავისუფალი და თანასწორი\nთავისი ღირსებითა და უფლებებით. ქართული ენა' },
+};
+const CONFIG = CONFIGS[SCRIPT];
+if (!CONFIG) { console.error(`Unknown SCRIPT ${SCRIPT}; one of ${Object.keys(CONFIGS).join(', ')}`); process.exit(1); }
 const SAMPLE = CONFIG.sample;
 const OUT = path.join(__dirname, 'out', SCRIPT);
 const REPO = path.resolve(__dirname, '../..');
-const DATA_ID = CONFIG.id;
-const scriptDef = (() => { const j = JSON.parse(fs.readFileSync(`${REPO}/scripts.json`, 'utf8')); return (Array.isArray(j) ? j : Object.values(j).find(Array.isArray)).find(x => x.id === DATA_ID); })();
+const LANGUAGE = CONFIG.language ? require('./language.cjs').languageProject(CONFIG.language) : null;
+const DATA_ID = LANGUAGE ? LANGUAGE.script.id : CONFIG.id;
+const scriptDef = LANGUAGE ? LANGUAGE.script : (() => { const j = JSON.parse(fs.readFileSync(`${REPO}/scripts.json`, 'utf8')); return (Array.isArray(j) ? j : Object.values(j).find(Array.isArray)).find(x => x.id === DATA_ID); })();
 const en = JSON.parse(fs.readFileSync(`${REPO}/locales/en.json`, 'utf8'));
-const SCRIPT_NAME = en[scriptDef.nameKey];
+const SCRIPT_NAME = LANGUAGE ? LANGUAGE.name : en[scriptDef.nameKey];
 const TILE = new RegExp(`${SCRIPT_NAME}$`);
-const sets = [...JSON.parse(fs.readFileSync(`${REPO}/data/characters_${DATA_ID}.json`, 'utf8')), ...JSON.parse(fs.readFileSync(`${REPO}/data/characters_basic.json`, 'utf8'))]
+const sets = [...(LANGUAGE ? LANGUAGE.definitions : JSON.parse(fs.readFileSync(`${REPO}/data/characters_${DATA_ID}.json`, 'utf8'))), ...JSON.parse(fs.readFileSync(`${REPO}/data/characters_basic.json`, 'utf8'))]
     .filter(st => st.characters);
 // Hidden glyphs aren't in the grid; linked ones (i = ı + dot) the app makes by itself.
 const ORDER = sets.flatMap(st => st.characters.filter(c => !c.hidden).map(c => ({
@@ -96,12 +123,21 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
     let celebrated = false; const celebrations = [];
     const closeTips = async () => {
         // The app celebrates when every glyph is done; continue to spacing from there.
-        const fineTune = p.getByText('Fine-tune Spacing', { exact: true }).first();
+        const celebration = p.locator('div.fixed.inset-0.z-\\[200\\]');
+        const fineTune = celebration.getByText(/^Fine-tune spacing$/i).first();
         if (await fineTune.isVisible().catch(() => false)) {
             celebrated = true;
             await caption('Every glyph is done: the app says the font is ready. Continue to fine-tune spacing');
             await p.waitForTimeout(2500); await shot('06-font-ready');
-            await fineTune.click().catch(() => {}); await p.waitForTimeout(1500);
+            // The celebration's floating letters can cover the link: press it directly if a click doesn't land.
+            await fineTune.click({ timeout: 3000 }).catch(() => fineTune.evaluate(b => b.click()).catch(() => {})); await p.waitForTimeout(1500);
+        }
+        // After an export the app explains how to use the font; read, then close it.
+        const useFont = p.locator('[role="dialog"]').filter({ hasText: 'Your font is downloaded' }).first();
+        if (await useFont.isVisible().catch(() => false)) {
+            await shot('11b-use-your-font');
+            await useFont.getByRole('button', { name: 'Close', exact: true }).click().catch(() => p.keyboard.press('Escape'));
+            await p.waitForTimeout(500);
         }
         // A tip can sit on top of a celebration (opening a finished project in a new browser): close tips first.
         for (let i = 0; i < 3; i++) {
@@ -110,8 +146,8 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
             await btn.click({ timeout: 1500 }).catch(() => {}); await p.waitForTimeout(250);
         }
         // Scripts with marks to place (Malayalam, Telugu…) hand over to Positioning first.
-        for (const label of ['Go to Positioning', 'Next: Kerning', 'One Last Test']) {
-            const next = p.getByRole('button', { name: label }).first();
+        for (const label of ['Go to Positioning', 'Go to Spacing', 'Done']) {
+            const next = celebration.getByRole('button', { name: label, exact: true }).first();
             if (await next.isVisible().catch(() => false)) {
                 await caption(`The app says this step is done: ${label}`); celebrations.push(label);
                 await p.waitForTimeout(2000); await shot(`06-celebration-${label.replace(/\W+/g, '-').toLowerCase()}`);
@@ -137,10 +173,46 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
         for (const pt of pts.slice(1)) await p.mouse.move(...pt, { steps: 4 });
         await p.mouse.up(); await p.waitForTimeout(60);
     };
+    // The editor may zoom and pan to fit a letter that opens with content outside the drawing area
+    // (a built letter pre-filled from its parts, its sign below the area). A person draws against
+    // the guide lines, which move with the view; the test reads the view from the canvas's props
+    // (screen = point * zoom + offset) once its fit animation has settled.
+    const readView = () => p.evaluate(() => {
+        const c = document.querySelector('[data-tour="drawing-canvas"]'); if (!c) return null;
+        let f = c[Object.keys(c).find(k => k.startsWith('__reactFiber'))];
+        for (; f; f = f.return) { const pr = f.memoizedProps; if (pr && typeof pr.zoom === 'number' && pr.viewOffset) return { zoom: pr.zoom, x: pr.viewOffset.x, y: pr.viewOffset.y }; }
+        return null;
+    }).catch(() => null);
+    const settledView = async () => {
+        let v = await readView();
+        for (let i = 0; i < 20; i++) { await p.waitForTimeout(100); const w = await readView(); if (JSON.stringify(w) === JSON.stringify(v)) return w; v = w; }
+        return v;
+    };
+    const isNormal = (v) => !v || (Math.abs(v.zoom - 1) < 1e-3 && Math.abs(v.x) < 0.5 && Math.abs(v.y) < 0.5);
+    // Put the view back to normal (as a person would pan back), until it stays there: the editor's
+    // fit animation can still be running and undo a single reset.
+    const resetView = async () => {
+        for (let i = 0; i < 15; i++) {
+            const v = await settledView();
+            if (isNormal(v)) return v;
+            await p.evaluate(() => {
+                const c = document.querySelector('[data-tour="drawing-canvas"]'); if (!c) return;
+                let f = c[Object.keys(c).find(k => k.startsWith('__reactFiber'))];
+                for (; f; f = f.return) { const pr = f.memoizedProps; if (pr && pr.setZoom && pr.setViewOffset) { pr.setZoom(1); pr.setViewOffset({ x: 0, y: 0 }); return; } }
+            }).catch(() => {});
+            await p.waitForTimeout(300);
+        }
+        return settledView();
+    };
     const drawGlyph = async (name) => {
         const box = await canvasBox(); const s = box.width / 1000;
+        const v = (await resetView()) || { zoom: 1, x: 0, y: 0 };
+        if (!isNormal(v)) log(`  the editor's view stayed zoomed ${v.zoom.toFixed(2)}x, moved ${Math.round(v.x)}, ${Math.round(v.y)}: drawing against it`);
+        // Never let a stroke leave the canvas: outside it, the mouse would click the page instead.
+        const inside = ([x, y]) => x > box.x + 2 && x < box.x + box.width - 2 && y > box.y + 2 && y < box.y + box.height - 2;
         for (const stroke of STROKES[name]) {
-            const pts = stroke.map(([x, y]) => [box.x + (500 + x) * s, box.y + y * s]);
+            const pts = stroke.map(([x, y]) => [box.x + ((500 + x) * v.zoom + v.x) * s, box.y + (y * v.zoom + v.y) * s]).filter(inside);
+            if (pts.length < 2) continue;
             if (await tipOpen()) await closeTips();
             await stroke1(pts);
             // A tip that opened mid-stroke swallows the rest of it: dismiss it and draw that stroke again
@@ -169,6 +241,17 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
         const chooser = p.waitForEvent('filechooser');
         await p.getByRole('button', { name: /Load Saved Project/ }).first().click();
         await (await chooser).setFiles(RESUME); await p.waitForTimeout(4000); await closeTips();
+    } else if (LANGUAGE) {
+        await caption(`${SCRIPT_NAME} has no ready-made set: find it in the language list`);
+        const more = p.getByRole('button', { name: /Don’t see your language\?/ }).first();
+        await more.scrollIntoViewIfNeeded(); await p.waitForTimeout(800); await more.click(); await p.waitForTimeout(1000);
+        await p.locator('input[type=search]').fill(LANGUAGE.lang.name.split(' ')[0]); await p.waitForTimeout(1200);
+        await shot('00-language-search');
+        await p.getByRole('listitem').filter({ hasText: SCRIPT_NAME }).first().click(); await p.waitForTimeout(1500);
+        await caption(`The letters ${SCRIPT_NAME} uses are picked; accented ones are built from a letter and an accent`);
+        await p.waitForTimeout(1500); await shot('00-language-letters');
+        await p.getByRole('button', { name: 'Start Project' }).click();
+        await p.waitForTimeout(3000); await closeTips();
     } else {
     await p.getByRole('button', { name: TILE }).first().click(); await p.waitForTimeout(2000);
     // Scripts with variant letters (Telugu క్ర…) ask which to use first: keep the defaults.
@@ -204,12 +287,15 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
         await closeTips();
         await p.locator('button[title="Clear"]').first().click().catch(() => {}); await p.waitForTimeout(400);
         await p.locator('[data-tour="toolbar-pen"]').first().click().catch(() => {}); await p.waitForTimeout(200);
+        // The editor fitted its view to the pre-filled parts, which can leave the letter's top out of
+        // sight. A person would pan back; the test puts the view back to normal.
+        await resetView();
     };
     const saveProjectFile = async (file) => {
         await closeTips();
         const dl = p.waitForEvent('download', { timeout: 60000 }).catch(() => null);
         await p.locator('button[title="More"]').first().click().catch(() => {}); await p.waitForTimeout(500);
-        await p.getByText('Export JSON', { exact: true }).first().click().catch(() => {});
+        await p.getByRole('button', { name: /(Export JSON|Download a backup)$/ }).first().click().catch(() => {});
         const f = await dl;
         if (f) { await f.saveAs(path.join(OUT, file)); log('saved', file); }
         await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(500);
@@ -365,11 +451,14 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
     const spacingTab = p.getByRole('button', { name: /Spacing|Kerning/ }).first();
     let spacingMode = 'none';
     const waitAutoKern = async () => {
-        for (let t = 0; t < 300; t++) { await p.waitForTimeout(1000); if (!(await p.getByText(/Auto-?kerning|Calculating/i).count())) break; }
+        // Big scripts with no suggested pairs (Sinhala: every pair of ~580 glyphs) take many minutes.
+        const t0 = Date.now();
+        for (let t = 0; t < 1800; t++) { await p.waitForTimeout(1000); if (!(await p.getByText(/Auto-?kerning|Auto-spacing the|Calculating|Kerning\.\.\.|^Spacing\.\.\.$/i).count())) break; }
+        log(`auto-kern took ${Math.round((Date.now() - t0) / 1000)} s`);
         await p.waitForTimeout(1500); await closeTips();
     };
     const accept = async () => {
-        const btn = p.getByRole('button', { name: /Accept Suggestions|Accept All|Accept Visible/ }).first();
+        const btn = p.getByRole('button', { name: /Accept Suggestions|Accept suggestions|Accept All|Accept Visible/ }).first();
         if (await btn.count() && await btn.isVisible().catch(() => false)) { await btn.click(); await p.waitForTimeout(1500); return true; }
         return false;
     };
@@ -392,13 +481,14 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
             for (const sa of await p.getByRole('button', { name: 'Select All' }).all()) await sa.click().catch(() => {});
             await p.waitForTimeout(800); await shot('06-all-pairs');
         }
-        await p.getByRole('button', { name: /Auto-kern/ }).first().click();
+        await p.getByRole('button', { name: /Auto-kern|Auto-space/ }).first().click();
         await waitAutoKern(); await shot('07-autokerned');
         await caption('Accept the suggested spacing');
         // Accept where we are; if this view has no Accept button, the results are on Suggestions.
         if (!(await accept()) && await suggestionsTab.count()) { await suggestionsTab.click(); await p.waitForTimeout(1000); await closeTips(); await accept(); }
         log('spacing:', spacingMode, '|', await p.getByText(/recommended pairs spaced/).first().innerText().catch(() => ''));
         await shot('08-spacing-accepted');
+        if (spacingMode === 'all pairs') await saveProjectFile(path.join(OUT, `${SCRIPT}-spaced.json`));
     }
 
     // 5. Try it: Test page. Building the font can take a while for big scripts: wait for it.
@@ -406,7 +496,7 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
     await closeTips(); // the spacing celebration may be up (its "One Last Test" opens the Test page)
     let t0 = Date.now();
     if (!(await p.locator('textarea').first().isVisible().catch(() => false))) await p.getByRole('button', { name: /^Test$/ }).first().click();
-    const ea = p.getByRole('button', { name: 'Export Anyway' });
+    const ea = p.getByRole('button', { name: /^(Export Anyway|Export what I have)$/ });
     const area = p.locator('textarea').first();
     for (let t = 0; t < 300; t++) {
         if (await ea.count()) { await ea.click(); }
@@ -421,11 +511,22 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
     await back();
 
     // 6. Creator
+    // The header buttons stay greyed out while the app builds the font (minutes with all-pairs spacing).
+    { const t1 = Date.now(); const exp = p.locator('[data-tour="header-export"]').first();
+      const busy = async () => !(await exp.isEnabled().catch(() => true)) || (await p.locator('header .animate-spin, [data-tour="header-export"] ~ * .animate-spin').count()) > 0;
+      for (let t = 0; t < 1800 && await busy(); t++) await p.waitForTimeout(1000);
+      if (await busy()) log('the app was still building the font after 30 min');
+      const waited = Math.round((Date.now() - t1) / 1000); if (waited > 2) log(`waited ${waited} s for the app to finish building the font`); }
     await caption('Make something with it in Creator');
     const create = p.getByRole('button', { name: /^Create$/ }).first();
     if (await create.count()) {
-        await create.click({ timeout: 300000 }); await p.waitForTimeout(6000); await closeTips(); // greyed out while the app is busy
-        const text = p.locator('textarea, [contenteditable="true"], input[type="text"]').first();
+        await create.click({ timeout: 300000 }); // greyed out while the app is busy
+        // Creator opens once the font is built: seconds for most scripts, minutes with all-pairs spacing.
+        const t2 = Date.now();
+        await p.locator('div.fixed.inset-0.z-50 header').first().waitFor({ timeout: 1800000 }).catch(() => {});
+        const built = Math.round((Date.now() - t2) / 1000); if (built > 10) log(`Creator opened after ${built} s`);
+        await p.waitForTimeout(2000); await closeTips();
+        const text = p.locator('div.fixed.inset-0.z-50').locator('textarea, [contenteditable="true"], input[type="text"]').first();
         if (await text.count()) { await text.fill(CONFIG.creator).catch(() => {}); await p.waitForTimeout(2500); }
         await shot('10-creator');
         const studio = p.locator('div.fixed.inset-0.z-50 header');

@@ -138,7 +138,32 @@ Object.assign(G, {
     '̧': [[[0, 660], [5, 700], [35, 720], [30, 750], [-20, 760]]], // cedilla
     '̆': [arc(0, 390, 50, 35, 180, 0)],                        // breve
     '̄': [seg(-60, 400, 60, 400)],                             // macron
+    '̣': [dot(0, 720)],                                       // dot below (ṭ ḍ ṇ ṣ ṛ)
+    '̤': [dot(-35, 720), dot(35, 720)],                        // diaeresis below (l̤)
+    '̥': [arc(0, 730, 28, 28, 0, 360)],                         // ring below (r̥ l̥)
     '̩': [seg(0, 690, 0, 750)],                                // vertical line below
+});
+
+// --- Norwegian, Danish (languages picked from the language list) ---
+Object.assign(G, {
+    'æ': [arc(-75, 560, 60, 100, 0, 360, 30), seg(-15, X, -15, B), seg(-15, 560, 145, 560), arc(70, 560, 75, 100, 0, -300)],
+    'Æ': [seg(-150, B, -10, C), seg(-10, C, 140, C), seg(-10, C, -10, B), seg(-10, B, 140, B), seg(-10, X, 110, X), seg(-95, 530, -10, 530)],
+    'ø': [arc(0, 560, 85, 100, 0, 360, 36), seg(-95, 680, 95, 440)],
+    'Ø': [arc(0, X, 130, 200, 0, 360, 40), seg(-140, 690, 140, 230)],
+    '̊': [arc(0, 395, 28, 28, 0, 360)],                          // ring above (å)
+});
+
+// --- Language punctuation (Spanish, French, German, Russian…) ---
+Object.assign(G, {
+    '¡': [dot(0, X - 30), seg(0, 520, 0, D - 40)],
+    '¿': [dot(0, X - 30), [...seg(0, 520, 0, 610), ...arc(0, 700, 85, 90, -90, 170)]],
+    '«': [...poly([-10, 470], [-80, 545], [-10, 620]), ...poly([70, 470], [0, 545], [70, 620])],
+    '»': [...poly([10, 470], [80, 545], [10, 620]), ...poly([-70, 470], [0, 545], [-70, 620])],
+    '‹': poly([40, 470], [-30, 545], [40, 620]),
+    '›': poly([-40, 470], [30, 545], [-40, 620]),
+    '„': [seg(-15, 655, -30, 715), seg(35, 655, 20, 715)],
+    '‚': [seg(10, 655, -5, 715)],
+    '№': [...poly([-150, B], [-150, C], [10, B], [10, C]), arc(90, 400, 45, 55, 0, 360, 24), seg(40, 520, 140, 520)],
 });
 
 // --- German ---
@@ -277,7 +302,7 @@ Object.assign(G, {
     '₂': small('2', 560), '₃': small('3', 560), '₄': small('4', 560),
     'ʼ': [seg(5, 270, -10, 320)],      // modifier apostrophe
     '꞉': [dot(0, 420), dot(0, 540)],   // modifier colon
-    '、': [seg(-15, 600, 15, 640)],     // Telugu uses U+3001 as a building block of ష (S19); not in its guide font
+    '\uE03B': [seg(-15, 600, 15, 640)], // Telugu building block of ష (U+E03B; was U+3001 、 before S19); not in its guide font
 });
 
 module.exports = { G, guides: { C, X, B, D } };

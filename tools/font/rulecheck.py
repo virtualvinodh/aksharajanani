@@ -80,7 +80,8 @@ def text_for(name):
 def shape(text, features=None):
     buf = hb.Buffer(); buf.add_str(text); buf.guess_segment_properties()
     hb.shape(font, buf, features or {})
-    return [(order[i.codepoint], p) for i, p in zip(buf.glyph_infos, buf.glyph_positions)]
+    out = [(order[i.codepoint], p) for i, p in zip(buf.glyph_infos, buf.glyph_positions)]
+    return out[::-1] if buf.direction == 'rtl' else out  # typing order, for Hebrew too
 
 def has_outline(g):
     from fontTools.pens.boundsPen import BoundsPen
@@ -263,7 +264,10 @@ for key, val in kern.items():
     if at is None:
         kern_skip += 1; continue  # typed one after the other they don't stay side by side (క్ + క makes a conjunct)
     plain = shape(text_for(ln) + text_for(rn), {'kern': False, 'dist': False})
-    if out[at][1].x_advance != plain[at][1].x_advance: kern_ok += 1
+    # Spacing changes the pair's advances (left-to-right: the first letter's; right-to-left
+    # HarfBuzz may put it on either), so compare both.
+    pos = lambda run: [(run[k][1].x_advance, run[k][1].x_offset) for k in (at, at + 1)]
+    if pos(out) != pos(plain): kern_ok += 1
     else: kern_bad += 1; bad.append(ln + rn)
 line(f'{kern_ok + kern_bad + kern_skip} spaced pairs in the project: **{kern_ok} spaced in the font, {kern_bad} not**' + (f', {kern_skip} that typing doesn\'t put side by side (sign forms, half forms) not checked' if kern_skip else '') + '.' + (' Not spaced, e.g. ' + ' '.join(bad[:20]) if bad else ''))
 rec = project.get('recommendedKerning') or []

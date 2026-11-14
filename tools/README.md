@@ -42,7 +42,9 @@ Does what a person would do, in any of the European scripts or Tamil:
 
 ```sh
 node tools/e2e/e2e.cjs                       # English
-SCRIPT=spanish node tools/e2e/e2e.cjs     # english spanish french portuguese german greek cyrillic tamil malayalam telugu
+SCRIPT=spanish node tools/e2e/e2e.cjs     # english spanish french portuguese german greek cyrillic hebrew iast
+                                           # tamil malayalam telugu kannada devanagari gurmukhi sinhala thai lao
+SCRIPT=norwegian node tools/e2e/e2e.cjs   # norwegian georgian japanese: started from "Don't see your language?"
 RESUME=tools/e2e/out/malayalam/malayalam-drawn.json SCRIPT=malayalam node tools/e2e/e2e.cjs  # start from the saved checkpoint, skip drawing
 SCRIPT=spanish VIDEO=1 node tools/e2e/e2e.cjs  # also record a video (with on-screen captions)
 DEBUG_GLYPHS=D,t SCRIPT=spanish node tools/e2e/e2e.cjs  # draw only these glyphs, one screenshot each (dbg-<glyph>-<code point>.png)
@@ -56,11 +58,27 @@ Output goes to `tools/e2e/out/<script>/`:
 - `summary.json` (glyphs drawn and positioned, page errors);
 - with `VIDEO=1`, `<script>.webm`.
 
-A run takes about 7 minutes (Tamil about 25). The log and `summary.json` say how long the Test page and the export took to build the font. To get an mp4, use `ffmpeg -i english.webm -c:v libx264 -pix_fmt yuv420p english.mp4`.
+A run takes about 7 minutes (Tamil about 25; Kannada and Sinhala about 2 hours, Sinhala's every-pair spacing alone 6 minutes).
+The editor zooms and pans to fit a letter that opens with content outside the drawing area (a built
+letter pre-filled from its parts): the test reads the editor's view from the canvas and puts it back
+to normal before drawing, and never lets a stroke leave the canvas. The log and `summary.json` say how long the Test page and the export took to build the font. To get an mp4, use `ffmpeg -i english.webm -c:v libx264 -pix_fmt yuv420p english.mp4`.
 
 Adding another script means:
 - adding it to `CONFIG` in `e2e.cjs` (its id in `scripts.json`, a sample for the Test page, a line for Creator);
 - giving it strokes: run `trace-glyphs.py` (below), or add hand-made ones to `alphabet.cjs`. Hand-made strokes win only for glyphs the app builds from others, where they're drawn on top (Ґ = Г + upturn).
+
+A language from the language list (no ready-made set) takes `language: '<CLDR code>'` instead of `id`.
+The run starts it from "Don't see your language?" with the picker's defaults (every main letter, capitals).
+`e2e/language.cjs` works out its letter sets with the app's own `services/languageService.ts` (bundled
+with esbuild, which comes with Vite); its id is `lang_<code>`, so traced strokes go in
+`strokes/lang_<code>.json`. To trace them, give `trace-glyphs.py` a folder with the project's script and
+data (its guide font is the Noto font for the language, in `data/languages.json`):
+
+```sh
+node tools/e2e/language.cjs ka /tmp/lang-ka     # writes scripts.json and data/ for lang_ka
+REPO=/tmp/lang-ka OUT_DIR=tools/e2e uv run --with fonttools --with uharfbuzz --with freetype-py \
+    --with scikit-image --with pillow python3 tools/e2e/trace-glyphs.py lang_ka NotoSansGeorgian-Regular.ttf
+```
 
 The run also skips a Spacing step if the script doesn't have one.
 
@@ -118,6 +136,47 @@ Output goes to `tools/out/layout/` (screenshots and `report.txt`).
 python3 tools/checks/script-data.py
 python3 tools/checks/data-files.py
 node tools/checks/locales.cjs
+```
+
+### `data/build_languages.py`: the language list
+
+Builds `data/languages.json`, which the "Don't see your language?" picker reads. For each language CLDR
+lists (one entry per language, plus variants such as Serbian in Latin letters) it keeps:
+- the letters the language uses, its occasional letters (names, borrowed words) and extra punctuation;
+- whether it has capitals, and its own name;
+- Article 1 of the Universal Declaration of Human Rights in it, as the Test page sample;
+- for each writing system, the Noto font to show behind the drawing area, its OpenType tag, and whether
+  its letters join (the picker then says joined shapes aren't built);
+- for each mark, where it sits (above, below, attached, over the letter): from Unicode's combining class,
+  or for marks without one (Hebrew points, Thai and Indic signs) from where the Noto font draws it.
+
+Writing systems with thousands of characters (Chinese, Korean, Yi) are left out. Japanese is kept as
+kana only ("Japanese (kana)": hiragana, katakana, ー ゝ ゞ; kanji then come from another font), with the
+iroha poem as its sample. Its guide font ships with the app, because Noto Sans JP is about 5 MB of mostly
+kanji: `public/fonts/NotoSansJPKana-Regular.ttf` (194 KB, licence next to it) is Google Fonts'
+`ofl/notosansjp/NotoSansJP[wght].ttf` at weight 400, cut down to U+3000–30FF and renamed:
+
+```sh
+uv run --with fonttools python3 -c "
+from fontTools.ttLib import TTFont; from fontTools.varLib import instancer; from fontTools import subset
+f = instancer.instantiateVariableFont(TTFont('NotoSansJP[wght].ttf'), {'wght': 400})
+o = subset.Options(); o.layout_features = ['*']; o.name_IDs = ['*']; s = subset.Subsetter(o)
+s.populate(unicodes=range(0x3000, 0x3100)); s.subset(f)
+for r in f['name'].names:
+    if r.nameID in (1, 4, 16): r.string = 'Noto Sans JP Kana'
+    elif r.nameID == 6: r.string = 'NotoSansJPKana-Regular'
+f.save('public/fonts/NotoSansJPKana-Regular.ttf')"
+```
+
+Download the sources first; nothing is fetched from unicode.org, which the sandbox can't reach:
+
+```sh
+npm pack cldr-misc-full cldr-localenames-full    # then untar both
+curl -L -o udhr.tgz https://codeload.github.com/eric-muller/udhr/tar.gz/refs/heads/main
+curl -L -o noto.json "https://api.github.com/repos/notofonts/notofonts.github.io/contents/fonts?ref=4cf78353cd1668040ba8efa13029cd910fcdf9e2"
+uv run --with fonttools python3 tools/data/build_languages.py \
+    --cldr-misc cldr-misc-full/package/main --cldr-names cldr-localenames-full/package/main \
+    --udhr udhr-main/data/udhr --noto-list noto.json --font-cache /tmp/noto --out data/languages.json
 ```
 
 ## Fonts
