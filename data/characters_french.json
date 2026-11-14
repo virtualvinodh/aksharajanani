@@ -132,5 +132,14 @@
       { "unicode": 252, "name": "ü", "glyphClass": "ligature", "position": ["u",  "̈"], "liga": ["u",  "̈"] },
       { "unicode": 255, "name": "ÿ", "glyphClass": "ligature", "position": ["y",  "̈"], "liga": ["y",  "̈"] }
     ]
+  },
+  {
+    "nameKey": "languagePunctuation",
+    "characters": [
+      { "unicode": 171, "name": "«", "glyphClass": "base" },
+      { "unicode": 187, "name": "»", "glyphClass": "base" },
+      { "unicode": 8249, "name": "‹", "glyphClass": "base" },
+      { "unicode": 8250, "name": "›", "glyphClass": "base" }
+    ]
   }
 ]

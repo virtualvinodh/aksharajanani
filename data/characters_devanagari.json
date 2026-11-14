@@ -4,7 +4,7 @@
     "nameKey": "vowelSigns",
     "characters": [
       { "unicode": 2366, "name": "ा", "glyphClass": "base" },
-      { "unicode": 2367, "name": "ि", "glyphClass": "base" },
+      { "unicode": 2367, "name": "ि", "glyphClass": "base", "rsb": -215 },
       { "name": "", "glyphClass": "mark", "advWidth": 0 },  
       { "unicode": 2368, "name": "ी", "glyphClass": "base" },
       { "unicode": 2369, "name": "ु", "glyphClass": "mark", "advWidth": 0 },
@@ -102,7 +102,11 @@
       { "unicode": 2396, "name": "ड़", "glyphClass": "base", "composite":["ड", "़"] },
       { "unicode": 2397, "name": "ढ़", "glyphClass": "base", "composite":["ढ", "़"] },
       { "unicode": 2398, "name": "फ़", "glyphClass": "base", "composite":["फ", "़"] },
-      { "unicode": 2399, "name": "य़", "glyphClass": "base", "composite":["य", "़"] }
+      { "unicode": 2399, "name": "य़", "glyphClass": "base", "composite":["य", "़"] },
+      { "unicode": 2427, "name": "ॻ", "glyphClass": "base", "composite":["ग"], "optional": true },
+      { "unicode": 2428, "name": "ॼ", "glyphClass": "base", "composite":["ज"], "optional": true },
+      { "unicode": 2430, "name": "ॾ", "glyphClass": "base", "composite":["ड"], "optional": true },
+      { "unicode": 2431, "name": "ॿ", "glyphClass": "base", "composite":["ब"], "optional": true }
     ]
   },
   {

@@ -29,7 +29,8 @@
       { "unicode": 1501, "name": "ם", "glyphClass": "base" },
       { "unicode": 1503, "name": "ן", "glyphClass": "base" },
       { "unicode": 1507, "name": "ף", "glyphClass": "base" },
-      { "unicode": 1509, "name": "ץ", "glyphClass": "base" }
+      { "unicode": 1509, "name": "ץ", "glyphClass": "base" },
+      { "unicode": 1522, "name": "ײ", "glyphClass": "base", "composite": ["י", "י"], "optional": true }
     ]
   },
   {

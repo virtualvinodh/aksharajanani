@@ -77,6 +77,7 @@
       { "name": "̄", "glyphClass": "mark", "advWidth": 0 },
       { "name": "́", "glyphClass": "mark", "advWidth": 0 },
       { "name": "̩", "glyphClass": "mark", "advWidth": 0 },
+      { "name": "̋", "glyphClass": "mark", "advWidth": 0 },
 
       { "unicode": 1025, "name": "Ё", "glyphClass": "ligature", "position": ["Е", "̈"], "liga": ["Е", "̈"] },
       { "unicode": 1168, "name": "Ґ", "glyphClass": "base", "composite": ["Г"] },
@@ -104,7 +105,20 @@
       { "unicode": 1262, "name": "Ӯ", "glyphClass": "ligature", "position": ["У", "̄"], "liga": ["У", "̄"] },
       { "unicode": 1178, "name": "Қ", "glyphClass": "ligature", "position": ["К", "̩"], "liga": ["К", "̩"] },
       { "unicode": 1194, "name": "Ҫ", "glyphClass": "ligature", "position": ["С", "̩"], "liga": ["С", "̩"] },
-      
+      { "unicode": 1029, "name": "Ѕ", "glyphClass": "base", "optional": true },
+      { "unicode": 1170, "name": "Ғ", "glyphClass": "base", "composite": ["Г"], "optional": true },
+      { "unicode": 1210, "name": "Һ", "glyphClass": "base", "optional": true },
+      { "unicode": 1216, "name": "Ӏ", "glyphClass": "base", "optional": true },
+      { "unicode": 1232, "name": "Ӑ", "glyphClass": "ligature", "position": ["А", "̆"], "liga": ["А", "̆"], "optional": true },
+      { "unicode": 1238, "name": "Ӗ", "glyphClass": "ligature", "position": ["Е", "̆"], "liga": ["Е", "̆"], "optional": true },
+      { "unicode": 1266, "name": "Ӳ", "glyphClass": "ligature", "position": ["У", "̋"], "liga": ["У", "̋"], "optional": true },
+      { "unicode": 1236, "name": "Ӕ", "glyphClass": "base", "optional": true },
+      { "unicode": 1176, "name": "Ҙ", "glyphClass": "ligature", "position": ["З", "̩"], "liga": ["З", "̩"], "optional": true },
+      { "unicode": 1184, "name": "Ҡ", "glyphClass": "base", "optional": true },
+      { "unicode": 1172, "name": "Ҕ", "glyphClass": "base", "composite": ["Г"], "optional": true },
+      { "unicode": 1188, "name": "Ҥ", "glyphClass": "base", "optional": true },
+      { "unicode": 1174, "name": "Җ", "glyphClass": "ligature", "position": ["Ж", "̩"], "liga": ["Ж", "̩"], "optional": true },
+
       { "unicode": 1105, "name": "ё", "glyphClass": "ligature", "position": ["е", "̈"], "liga": ["е", "̈"] },
       { "unicode": 1169, "name": "ґ", "glyphClass": "base", "composite": ["г"] },
       { "unicode": 1108, "name": "є", "glyphClass": "base" },
@@ -130,7 +144,30 @@
       { "unicode": 1251, "name": "ӣ", "glyphClass": "ligature", "position": ["и", "̄"], "liga": ["и", "̄"] },
       { "unicode": 1263, "name": "ӯ", "glyphClass": "ligature", "position": ["у", "̄"], "liga": ["у", "̄"] },
       { "unicode": 1179, "name": "қ", "glyphClass": "ligature", "position": ["к", "̩"], "liga": ["к", "̩"] },
-      { "unicode": 1195, "name": "ҫ", "glyphClass": "ligature", "position": ["с", "̩"], "liga": ["с", "̩"] }
+      { "unicode": 1195, "name": "ҫ", "glyphClass": "ligature", "position": ["с", "̩"], "liga": ["с", "̩"] },
+      { "unicode": 1109, "name": "ѕ", "glyphClass": "base", "optional": true },
+      { "unicode": 1171, "name": "ғ", "glyphClass": "base", "composite": ["г"], "optional": true },
+      { "unicode": 1211, "name": "һ", "glyphClass": "base", "optional": true },
+      { "unicode": 1231, "name": "ӏ", "glyphClass": "base", "optional": true },
+      { "unicode": 1233, "name": "ӑ", "glyphClass": "ligature", "position": ["а", "̆"], "liga": ["а", "̆"], "optional": true },
+      { "unicode": 1239, "name": "ӗ", "glyphClass": "ligature", "position": ["е", "̆"], "liga": ["е", "̆"], "optional": true },
+      { "unicode": 1267, "name": "ӳ", "glyphClass": "ligature", "position": ["у", "̋"], "liga": ["у", "̋"], "optional": true },
+      { "unicode": 1237, "name": "ӕ", "glyphClass": "base", "optional": true },
+      { "unicode": 1177, "name": "ҙ", "glyphClass": "ligature", "position": ["з", "̩"], "liga": ["з", "̩"], "optional": true },
+      { "unicode": 1185, "name": "ҡ", "glyphClass": "base", "optional": true },
+      { "unicode": 1173, "name": "ҕ", "glyphClass": "base", "composite": ["г"], "optional": true },
+      { "unicode": 1189, "name": "ҥ", "glyphClass": "base", "optional": true },
+      { "unicode": 1175, "name": "җ", "glyphClass": "ligature", "position": ["ж", "̩"], "liga": ["ж", "̩"], "optional": true },
+      { "unicode": 700, "name": "ʼ", "glyphClass": "base", "optional": true }
+    ]
+  },
+  {
+    "nameKey": "languagePunctuation",
+    "characters": [
+      { "unicode": 171, "name": "«", "glyphClass": "base" },
+      { "unicode": 187, "name": "»", "glyphClass": "base" },
+      { "unicode": 8222, "name": "„", "glyphClass": "base" },
+      { "unicode": 8470, "name": "№", "glyphClass": "base" }
     ]
   }
 ]

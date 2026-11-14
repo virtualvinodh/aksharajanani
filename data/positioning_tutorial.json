@@ -12,7 +12,6 @@
     "markAttachment": {
         "A":  {  "ͤ": ["topCenter", "bottomCenter"] },
         "a":  {  "ͤ": ["topCenter", "bottomCenter"] },
-        "N":  {  "̃": ["topCenter", "bottomCenter"] },        
         "n":  {  "̃": ["topCenter", "bottomCenter"],  "̄": ["topCenter", "bottomCenter"] }         
     }
    },

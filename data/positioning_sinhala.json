@@ -1,5 +1,8 @@
 [ {
   "groups": {
+      "consAllForms": ["$consonants", "$halfCons", "$iCons", "$iiCons", "$uCons", "$uuCons"],
+      "spacingSignsRight": ["ා", "ා්", "ැ", "ෑ", "ෘ", "ෲ", "ෟ", "ෳ", "ං", "ඃ"],
+      "preBaseSigns": ["ෙ", "ේ", "ෛ"],
     "consAllVowelPos": ["$consonants", "$conjuncts"],
     "consAllforRa": ["$consonants", "$conjuncts", "$halfCons", "$iCons", "$iiCons"],
     "consForRa": [
@@ -68,5 +71,13 @@
       }
     } 
   },
-  { "recommendedKerning": [] }
+  { "recommendedKerning": [
+      ["$consAllForms", "$consonants"],
+      ["$conjuncts", "$consonants"],
+      ["$consonants", "$conjuncts"],
+      ["$consAllForms", "$spacingSignsRight"],
+      ["$preBaseSigns", "$consonants"],
+      ["$vowels", "$consonants"],
+      ["$consonants", "$vowels"]
+    ] }
 ]

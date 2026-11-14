@@ -25,7 +25,9 @@
       {  "name": "್", "glyphClass": "mark", "advWidth": 0 },
       {  "name": "ಁ", "glyphClass": "mark" },
       {  "name": "ಂ", "glyphClass": "base" },
-      {  "name": "ಃ", "glyphClass": "base" }
+      {  "name": "ಃ", "glyphClass": "base" },
+      {  "name": "ಽ", "glyphClass": "base", "optional": true },
+      {  "name": "಼", "glyphClass": "mark", "advWidth": 0, "optional": true }
     ]
   },
   {
@@ -169,8 +171,8 @@
       { "name": "್ೞ", "glyphClass": "mark", "composite": ["ೞ"], "compositeTransform": [{ "scale": 0.6, "y": 200 }]  },
       { "name": "", "glyphClass": "mark", "lsb": -50  },
       { "name": "", "glyphClass": "mark", "lsb": -50  },
-      { "name": "", "glyphClass": "mark",  "composite": [ "್ತ", ""], "lsb": -50, "if": "" },
-      { "name": "", "glyphClass": "mark",  "composite": [ "್ಟ", ""], "lsb": -50, "if": "" }
+      { "name": "", "glyphClass": "mark", "composite": ["್ತ", "್ರ"], "compositeTransform": [{ "scale": 1 }, { "scale": 1, "mode": "touching" }], "lsb": -50 },
+      { "name": "", "glyphClass": "mark", "composite": ["್ಟ", "್ರ"], "compositeTransform": [{ "scale": 1 }, { "scale": 1, "mode": "touching" }], "lsb": -50 }
 
     ]
   },

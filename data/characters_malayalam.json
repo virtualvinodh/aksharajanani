@@ -26,7 +26,10 @@
   { "unicode": 3328, "name": "ഀ", "glyphClass": "mark", "advWidth": "0" },
   { "unicode": 3387, "name": "഻", "glyphClass": "mark", "advWidth": "0" },
   { "unicode": 3388, "name": "഼", "glyphClass": "mark", "advWidth": "0" },
-  { "name": "ഄ", "glyphClass": "base" }
+  { "name": "ഄ", "glyphClass": "base" },
+  { "name": "", "glyphClass": "mark", "advWidth": "0", "liga":[ "്", "ല"]},
+  { "name": "", "glyphClass": "mark", "advWidth": "0"},
+  { "name": "ൎ", "glyphClass": "mark", "advWidth": "0"}
 
 ]
   },
@@ -115,9 +118,6 @@
   { "name": "്യ", "glyphClass": "ligature", "lsb": 10, "liga": ["്", "യ"] },
   {  "name": "്ര", "glyphClass": "ligature", "rsb": -30, "liga": ["്", "ര"], "gsub": "pref" },
   { "unicode": 57347, "name": "്വ", "glyphClass": "ligature", "liga": ["്", "വ"] },
-  { "name": "", "glyphClass": "mark", "advWidth": "0", "liga":[ "്", "ല"]},
-  { "name": "", "glyphClass": "mark", "advWidth": "0"},
-  { "name": "ൎ", "glyphClass": "mark", "advWidth": "0"},
   { "unicode": 57348, "name": "ക്ക", "glyphClass": "ligature", "liga": ["ക", "്", "ക"] },
   { "unicode": 57349, "name": "ക്ത", "glyphClass": "ligature", "liga": ["ക", "്", "ത"] },
   { "unicode": 57350, "name": "ക്ഷ", "glyphClass": "ligature", "liga": ["ക", "്", "ഷ"] },

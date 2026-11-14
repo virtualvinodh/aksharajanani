@@ -402,8 +402,8 @@
         "characterNameSize": 480
       },
       "guideFont": {
-        "fontName": "Noto Sans Lao",
-        "fontUrl": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io@4cf78353cd1668040ba8efa13029cd910fcdf9e2/fonts/NotoSansLao/hinted/ttf/NotoSansLao-Regular.ttf",
+        "fontName": "Noto Sans Thai",
+        "fontUrl": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io@4cf78353cd1668040ba8efa13029cd910fcdf9e2/fonts/NotoSansThai/hinted/ttf/NotoSansThai-Regular.ttf",
         "stylisticSet": ""
       },
       "testPage": {
@@ -586,6 +586,7 @@
       "id": "latin_indic",
       "nameKey": "scriptLatinIndic",
       "region": "southAsia",
+      "languagesKey": "langsLatinIndic",
       "support": "full",
       "metrics": {
         "unitsPerEm": 1000,

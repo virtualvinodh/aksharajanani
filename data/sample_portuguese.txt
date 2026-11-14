@@ -3,8 +3,8 @@ a á à â ã b c ç d e é ê f g h i í j k l m n o ó ô õ p q r s t u ú v 
 AÁÀÂÃBCÇDEÉÊFGHIÍJKLMNOÓÔÕPQRSTUÚVWXYZ
 aáàâãbcçdeéêfghiíjklmnoóôõpqrstuúvwxyz
 0 1 2 3 4 5 6 7 8 9 0123456789
-.,;:!?-–—()[]{}\"'@#&%$+*/=<>|~^_«»
-. , ; : ! ? - – — ( ) [ ] { } \" ' @ # & % $ + * / = < > | ~ ^ _ « »
+.,;:!?-–—()[]{}"'@#&%$+*/=<>|~^_«»
+. , ; : ! ? - – — ( ) [ ] { } " ' @ # & % $ + * / = < > | ~ ^ _ « »
 
 Põe à prova a faxina do canguru: vê que o jiló, a maçã, o ônibus e o avô zumbem!
 põe à prova a faxina do canguru: vê que o jiló, a maçã, o ônibus e o avô zumbem!

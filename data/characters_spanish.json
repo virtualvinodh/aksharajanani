@@ -454,5 +454,14 @@
         ]
       }
     ]
+  },
+  {
+    "nameKey": "languagePunctuation",
+    "characters": [
+      { "unicode": 161, "name": "¡", "glyphClass": "base" },
+      { "unicode": 191, "name": "¿", "glyphClass": "base" },
+      { "unicode": 171, "name": "«", "glyphClass": "base" },
+      { "unicode": 187, "name": "»", "glyphClass": "base" }
+    ]
   }
 ]

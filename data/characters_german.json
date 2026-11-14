@@ -75,5 +75,16 @@
       { "unicode": 7838, "name": "ẞ", "glyphClass": "base" }
 
     ]
+  },
+  {
+    "nameKey": "languagePunctuation",
+    "characters": [
+      { "unicode": 8222, "name": "„", "glyphClass": "base" },
+      { "unicode": 8218, "name": "‚", "glyphClass": "base" },
+      { "unicode": 171, "name": "«", "glyphClass": "base" },
+      { "unicode": 187, "name": "»", "glyphClass": "base" },
+      { "unicode": 8249, "name": "‹", "glyphClass": "base" },
+      { "unicode": 8250, "name": "›", "glyphClass": "base" }
+    ]
   }
 ]

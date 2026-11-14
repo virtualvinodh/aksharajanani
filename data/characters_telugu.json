@@ -53,8 +53,8 @@
     "nameKey": "consonantsTemplate",
     "characters": [
       { "name": "·", "glyphClass": "mark", "advWidth": 0 },
-      { "name": "", "glyphClass": "base", "advWidth": 0 },
-      { "name": "、", "glyphClass": "base", "advWidth": 0 },
+      { "name": "", "glyphClass": "mark", "advWidth": 0 },
+      { "name": "", "glyphClass": "mark", "advWidth": 0 },
       { "name": "", "glyphClass": "base", "composite": ["ం"] },
       { "name": "", "glyphClass": "base", "link": ["", "·"] },
       { "name": "", "glyphClass": "base", "composite": ["", "ు", "ు"] },
@@ -64,10 +64,10 @@
       { "name": "", "glyphClass": "base" },
       { "name": "", "glyphClass": "base", "link": ["", ""]},
       { "name": "", "glyphClass": "base", "link": ["", "ు"] },
-      { "name": "", "glyphClass": "base", "link": ["", "、"] },
+      { "name": "", "glyphClass": "base", "link": ["", ""] },
       { "name": "", "glyphClass": "base", "link": ["ఎ"] },
       { "name": "", "glyphClass": "base", "link": ["", ""] },
-      { "name": "", "glyphClass": "base", "link": ["", "、"] },
+      { "name": "", "glyphClass": "base", "link": ["", ""] },
       { "name": "", "glyphClass": "base" },
       { "name": "", "glyphClass": "base" },
       { "name": "", "glyphClass": "base" },
@@ -444,7 +444,7 @@
       { "name": "", "glyphClass": "ligature", "link": ["్ప", "ూ"], "liga": ["్", "ప", "ూ"], "gsub": "akhn"  },
 
       { "name": "హు", "glyphClass": "ligature", "link": ["హ", "ు"], "liga": ["హ", "ు"]  },
-      { "name": "హూ", "glyphClass": "ligature", "link": ["హు", "ా"], "liga": ["హు", "ూ"]  },   
+      { "name": "హూ", "glyphClass": "ligature", "link": ["హు", "ా"], "liga": ["హ", "ూ"]  },   
       { "name": "ళు", "glyphClass": "ligature", "link": ["ళ", "ు"], "liga": ["ళ", "ు"]  },
       { "name": "ళూ", "glyphClass": "ligature", "link": ["ళు", "ా"], "liga": ["ళ", "ూ"]  },
 

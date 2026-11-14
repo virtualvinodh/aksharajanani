@@ -7,8 +7,8 @@ abcdefghijklmnopqrstuvwxyz
 ÀÂÆÇÈÉÊËÎÏÔŒÙÛÜŸ
 àâæçèéêëîïôœùûüÿ
 0123456789 0 1 2 3 4 5 6 7 8 9
-. , ; : ! ? - – — ( ) [ ] { } \" ' @ # & % $ + * / = < > | ~ ^ _ « »
-.,;:!?-–—()[]{}\"'@#&%$+*/=<>|~^_«»
+. , ; : ! ? - – — ( ) [ ] { } " ' @ # & % $ + * / = < > | ~ ^ _ « »
+.,;:!?-–—()[]{}"'@#&%$+*/=<>|~^_«»
 
 Voyageur juvénile bouleverse ça, à l'œuvre d’Æsop, pendant qu’il fume un whisky über-Y
 voyageur juvénile bouleverse ça, à l'œuvre d’æsop, pendant qu’il fume un whisky über-y.

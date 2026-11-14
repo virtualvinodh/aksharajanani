@@ -88,5 +88,12 @@
       { "unicode": 912, "name": "ΐ", "glyphClass": "ligature", "position": ["ϊ", "́"], "liga": ["ϊ", "́"]},
       { "unicode": 944, "name": "ΰ", "glyphClass": "ligature", "position": ["ϋ", "́"], "liga": ["ϋ", "́"]}
     ]
+  },
+  {
+    "nameKey": "languagePunctuation",
+    "characters": [
+      { "unicode": 171, "name": "«", "glyphClass": "base" },
+      { "unicode": 187, "name": "»", "glyphClass": "base" }
+    ]
   }
 ]
