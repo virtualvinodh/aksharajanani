@@ -3,7 +3,7 @@ import Modal from './Modal';
 import { useLocale } from '../contexts/LocaleContext';
 
 export const FEEDBACK_EMAIL = 'vinodh@virtualvinodh.com';
-export const FEEDBACK_ISSUES_URL = 'https://github.com/virtualvinodh/Aksharajanani/issues/new';
+export const FEEDBACK_ISSUES_URL = 'https://github.com/virtualvinodh/aksharajanani/issues/new';
 
 /** A mail with the browser filled in, which is the first thing needed to look into a problem. */
 const mailtoHref = (subject: string, body: string) =>

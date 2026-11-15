@@ -1,6 +1,6 @@
 name: Deploy to GitHub Pages
 
-# A test site at https://virtualvinodh.github.io/Aksharajanani/, rebuilt on every push to
+# A test site at https://virtualvinodh.github.io/aksharajanani/, rebuilt on every push to
 # `claude` (the working branch) or `main`. The app will later move to its own domain, served
 # from `/`; only BASE_PATH below is specific to GitHub Pages.
 on:
@@ -31,7 +31,7 @@ jobs:
       # `prebuild` downloads the font builder (Pyodide + fontTools) into public/font-builder/.
       - run: npm run build
         env:
-          BASE_PATH: /Aksharajanani/
+          BASE_PATH: /aksharajanani/
           FONT_BUILDER_REQUIRED: '1'
       - uses: actions/upload-pages-artifact@v3
         with:

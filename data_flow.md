@@ -388,7 +388,7 @@ The `pythonFontService.ts` executes a complex internal bootstrap:
 4.  **Signal**: The worker posts a `type: 'status', payload: 'ready'` message back to the main thread.
 
 ### 14.4 Project Asset Hydration
-All of the app's own files (`scripts.json`, `data/…`, `locales/…`, `font-builder/…`, and `/fonts/…` URLs in data files) are fetched through `utils/appUrl.ts`, relative to the base path the app is served from (`/` locally, `/Aksharajanani/` on GitHub Pages; set with `BASE_PATH` at build time).
+All of the app's own files (`scripts.json`, `data/…`, `locales/…`, `font-builder/…`, and `/fonts/…` URLs in data files) are fetched through `utils/appUrl.ts`, relative to the base path the app is served from (`/` locally, `/aksharajanani/` on GitHub Pages; set with `BASE_PATH` at build time).
 
 When a specific script (e.g., "Tamil") is selected:
 1.  **Blueprint Fetching**: `useProjectLoad.ts` fetches `characters_[id].json`, `positioning_[id].json`, and `rules_[id].json`.

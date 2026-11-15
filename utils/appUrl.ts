@@ -2,7 +2,7 @@
 
 /**
  * A URL for one of the app's own files (`data/…`, `locales/…`, `scripts.json`, `font-builder/…`),
- * relative to where the app is served. Locally that is `/`; on GitHub Pages it's `/Aksharajanani/`
+ * relative to where the app is served. Locally that is `/`; on GitHub Pages it's `/aksharajanani/`
  * (set with BASE_PATH at build time), so root-relative URLs like `/data/x.json` would miss.
  */
 export const appUrl = (p: string): string => import.meta.env.BASE_URL + p.replace(/^\/+/, '');

@@ -22,7 +22,7 @@ Everything stays on your computer: projects are saved in the browser, and you ca
 Requires Node.js 18 or later.
 
 ```bash
-git clone https://github.com/virtualvinodh/Aksharajanani.git
+git clone https://github.com/virtualvinodh/aksharajanani.git
 cd Aksharajanani
 npm install
 npm run dev
@@ -32,7 +32,7 @@ Then open http://localhost:3000/.
 
 `npm run dev` and `npm run build` first download the font builder (Pyodide, fontTools and fontFeatures, about 19 MB, each file checked against a pinned SHA-256) into `public/font-builder/` with `scripts/fetch-font-builder.mjs`; after that it's a no-op. The app serves these files itself and starts loading them when a project opens.
 
-To build for a sub-folder (as on GitHub Pages), set `BASE_PATH`, e.g. `BASE_PATH=/Aksharajanani/ npm run build`. The test site at https://virtualvinodh.github.io/Aksharajanani/ is deployed by `.github/workflows/pages.yml` on every push to `claude` or `main`.
+To build for a sub-folder (as on GitHub Pages), set `BASE_PATH`, e.g. `BASE_PATH=/aksharajanani/ npm run build`. The test site at https://virtualvinodh.github.io/aksharajanani/ is deployed by `.github/workflows/pages.yml` on every push to `claude` or `main`.
 
 Other commands:
 
