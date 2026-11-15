@@ -1105,7 +1105,9 @@
         "liga": [
           "സ",
           "്",
-          "റ്റ"
+          "റ",
+          "്",
+          "റ"
         ]
       },
       {
@@ -3402,10 +3404,10 @@
         "name": "്യു",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "്യ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "്യ",
           "ു"
@@ -3415,19 +3417,19 @@
         "name": "്രു",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ര",
+          "്ര",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "്വു",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "്വ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "്വ",
           "ു"
@@ -3437,10 +3439,10 @@
         "name": "ു",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "",
           "ു"
@@ -3466,31 +3468,28 @@
         "name": "ക്കു",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ക",
+          "ക്ക",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്തു",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ത",
+          "ക്ത",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്ഷു",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ",
           "ു"
@@ -3500,31 +3499,28 @@
         "name": "ഗ്ഗു",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്നു",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്മു",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ",
           "ു"
@@ -3534,11 +3530,10 @@
         "name": "ങ്ങു",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ",
           "ു"
@@ -3548,41 +3543,37 @@
         "name": "ങ്കു",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ച്ഛു",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ജു",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ഞു",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ",
           "ു"
@@ -3592,11 +3583,10 @@
         "name": "ഞ്ചു",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച",
           "ു"
@@ -3606,11 +3596,10 @@
         "name": "ഞ്ഞു",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ",
           "ു"
@@ -3620,11 +3609,10 @@
         "name": "ട്ടു",
         "glyphClass": "ligature",
         "liga": [
-          "ട",
-          "്",
-          "ട",
+          "ട്ട",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട",
           "ു"
@@ -3634,11 +3622,10 @@
         "name": "ഡ്ഡു",
         "glyphClass": "ligature",
         "liga": [
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ",
           "ു"
@@ -3648,11 +3635,10 @@
         "name": "ണ്ടു",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട",
           "ു"
@@ -3662,11 +3648,10 @@
         "name": "ണ്ഡു",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ",
           "ു"
@@ -3676,21 +3661,19 @@
         "name": "ണ്ണു",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ണ്മു",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ",
           "ു"
@@ -3700,21 +3683,19 @@
         "name": "ത്തു",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ത",
+          "ത്ത",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്ഥു",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ",
           "ു"
@@ -3724,11 +3705,10 @@
         "name": "ത്മു",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "മ",
+          "ത്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ",
           "ു"
@@ -3738,21 +3718,19 @@
         "name": "ത്നു",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ന",
+          "ത്ന",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ദ്ദു",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ",
           "ു"
@@ -3762,11 +3740,10 @@
         "name": "ദ്ധു",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ",
           "ു"
@@ -3776,21 +3753,19 @@
         "name": "ന്തു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ത",
+          "ന്ത",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്ഥു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ",
           "ു"
@@ -3800,11 +3775,10 @@
         "name": "ന്ദു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ",
           "ു"
@@ -3814,11 +3788,10 @@
         "name": "ന്ധു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ",
           "ു"
@@ -3828,11 +3801,10 @@
         "name": "ന്മു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "മ",
+          "ന്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ",
           "ു"
@@ -3842,21 +3814,19 @@
         "name": "ന്നു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ന",
+          "ന്ന",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്റു",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "റ",
+          "ന്റ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ",
           "ു"
@@ -3866,11 +3836,10 @@
         "name": "ൻ്റു",
         "glyphClass": "ligature",
         "liga": [
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ",
           "ു"
@@ -3880,11 +3849,10 @@
         "name": "പ്പു",
         "glyphClass": "ligature",
         "liga": [
-          "പ",
-          "്",
-          "പ",
+          "പ്പ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ",
           "ു"
@@ -3894,11 +3862,10 @@
         "name": "മ്മു",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "മ",
+          "മ്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ",
           "ു"
@@ -3908,11 +3875,10 @@
         "name": "മ്പു",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "പ",
+          "മ്പ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ",
           "ു"
@@ -3922,11 +3888,10 @@
         "name": "ള്ളു",
         "glyphClass": "ligature",
         "liga": [
-          "ള",
-          "്",
-          "ള",
+          "ള്ള",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള",
           "ു"
@@ -3936,21 +3901,19 @@
         "name": "ശ്ശു",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ശ്ചു",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച",
           "ു"
@@ -3960,11 +3923,10 @@
         "name": "സ്സു",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "സ",
+          "സ്സ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ",
           "ു"
@@ -3974,11 +3936,10 @@
         "name": "സ്ഥു",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ",
           "ു"
@@ -3988,21 +3949,19 @@
         "name": "സ്റ്റു",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്സു",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "സ",
+          "ത്സ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ",
           "ു"
@@ -4012,11 +3971,10 @@
         "name": "ഹ്മു",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ",
           "ു"
@@ -4026,21 +3984,19 @@
         "name": "ഹ്നു",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന",
           "ു"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "റ്റു",
         "glyphClass": "ligature",
         "liga": [
-          "റ",
-          "്",
-          "റ",
+          "റ്റ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ",
           "ു"
@@ -4050,11 +4006,10 @@
         "name": "ബ്ബു",
         "glyphClass": "ligature",
         "liga": [
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ",
           "ു"
@@ -4064,11 +4019,10 @@
         "name": "ച്ചു",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ച",
+          "ച്ച",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച",
           "ു"
@@ -4078,11 +4032,10 @@
         "name": "യ്യു",
         "glyphClass": "ligature",
         "liga": [
-          "യ",
-          "്",
-          "യ",
+          "യ്യ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ",
           "ു"
@@ -4092,11 +4045,10 @@
         "name": "വ്വു",
         "glyphClass": "ligature",
         "liga": [
-          "വ",
-          "്",
-          "വ",
+          "വ്വ",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ",
           "ു"
@@ -4111,10 +4063,10 @@
         "name": "്യൂ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "്യ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ",
           "ൂ"
@@ -4124,19 +4076,19 @@
         "name": "്രൂ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ര",
+          "്ര",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "്വൂ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "്വ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ",
           "ൂ"
@@ -4146,10 +4098,10 @@
         "name": "ൂ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "",
           "ൂ"
@@ -4175,31 +4127,28 @@
         "name": "ക്കൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ക",
+          "ക്ക",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്തൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ത",
+          "ക്ത",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്ഷൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ",
           "ൂ"
@@ -4209,31 +4158,28 @@
         "name": "ഗ്ഗൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്നൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ",
           "ൂ"
@@ -4243,11 +4189,10 @@
         "name": "ങ്ങൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ",
           "ൂ"
@@ -4257,41 +4202,37 @@
         "name": "ങ്കൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ച്ഛൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ജൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ഞൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ",
           "ൂ"
@@ -4301,11 +4242,10 @@
         "name": "ഞ്ചൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച",
           "ൂ"
@@ -4315,11 +4255,10 @@
         "name": "ഞ്ഞൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ",
           "ൂ"
@@ -4329,11 +4268,10 @@
         "name": "ട്ടൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ട",
-          "്",
-          "ട",
+          "ട്ട",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട",
           "ൂ"
@@ -4343,11 +4281,10 @@
         "name": "ഡ്ഡൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ",
           "ൂ"
@@ -4357,11 +4294,10 @@
         "name": "ണ്ടൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട",
           "ൂ"
@@ -4371,11 +4307,10 @@
         "name": "ണ്ഡൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ",
           "ൂ"
@@ -4385,21 +4320,19 @@
         "name": "ണ്ണൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ണ്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ",
           "ൂ"
@@ -4409,21 +4342,19 @@
         "name": "ത്തൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ത",
+          "ത്ത",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്ഥൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ",
           "ൂ"
@@ -4433,11 +4364,10 @@
         "name": "ത്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "മ",
+          "ത്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ",
           "ൂ"
@@ -4447,21 +4377,19 @@
         "name": "ത്നൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ന",
+          "ത്ന",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ദ്ദൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ",
           "ൂ"
@@ -4471,11 +4399,10 @@
         "name": "ദ്ധൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ",
           "ൂ"
@@ -4485,21 +4412,19 @@
         "name": "ന്തൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ത",
+          "ന്ത",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്ഥൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ",
           "ൂ"
@@ -4509,11 +4434,10 @@
         "name": "ന്ദൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ",
           "ൂ"
@@ -4523,11 +4447,10 @@
         "name": "ന്ധൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ",
           "ൂ"
@@ -4537,11 +4460,10 @@
         "name": "ന്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "മ",
+          "ന്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ",
           "ൂ"
@@ -4551,21 +4473,19 @@
         "name": "ന്നൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ന",
+          "ന്ന",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്റൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "റ",
+          "ന്റ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ",
           "ൂ"
@@ -4575,11 +4495,10 @@
         "name": "ൻ്റൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ",
           "ൂ"
@@ -4589,11 +4508,10 @@
         "name": "പ്പൂ",
         "glyphClass": "ligature",
         "liga": [
-          "പ",
-          "്",
-          "പ",
+          "പ്പ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ",
           "ൂ"
@@ -4603,11 +4521,10 @@
         "name": "മ്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "മ",
+          "മ്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ",
           "ൂ"
@@ -4617,11 +4534,10 @@
         "name": "മ്പൂ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "പ",
+          "മ്പ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ",
           "ൂ"
@@ -4631,11 +4547,10 @@
         "name": "ള്ളൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ള",
-          "്",
-          "ള",
+          "ള്ള",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള",
           "ൂ"
@@ -4645,21 +4560,19 @@
         "name": "ശ്ശൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ശ്ചൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച",
           "ൂ"
@@ -4669,11 +4582,10 @@
         "name": "സ്സൂ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "സ",
+          "സ്സ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ",
           "ൂ"
@@ -4683,11 +4595,10 @@
         "name": "സ്ഥൂ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ",
           "ൂ"
@@ -4697,21 +4608,19 @@
         "name": "സ്റ്റൂ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്സൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "സ",
+          "ത്സ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ",
           "ൂ"
@@ -4721,11 +4630,10 @@
         "name": "ഹ്മൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ",
           "ൂ"
@@ -4735,21 +4643,19 @@
         "name": "ഹ്നൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന",
           "ൂ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "റ്റൂ",
         "glyphClass": "ligature",
         "liga": [
-          "റ",
-          "്",
-          "റ",
+          "റ്റ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ",
           "ൂ"
@@ -4759,11 +4665,10 @@
         "name": "ബ്ബൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ",
           "ൂ"
@@ -4773,11 +4678,10 @@
         "name": "ച്ചൂ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ച",
+          "ച്ച",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച",
           "ൂ"
@@ -4787,11 +4691,10 @@
         "name": "യ്യൂ",
         "glyphClass": "ligature",
         "liga": [
-          "യ",
-          "്",
-          "യ",
+          "യ്യ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ",
           "ൂ"
@@ -4801,11 +4704,10 @@
         "name": "വ്വൂ",
         "glyphClass": "ligature",
         "liga": [
-          "വ",
-          "്",
-          "വ",
+          "വ്വ",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ",
           "ൂ"
@@ -4820,10 +4722,10 @@
         "name": "്യൃ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "്യ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ",
           "ൃ"
@@ -4833,19 +4735,19 @@
         "name": "്രൃ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ര",
+          "്ര",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "്വൃ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "്വ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ",
           "ൃ"
@@ -4855,10 +4757,10 @@
         "name": "ൃ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "",
           "ൃ"
@@ -4884,31 +4786,28 @@
         "name": "ക്കൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ക",
+          "ക്ക",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്തൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ത",
+          "ക്ത",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്ഷൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ",
           "ൃ"
@@ -4918,31 +4817,28 @@
         "name": "ഗ്ഗൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്നൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ",
           "ൃ"
@@ -4952,11 +4848,10 @@
         "name": "ങ്ങൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ",
           "ൃ"
@@ -4966,41 +4861,37 @@
         "name": "ങ്കൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ച്ഛൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ജൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ഞൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ",
           "ൃ"
@@ -5010,11 +4901,10 @@
         "name": "ഞ്ചൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച",
           "ൃ"
@@ -5024,11 +4914,10 @@
         "name": "ഞ്ഞൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ",
           "ൃ"
@@ -5038,11 +4927,10 @@
         "name": "ട്ടൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ട",
-          "്",
-          "ട",
+          "ട്ട",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട",
           "ൃ"
@@ -5052,11 +4940,10 @@
         "name": "ഡ്ഡൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ",
           "ൃ"
@@ -5066,11 +4953,10 @@
         "name": "ണ്ടൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട",
           "ൃ"
@@ -5080,11 +4966,10 @@
         "name": "ണ്ഡൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ",
           "ൃ"
@@ -5094,21 +4979,19 @@
         "name": "ണ്ണൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ണ്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ",
           "ൃ"
@@ -5118,21 +5001,19 @@
         "name": "ത്തൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ത",
+          "ത്ത",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്ഥൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ",
           "ൃ"
@@ -5142,11 +5023,10 @@
         "name": "ത്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "മ",
+          "ത്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ",
           "ൃ"
@@ -5156,21 +5036,19 @@
         "name": "ത്നൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ന",
+          "ത്ന",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ദ്ദൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ",
           "ൃ"
@@ -5180,11 +5058,10 @@
         "name": "ദ്ധൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ",
           "ൃ"
@@ -5194,21 +5071,19 @@
         "name": "ന്തൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ത",
+          "ന്ത",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്ഥൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ",
           "ൃ"
@@ -5218,11 +5093,10 @@
         "name": "ന്ദൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ",
           "ൃ"
@@ -5232,11 +5106,10 @@
         "name": "ന്ധൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ",
           "ൃ"
@@ -5246,11 +5119,10 @@
         "name": "ന്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "മ",
+          "ന്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ",
           "ൃ"
@@ -5260,21 +5132,19 @@
         "name": "ന്നൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ന",
+          "ന്ന",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്റൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "റ",
+          "ന്റ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ",
           "ൃ"
@@ -5284,11 +5154,10 @@
         "name": "ൻ്റൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ",
           "ൃ"
@@ -5298,11 +5167,10 @@
         "name": "പ്പൃ",
         "glyphClass": "ligature",
         "liga": [
-          "പ",
-          "്",
-          "പ",
+          "പ്പ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ",
           "ൃ"
@@ -5312,11 +5180,10 @@
         "name": "മ്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "മ",
+          "മ്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ",
           "ൃ"
@@ -5326,11 +5193,10 @@
         "name": "മ്പൃ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "പ",
+          "മ്പ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ",
           "ൃ"
@@ -5340,11 +5206,10 @@
         "name": "ള്ളൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ള",
-          "്",
-          "ള",
+          "ള്ള",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള",
           "ൃ"
@@ -5354,21 +5219,19 @@
         "name": "ശ്ശൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ശ്ചൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച",
           "ൃ"
@@ -5378,11 +5241,10 @@
         "name": "സ്സൃ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "സ",
+          "സ്സ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ",
           "ൃ"
@@ -5392,11 +5254,10 @@
         "name": "സ്ഥൃ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ",
           "ൃ"
@@ -5406,21 +5267,19 @@
         "name": "സ്റ്റൃ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്സൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "സ",
+          "ത്സ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ",
           "ൃ"
@@ -5430,11 +5289,10 @@
         "name": "ഹ്മൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ",
           "ൃ"
@@ -5444,21 +5302,19 @@
         "name": "ഹ്നൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന",
           "ൃ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "റ്റൃ",
         "glyphClass": "ligature",
         "liga": [
-          "റ",
-          "്",
-          "റ",
+          "റ്റ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ",
           "ൃ"
@@ -5468,11 +5324,10 @@
         "name": "ബ്ബൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ",
           "ൃ"
@@ -5482,11 +5337,10 @@
         "name": "ച്ചൃ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ച",
+          "ച്ച",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച",
           "ൃ"
@@ -5496,11 +5350,10 @@
         "name": "യ്യൃ",
         "glyphClass": "ligature",
         "liga": [
-          "യ",
-          "്",
-          "യ",
+          "യ്യ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ",
           "ൃ"
@@ -5510,11 +5363,10 @@
         "name": "വ്വൃ",
         "glyphClass": "ligature",
         "liga": [
-          "വ",
-          "്",
-          "വ",
+          "വ്വ",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ",
           "ൃ"
@@ -5529,10 +5381,10 @@
         "name": "്യൄ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "്യ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ",
           "ൄ"
@@ -5542,19 +5394,19 @@
         "name": "്രൄ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ര",
+          "്ര",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "്വൄ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "്വ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ",
           "ൄ"
@@ -5564,10 +5416,10 @@
         "name": "ൄ",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "",
           "ൄ"
@@ -5593,31 +5445,28 @@
         "name": "ക്കൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ക",
+          "ക്ക",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്തൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ത",
+          "ക്ത",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ക്ഷൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ",
           "ൄ"
@@ -5627,31 +5476,28 @@
         "name": "ഗ്ഗൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്നൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ഗ്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ",
           "ൄ"
@@ -5661,11 +5507,10 @@
         "name": "ങ്ങൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ",
           "ൄ"
@@ -5675,41 +5520,37 @@
         "name": "ങ്കൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ച്ഛൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ജൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ജ്ഞൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ",
           "ൄ"
@@ -5719,11 +5560,10 @@
         "name": "ഞ്ചൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച",
           "ൄ"
@@ -5733,11 +5573,10 @@
         "name": "ഞ്ഞൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ",
           "ൄ"
@@ -5747,11 +5586,10 @@
         "name": "ട്ടൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ട",
-          "്",
-          "ട",
+          "ട്ട",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട",
           "ൄ"
@@ -5761,11 +5599,10 @@
         "name": "ഡ്ഡൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ",
           "ൄ"
@@ -5775,11 +5612,10 @@
         "name": "ണ്ടൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട",
           "ൄ"
@@ -5789,11 +5625,10 @@
         "name": "ണ്ഡൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ",
           "ൄ"
@@ -5803,21 +5638,19 @@
         "name": "ണ്ണൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ണ്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ",
           "ൄ"
@@ -5827,21 +5660,19 @@
         "name": "ത്തൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ത",
+          "ത്ത",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്ഥൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ",
           "ൄ"
@@ -5851,11 +5682,10 @@
         "name": "ത്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "മ",
+          "ത്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ",
           "ൄ"
@@ -5865,21 +5695,19 @@
         "name": "ത്നൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "ന",
+          "ത്ന",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ദ്ദൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ",
           "ൄ"
@@ -5889,11 +5717,10 @@
         "name": "ദ്ധൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ",
           "ൄ"
@@ -5903,21 +5730,19 @@
         "name": "ന്തൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ത",
+          "ന്ത",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്ഥൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ",
           "ൄ"
@@ -5927,11 +5752,10 @@
         "name": "ന്ദൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ",
           "ൄ"
@@ -5941,11 +5765,10 @@
         "name": "ന്ധൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ",
           "ൄ"
@@ -5955,11 +5778,10 @@
         "name": "ന്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "മ",
+          "ന്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ",
           "ൄ"
@@ -5969,21 +5791,19 @@
         "name": "ന്നൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "ന",
+          "ന്ന",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ന്റൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ന",
-          "്",
-          "റ",
+          "ന്റ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ",
           "ൄ"
@@ -5993,11 +5813,10 @@
         "name": "ൻ്റൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ",
           "ൄ"
@@ -6007,11 +5826,10 @@
         "name": "പ്പൄ",
         "glyphClass": "ligature",
         "liga": [
-          "പ",
-          "്",
-          "പ",
+          "പ്പ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ",
           "ൄ"
@@ -6021,11 +5839,10 @@
         "name": "മ്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "മ",
+          "മ്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ",
           "ൄ"
@@ -6035,11 +5852,10 @@
         "name": "മ്പൄ",
         "glyphClass": "ligature",
         "liga": [
-          "മ",
-          "്",
-          "പ",
+          "മ്പ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ",
           "ൄ"
@@ -6049,11 +5865,10 @@
         "name": "ള്ളൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ള",
-          "്",
-          "ള",
+          "ള്ള",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള",
           "ൄ"
@@ -6063,21 +5878,19 @@
         "name": "ശ്ശൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ശ്ചൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച",
           "ൄ"
@@ -6087,11 +5900,10 @@
         "name": "സ്സൄ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "സ",
+          "സ്സ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ",
           "ൄ"
@@ -6101,11 +5913,10 @@
         "name": "സ്ഥൄ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ",
           "ൄ"
@@ -6115,21 +5926,19 @@
         "name": "സ്റ്റൄ",
         "glyphClass": "ligature",
         "liga": [
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "ത്സൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ത",
-          "്",
-          "സ",
+          "ത്സ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ",
           "ൄ"
@@ -6139,11 +5948,10 @@
         "name": "ഹ്മൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ",
           "ൄ"
@@ -6153,21 +5961,19 @@
         "name": "ഹ്നൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന",
           "ൄ"
-        ]
+        ],
+        "gsub": "blws"
       },
       {
         "name": "റ്റൄ",
         "glyphClass": "ligature",
         "liga": [
-          "റ",
-          "്",
-          "റ",
+          "റ്റ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ",
           "ൄ"
@@ -6177,11 +5983,10 @@
         "name": "ബ്ബൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ",
           "ൄ"
@@ -6191,11 +5996,10 @@
         "name": "ച്ചൄ",
         "glyphClass": "ligature",
         "liga": [
-          "ച",
-          "്",
-          "ച",
+          "ച്ച",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച",
           "ൄ"
@@ -6205,11 +6009,10 @@
         "name": "യ്യൄ",
         "glyphClass": "ligature",
         "liga": [
-          "യ",
-          "്",
-          "യ",
+          "യ്യ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ",
           "ൄ"
@@ -6219,11 +6022,10 @@
         "name": "വ്വൄ",
         "glyphClass": "ligature",
         "liga": [
-          "വ",
-          "്",
-          "വ",
+          "വ്വ",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ",
           "ൄ"
@@ -6749,7 +6551,9 @@
         "liga": [
           "സ",
           "്",
-          "റ്റ",
+          "റ",
+          "്",
+          "റ",
           "്",
           "ര"
         ]
@@ -7303,10 +7107,6 @@
         "link": [
           "യ"
         ],
-        "liga": [
-          "്",
-          "യ"
-        ],
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -7339,10 +7139,6 @@
         "link": [
           "ല"
         ],
-        "liga": [
-          "്",
-          "ല"
-        ],
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -7355,10 +7151,6 @@
         "name": "വ.mini",
         "glyphClass": "ligature",
         "link": [
-          "വ"
-        ],
-        "liga": [
-          "്",
           "വ"
         ],
         "compositeTransform": [
@@ -8478,7 +8270,9 @@
           "്",
           "സ",
           "്",
-          "റ്റ"
+          "റ",
+          "്",
+          "റ"
         ],
         "compositeTransform": [
           {
@@ -8660,10 +8454,10 @@
           "കു"
         ],
         "liga": [
-          "്",
-          "ക",
+          "ക.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8676,10 +8470,10 @@
         "name": "ഖു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഖ",
+          "ഖ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഖ.mini",
           "ു.mini"
@@ -8692,10 +8486,10 @@
           "ഗു"
         ],
         "liga": [
-          "്",
-          "ഗ",
+          "ഗ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8708,10 +8502,10 @@
         "name": "ഘു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഘ",
+          "ഘ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഘ.mini",
           "ു.mini"
@@ -8721,10 +8515,10 @@
         "name": "ങു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
+          "ങ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ങ.mini",
           "ു.mini"
@@ -8734,10 +8528,10 @@
         "name": "ചു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
+          "ച.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ച.mini",
           "ു.mini"
@@ -8750,10 +8544,10 @@
           "ഛു"
         ],
         "liga": [
-          "്",
-          "ഛ",
+          "ഛ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8769,10 +8563,10 @@
           "ജു"
         ],
         "liga": [
-          "്",
-          "ജ",
+          "ജ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8785,10 +8579,10 @@
         "name": "ഝു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഝ",
+          "ഝ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഝ.mini",
           "ു.mini"
@@ -8798,10 +8592,10 @@
         "name": "ഞു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
+          "ഞ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ.mini",
           "ു.mini"
@@ -8811,10 +8605,10 @@
         "name": "ടു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
+          "ട.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ട.mini",
           "ു.mini"
@@ -8824,10 +8618,10 @@
         "name": "ഠു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഠ",
+          "ഠ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഠ.mini",
           "ു.mini"
@@ -8837,10 +8631,10 @@
         "name": "ഡു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
+          "ഡ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ.mini",
           "ു.mini"
@@ -8850,10 +8644,10 @@
         "name": "ഢു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഢ",
+          "ഢ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഢ.mini",
           "ു.mini"
@@ -8866,10 +8660,10 @@
           "ണു"
         ],
         "liga": [
-          "്",
-          "ണ",
+          "ണ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8885,10 +8679,10 @@
           "തു"
         ],
         "liga": [
-          "്",
-          "ത",
+          "ത.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8901,10 +8695,10 @@
         "name": "ഥു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഥ",
+          "ഥ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഥ.mini",
           "ു.mini"
@@ -8914,10 +8708,10 @@
         "name": "ദു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
+          "ദ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ദ.mini",
           "ു.mini"
@@ -8927,10 +8721,10 @@
         "name": "ധു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ധ",
+          "ധ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ധ.mini",
           "ു.mini"
@@ -8943,10 +8737,10 @@
           "നു"
         ],
         "liga": [
-          "്",
-          "ന",
+          "ന.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -8959,10 +8753,10 @@
         "name": "പു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
+          "പ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "പ.mini",
           "ു.mini"
@@ -8972,10 +8766,10 @@
         "name": "ഫു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഫ",
+          "ഫ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഫ.mini",
           "ു.mini"
@@ -8985,10 +8779,10 @@
         "name": "ബു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
+          "ബ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ബ.mini",
           "ു.mini"
@@ -9001,10 +8795,10 @@
           "ഭു"
         ],
         "liga": [
-          "്",
-          "ഭ",
+          "ഭ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9017,10 +8811,10 @@
         "name": "മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
+          "മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "മ.mini",
           "ു.mini"
@@ -9030,10 +8824,10 @@
         "name": "യു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "യ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "യ.mini",
           "ു.mini"
@@ -9046,10 +8840,10 @@
           "രു"
         ],
         "liga": [
-          "്",
-          "ര",
+          "ര.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9062,10 +8856,10 @@
         "name": "ലു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "ല.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ല.mini",
           "ു.mini"
@@ -9075,10 +8869,10 @@
         "name": "വു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "വ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "വ.mini",
           "ു.mini"
@@ -9091,10 +8885,10 @@
           "ശു"
         ],
         "liga": [
-          "്",
-          "ശ",
+          "ശ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9107,10 +8901,10 @@
         "name": "ഷു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഷ",
+          "ഷ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഷ.mini",
           "ു.mini"
@@ -9120,10 +8914,10 @@
         "name": "സു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
+          "സ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "സ.mini",
           "ു.mini"
@@ -9136,10 +8930,10 @@
           "ഹു"
         ],
         "liga": [
-          "്",
-          "ഹ",
+          "ഹ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9152,10 +8946,10 @@
         "name": "ളു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
+          "ള.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ള.mini",
           "ു.mini"
@@ -9165,10 +8959,10 @@
         "name": "ഴു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഴ",
+          "ഴ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഴ.mini",
           "ു.mini"
@@ -9178,10 +8972,10 @@
         "name": "റു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
+          "റ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "റ.mini",
           "ു.mini"
@@ -9191,10 +8985,10 @@
         "name": "ഩു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഩ",
+          "ഩ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഩ.mini",
           "ു.mini"
@@ -9204,10 +8998,10 @@
         "name": "ഺു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഺ",
+          "ഺ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഺ.mini",
           "ു.mini"
@@ -9225,10 +9019,10 @@
           "കൂ"
         ],
         "liga": [
-          "്",
-          "ക",
+          "ക.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9241,10 +9035,10 @@
         "name": "ഖൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഖ",
+          "ഖ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഖ.mini",
           "ൂ.mini"
@@ -9257,10 +9051,10 @@
           "ഗൂ"
         ],
         "liga": [
-          "്",
-          "ഗ",
+          "ഗ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9273,10 +9067,10 @@
         "name": "ഘൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഘ",
+          "ഘ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഘ.mini",
           "ൂ.mini"
@@ -9286,10 +9080,10 @@
         "name": "ങൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
+          "ങ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ.mini",
           "ൂ.mini"
@@ -9299,10 +9093,10 @@
         "name": "ചൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
+          "ച.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ച.mini",
           "ൂ.mini"
@@ -9315,10 +9109,10 @@
           "ഛൂ"
         ],
         "liga": [
-          "്",
-          "ഛ",
+          "ഛ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9334,10 +9128,10 @@
           "ജൂ"
         ],
         "liga": [
-          "്",
-          "ജ",
+          "ജ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9350,10 +9144,10 @@
         "name": "ഝൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഝ",
+          "ഝ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഝ.mini",
           "ൂ.mini"
@@ -9363,10 +9157,10 @@
         "name": "ഞൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
+          "ഞ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ.mini",
           "ൂ.mini"
@@ -9376,10 +9170,10 @@
         "name": "ടൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
+          "ട.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ട.mini",
           "ൂ.mini"
@@ -9389,10 +9183,10 @@
         "name": "ഠൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഠ",
+          "ഠ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഠ.mini",
           "ൂ.mini"
@@ -9402,10 +9196,10 @@
         "name": "ഡൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
+          "ഡ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ.mini",
           "ൂ.mini"
@@ -9415,10 +9209,10 @@
         "name": "ഢൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഢ",
+          "ഢ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഢ.mini",
           "ൂ.mini"
@@ -9431,10 +9225,10 @@
           "ണൂ"
         ],
         "liga": [
-          "്",
-          "ണ",
+          "ണ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9450,10 +9244,10 @@
           "തൂ"
         ],
         "liga": [
-          "്",
-          "ത",
+          "ത.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9466,10 +9260,10 @@
         "name": "ഥൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഥ",
+          "ഥ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഥ.mini",
           "ൂ.mini"
@@ -9479,10 +9273,10 @@
         "name": "ദൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
+          "ദ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ.mini",
           "ൂ.mini"
@@ -9492,10 +9286,10 @@
         "name": "ധൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ധ",
+          "ധ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ധ.mini",
           "ൂ.mini"
@@ -9508,10 +9302,10 @@
           "നൂ"
         ],
         "liga": [
-          "്",
-          "ന",
+          "ന.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9524,10 +9318,10 @@
         "name": "പൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
+          "പ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "പ.mini",
           "ൂ.mini"
@@ -9537,10 +9331,10 @@
         "name": "ഫൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഫ",
+          "ഫ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഫ.mini",
           "ൂ.mini"
@@ -9550,10 +9344,10 @@
         "name": "ബൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
+          "ബ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ.mini",
           "ൂ.mini"
@@ -9566,10 +9360,10 @@
           "ഭൂ"
         ],
         "liga": [
-          "്",
-          "ഭ",
+          "ഭ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9582,10 +9376,10 @@
         "name": "മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
+          "മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "മ.mini",
           "ൂ.mini"
@@ -9595,10 +9389,10 @@
         "name": "യൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "യ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "യ.mini",
           "ൂ.mini"
@@ -9611,10 +9405,10 @@
           "രൂ"
         ],
         "liga": [
-          "്",
-          "ര",
+          "ര.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9627,10 +9421,10 @@
         "name": "ലൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "ല.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ല.mini",
           "ൂ.mini"
@@ -9640,10 +9434,10 @@
         "name": "വൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "വ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "വ.mini",
           "ൂ.mini"
@@ -9656,10 +9450,10 @@
           "ശൂ"
         ],
         "liga": [
-          "്",
-          "ശ",
+          "ശ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9672,10 +9466,10 @@
         "name": "ഷൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഷ",
+          "ഷ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഷ.mini",
           "ൂ.mini"
@@ -9685,10 +9479,10 @@
         "name": "സൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
+          "സ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "സ.mini",
           "ൂ.mini"
@@ -9701,10 +9495,10 @@
           "ഹൂ"
         ],
         "liga": [
-          "്",
-          "ഹ",
+          "ഹ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9717,10 +9511,10 @@
         "name": "ളൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
+          "ള.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ള.mini",
           "ൂ.mini"
@@ -9730,10 +9524,10 @@
         "name": "ഴൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഴ",
+          "ഴ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഴ.mini",
           "ൂ.mini"
@@ -9743,10 +9537,10 @@
         "name": "റൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
+          "റ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "റ.mini",
           "ൂ.mini"
@@ -9756,10 +9550,10 @@
         "name": "ഩൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഩ",
+          "ഩ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഩ.mini",
           "ൂ.mini"
@@ -9769,10 +9563,10 @@
         "name": "ഺൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഺ",
+          "ഺ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഺ.mini",
           "ൂ.mini"
@@ -9790,10 +9584,10 @@
           "കൃ"
         ],
         "liga": [
-          "്",
-          "ക",
+          "ക.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9806,10 +9600,10 @@
         "name": "ഖൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഖ",
+          "ഖ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഖ.mini",
           "ൃ.mini"
@@ -9822,10 +9616,10 @@
           "ഗൃ"
         ],
         "liga": [
-          "്",
-          "ഗ",
+          "ഗ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9838,10 +9632,10 @@
         "name": "ഘൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഘ",
+          "ഘ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഘ.mini",
           "ൃ.mini"
@@ -9851,10 +9645,10 @@
         "name": "ങൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
+          "ങ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ.mini",
           "ൃ.mini"
@@ -9864,10 +9658,10 @@
         "name": "ചൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
+          "ച.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ച.mini",
           "ൃ.mini"
@@ -9880,10 +9674,10 @@
           "ഛൃ"
         ],
         "liga": [
-          "്",
-          "ഛ",
+          "ഛ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9899,10 +9693,10 @@
           "ജൃ"
         ],
         "liga": [
-          "്",
-          "ജ",
+          "ജ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -9915,10 +9709,10 @@
         "name": "ഝൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഝ",
+          "ഝ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഝ.mini",
           "ൃ.mini"
@@ -9928,10 +9722,10 @@
         "name": "ഞൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
+          "ഞ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ.mini",
           "ൃ.mini"
@@ -9941,10 +9735,10 @@
         "name": "ടൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
+          "ട.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ട.mini",
           "ൃ.mini"
@@ -9954,10 +9748,10 @@
         "name": "ഠൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഠ",
+          "ഠ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഠ.mini",
           "ൃ.mini"
@@ -9967,10 +9761,10 @@
         "name": "ഡൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
+          "ഡ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ.mini",
           "ൃ.mini"
@@ -9980,10 +9774,10 @@
         "name": "ഢൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഢ",
+          "ഢ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഢ.mini",
           "ൃ.mini"
@@ -9996,10 +9790,10 @@
           "ണൃ"
         ],
         "liga": [
-          "്",
-          "ണ",
+          "ണ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10015,10 +9809,10 @@
           "തൃ"
         ],
         "liga": [
-          "്",
-          "ത",
+          "ത.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10031,10 +9825,10 @@
         "name": "ഥൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഥ",
+          "ഥ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഥ.mini",
           "ൃ.mini"
@@ -10044,10 +9838,10 @@
         "name": "ദൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
+          "ദ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ.mini",
           "ൃ.mini"
@@ -10057,10 +9851,10 @@
         "name": "ധൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ധ",
+          "ധ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ധ.mini",
           "ൃ.mini"
@@ -10073,10 +9867,10 @@
           "നൃ"
         ],
         "liga": [
-          "്",
-          "ന",
+          "ന.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10089,10 +9883,10 @@
         "name": "പൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
+          "പ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "പ.mini",
           "ൃ.mini"
@@ -10102,10 +9896,10 @@
         "name": "ഫൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഫ",
+          "ഫ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഫ.mini",
           "ൃ.mini"
@@ -10115,10 +9909,10 @@
         "name": "ബൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
+          "ബ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ.mini",
           "ൃ.mini"
@@ -10131,10 +9925,10 @@
           "ഭൃ"
         ],
         "liga": [
-          "്",
-          "ഭ",
+          "ഭ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10147,10 +9941,10 @@
         "name": "മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
+          "മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "മ.mini",
           "ൃ.mini"
@@ -10160,10 +9954,10 @@
         "name": "യൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "യ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "യ.mini",
           "ൃ.mini"
@@ -10176,10 +9970,10 @@
           "രൃ"
         ],
         "liga": [
-          "്",
-          "ര",
+          "ര.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10192,10 +9986,10 @@
         "name": "ലൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "ല.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ല.mini",
           "ൃ.mini"
@@ -10205,10 +9999,10 @@
         "name": "വൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "വ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "വ.mini",
           "ൃ.mini"
@@ -10221,10 +10015,10 @@
           "ശൃ"
         ],
         "liga": [
-          "്",
-          "ശ",
+          "ശ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10237,10 +10031,10 @@
         "name": "ഷൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഷ",
+          "ഷ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഷ.mini",
           "ൃ.mini"
@@ -10250,10 +10044,10 @@
         "name": "സൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
+          "സ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "സ.mini",
           "ൃ.mini"
@@ -10266,10 +10060,10 @@
           "ഹൃ"
         ],
         "liga": [
-          "്",
-          "ഹ",
+          "ഹ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10282,10 +10076,10 @@
         "name": "ളൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
+          "ള.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ള.mini",
           "ൃ.mini"
@@ -10295,10 +10089,10 @@
         "name": "ഴൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഴ",
+          "ഴ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഴ.mini",
           "ൃ.mini"
@@ -10308,10 +10102,10 @@
         "name": "റൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
+          "റ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "റ.mini",
           "ൃ.mini"
@@ -10321,10 +10115,10 @@
         "name": "ഩൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഩ",
+          "ഩ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഩ.mini",
           "ൃ.mini"
@@ -10334,10 +10128,10 @@
         "name": "ഺൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഺ",
+          "ഺ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഺ.mini",
           "ൃ.mini"
@@ -10355,10 +10149,10 @@
           "കൄ"
         ],
         "liga": [
-          "്",
-          "ക",
+          "ക.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10371,10 +10165,10 @@
         "name": "ഖൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഖ",
+          "ഖ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഖ.mini",
           "ൄ.mini"
@@ -10387,10 +10181,10 @@
           "ഗൄ"
         ],
         "liga": [
-          "്",
-          "ഗ",
+          "ഗ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10403,10 +10197,10 @@
         "name": "ഘൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഘ",
+          "ഘ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഘ.mini",
           "ൄ.mini"
@@ -10416,10 +10210,10 @@
         "name": "ങൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
+          "ങ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ.mini",
           "ൄ.mini"
@@ -10429,10 +10223,10 @@
         "name": "ചൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
+          "ച.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ച.mini",
           "ൄ.mini"
@@ -10445,10 +10239,10 @@
           "ഛൄ"
         ],
         "liga": [
-          "്",
-          "ഛ",
+          "ഛ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10464,10 +10258,10 @@
           "ജൄ"
         ],
         "liga": [
-          "്",
-          "ജ",
+          "ജ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10480,10 +10274,10 @@
         "name": "ഝൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഝ",
+          "ഝ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഝ.mini",
           "ൄ.mini"
@@ -10493,10 +10287,10 @@
         "name": "ഞൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
+          "ഞ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ.mini",
           "ൄ.mini"
@@ -10506,10 +10300,10 @@
         "name": "ടൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
+          "ട.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ട.mini",
           "ൄ.mini"
@@ -10519,10 +10313,10 @@
         "name": "ഠൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഠ",
+          "ഠ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഠ.mini",
           "ൄ.mini"
@@ -10532,10 +10326,10 @@
         "name": "ഡൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
+          "ഡ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ.mini",
           "ൄ.mini"
@@ -10545,10 +10339,10 @@
         "name": "ഢൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഢ",
+          "ഢ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഢ.mini",
           "ൄ.mini"
@@ -10561,10 +10355,10 @@
           "ണൄ"
         ],
         "liga": [
-          "്",
-          "ണ",
+          "ണ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10580,10 +10374,10 @@
           "തൄ"
         ],
         "liga": [
-          "്",
-          "ത",
+          "ത.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10596,10 +10390,10 @@
         "name": "ഥൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഥ",
+          "ഥ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഥ.mini",
           "ൄ.mini"
@@ -10609,10 +10403,10 @@
         "name": "ദൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
+          "ദ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ.mini",
           "ൄ.mini"
@@ -10622,10 +10416,10 @@
         "name": "ധൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ധ",
+          "ധ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ധ.mini",
           "ൄ.mini"
@@ -10638,10 +10432,10 @@
           "നൄ"
         ],
         "liga": [
-          "്",
-          "ന",
+          "ന.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10654,10 +10448,10 @@
         "name": "പൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
+          "പ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "പ.mini",
           "ൄ.mini"
@@ -10667,10 +10461,10 @@
         "name": "ഫൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഫ",
+          "ഫ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഫ.mini",
           "ൄ.mini"
@@ -10680,10 +10474,10 @@
         "name": "ബൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
+          "ബ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ.mini",
           "ൄ.mini"
@@ -10696,10 +10490,10 @@
           "ഭൄ"
         ],
         "liga": [
-          "്",
-          "ഭ",
+          "ഭ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10712,10 +10506,10 @@
         "name": "മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
+          "മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "മ.mini",
           "ൄ.mini"
@@ -10725,10 +10519,10 @@
         "name": "യൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
+          "യ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "യ.mini",
           "ൄ.mini"
@@ -10741,10 +10535,10 @@
           "രൄ"
         ],
         "liga": [
-          "്",
-          "ര",
+          "ര.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10757,10 +10551,10 @@
         "name": "ലൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ല",
+          "ല.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ല.mini",
           "ൄ.mini"
@@ -10770,10 +10564,10 @@
         "name": "വൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
+          "വ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "വ.mini",
           "ൄ.mini"
@@ -10786,10 +10580,10 @@
           "ശൄ"
         ],
         "liga": [
-          "്",
-          "ശ",
+          "ശ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10802,10 +10596,10 @@
         "name": "ഷൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഷ",
+          "ഷ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഷ.mini",
           "ൄ.mini"
@@ -10815,10 +10609,10 @@
         "name": "സൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
+          "സ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "സ.mini",
           "ൄ.mini"
@@ -10831,10 +10625,10 @@
           "ഹൄ"
         ],
         "liga": [
-          "്",
-          "ഹ",
+          "ഹ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -10847,10 +10641,10 @@
         "name": "ളൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
+          "ള.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ള.mini",
           "ൄ.mini"
@@ -10860,10 +10654,10 @@
         "name": "ഴൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഴ",
+          "ഴ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഴ.mini",
           "ൄ.mini"
@@ -10873,10 +10667,10 @@
         "name": "റൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
+          "റ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "റ.mini",
           "ൄ.mini"
@@ -10886,10 +10680,10 @@
         "name": "ഩൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഩ",
+          "ഩ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഩ.mini",
           "ൄ.mini"
@@ -10899,10 +10693,10 @@
         "name": "ഺൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഺ",
+          "ഺ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഺ.mini",
           "ൄ.mini"
@@ -11419,12 +11213,6 @@
         "link": [
           "യ്ര"
         ],
-        "liga": [
-          "്",
-          "യ",
-          "്",
-          "ര"
-        ],
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11438,12 +11226,6 @@
         "glyphClass": "ligature",
         "link": [
           "ര്ര"
-        ],
-        "liga": [
-          "്",
-          "ര",
-          "്",
-          "ര"
         ],
         "compositeTransform": [
           {
@@ -11459,12 +11241,6 @@
         "link": [
           "ല്ര"
         ],
-        "liga": [
-          "്",
-          "ല",
-          "്",
-          "ര"
-        ],
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11478,12 +11254,6 @@
         "glyphClass": "ligature",
         "link": [
           "വ്ര"
-        ],
-        "liga": [
-          "്",
-          "വ",
-          "്",
-          "ര"
         ],
         "compositeTransform": [
           {
@@ -11682,11 +11452,10 @@
         "name": "്യു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "യ",
+          "്യ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "്യ.mini",
           "ു.mini"
@@ -11699,11 +11468,10 @@
           "്രു"
         ],
         "liga": [
-          "്",
-          "്",
-          "ര",
+          "്ര.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11716,11 +11484,10 @@
         "name": "്വു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "വ",
+          "്വ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "്വ.mini",
           "ു.mini"
@@ -11730,11 +11497,10 @@
         "name": "ു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "ല",
+          ".mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           ".mini",
           "ു.mini"
@@ -11747,10 +11513,10 @@
           "ു"
         ],
         "liga": [
-          "്",
-          "",
+          ".mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11766,10 +11532,10 @@
           "ൎു"
         ],
         "liga": [
-          "്",
-          "ൎ",
+          "ൎ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11785,12 +11551,10 @@
           "ക്കു"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ക",
+          "ക്ക.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11806,12 +11570,10 @@
           "ക്തു"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ത",
+          "ക്ത.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11824,12 +11586,10 @@
         "name": "ക്ഷു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ.mini",
           "ു.mini"
@@ -11842,12 +11602,10 @@
           "ഗ്ഗു"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11863,12 +11621,10 @@
           "ഗ്നു"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11881,12 +11637,10 @@
         "name": "ഗ്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ.mini",
           "ു.mini"
@@ -11896,12 +11650,10 @@
         "name": "ങ്ങു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ.mini",
           "ു.mini"
@@ -11914,12 +11666,10 @@
           "ങ്കു"
         ],
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11935,12 +11685,10 @@
           "ച്ഛു"
         ],
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11956,12 +11704,10 @@
           "ജ്ജു"
         ],
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -11974,12 +11720,10 @@
         "name": "ജ്ഞു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ.mini",
           "ു.mini"
@@ -11989,12 +11733,10 @@
         "name": "ഞ്ചു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച.mini",
           "ു.mini"
@@ -12004,12 +11746,10 @@
         "name": "ഞ്ഞു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ.mini",
           "ു.mini"
@@ -12019,12 +11759,10 @@
         "name": "ട്ടു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
-          "്",
-          "ട",
+          "ട്ട.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട.mini",
           "ു.mini"
@@ -12034,12 +11772,10 @@
         "name": "ഡ്ഡു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ.mini",
           "ു.mini"
@@ -12049,12 +11785,10 @@
         "name": "ണ്ടു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട.mini",
           "ു.mini"
@@ -12064,12 +11798,10 @@
         "name": "ണ്ഡു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ.mini",
           "ു.mini"
@@ -12082,12 +11814,10 @@
           "ണ്ണു"
         ],
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12100,12 +11830,10 @@
         "name": "ണ്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ.mini",
           "ു.mini"
@@ -12118,12 +11846,10 @@
           "ത്തു"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ത",
+          "ത്ത.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12136,12 +11862,10 @@
         "name": "ത്ഥു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ.mini",
           "ു.mini"
@@ -12151,12 +11875,10 @@
         "name": "ത്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "മ",
+          "ത്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ.mini",
           "ു.mini"
@@ -12169,12 +11891,10 @@
           "ത്നു"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ന",
+          "ത്ന.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12187,12 +11907,10 @@
         "name": "ദ്ദു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ.mini",
           "ു.mini"
@@ -12202,12 +11920,10 @@
         "name": "ദ്ധു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ.mini",
           "ു.mini"
@@ -12220,12 +11936,10 @@
           "ന്തു"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ത",
+          "ന്ത.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12238,12 +11952,10 @@
         "name": "ന്ഥു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ.mini",
           "ു.mini"
@@ -12253,12 +11965,10 @@
         "name": "ന്ദു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ.mini",
           "ു.mini"
@@ -12268,12 +11978,10 @@
         "name": "ന്ധു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ.mini",
           "ു.mini"
@@ -12283,12 +11991,10 @@
         "name": "ന്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "മ",
+          "ന്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ.mini",
           "ു.mini"
@@ -12301,12 +12007,10 @@
           "ന്നു"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ന",
+          "ന്ന.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12319,12 +12023,10 @@
         "name": "ന്റു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "റ",
+          "ന്റ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ.mini",
           "ു.mini"
@@ -12334,12 +12036,10 @@
         "name": "ൻ്റു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ.mini",
           "ു.mini"
@@ -12349,12 +12049,10 @@
         "name": "പ്പു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
-          "്",
-          "പ",
+          "പ്പ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ.mini",
           "ു.mini"
@@ -12364,12 +12062,10 @@
         "name": "മ്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "മ",
+          "മ്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ.mini",
           "ു.mini"
@@ -12379,12 +12075,10 @@
         "name": "മ്പു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "പ",
+          "മ്പ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ.mini",
           "ു.mini"
@@ -12394,12 +12088,10 @@
         "name": "ള്ളു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
-          "്",
-          "ള",
+          "ള്ള.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള.mini",
           "ു.mini"
@@ -12412,12 +12104,10 @@
           "ശ്ശു"
         ],
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12430,12 +12120,10 @@
         "name": "ശ്ചു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച.mini",
           "ു.mini"
@@ -12445,12 +12133,10 @@
         "name": "സ്സു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "സ",
+          "സ്സ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ.mini",
           "ു.mini"
@@ -12460,12 +12146,10 @@
         "name": "സ്ഥു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ.mini",
           "ു.mini"
@@ -12478,12 +12162,10 @@
           "സ്റ്റു"
         ],
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12496,12 +12178,10 @@
         "name": "ത്സു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "സ",
+          "ത്സ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ.mini",
           "ു.mini"
@@ -12511,12 +12191,10 @@
         "name": "ഹ്മു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ.mini",
           "ു.mini"
@@ -12529,12 +12207,10 @@
           "ഹ്നു"
         ],
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന.mini",
           "ു"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12547,12 +12223,10 @@
         "name": "റ്റു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
-          "്",
-          "റ",
+          "റ്റ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ.mini",
           "ു.mini"
@@ -12562,12 +12236,10 @@
         "name": "ബ്ബു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ.mini",
           "ു.mini"
@@ -12577,12 +12249,10 @@
         "name": "ച്ചു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ച",
+          "ച്ച.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച.mini",
           "ു.mini"
@@ -12592,12 +12262,10 @@
         "name": "യ്യു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
-          "്",
-          "യ",
+          "യ്യ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ.mini",
           "ു.mini"
@@ -12607,12 +12275,10 @@
         "name": "വ്വു.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
-          "്",
-          "വ",
+          "വ്വ.mini",
           "ു"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ.mini",
           "ു.mini"
@@ -12627,11 +12293,10 @@
         "name": "്യൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "യ",
+          "്യ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ.mini",
           "ൂ.mini"
@@ -12644,11 +12309,10 @@
           "്രൂ"
         ],
         "liga": [
-          "്",
-          "്",
-          "ര",
+          "്ര.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12661,11 +12325,10 @@
         "name": "്വൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "വ",
+          "്വ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ.mini",
           "ൂ.mini"
@@ -12675,11 +12338,10 @@
         "name": "ൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "ല",
+          ".mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           ".mini",
           "ൂ.mini"
@@ -12692,10 +12354,10 @@
           "ൂ"
         ],
         "liga": [
-          "്",
-          "",
+          ".mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12711,10 +12373,10 @@
           "ൎൂ"
         ],
         "liga": [
-          "്",
-          "ൎ",
+          "ൎ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12730,12 +12392,10 @@
           "ക്കൂ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ക",
+          "ക്ക.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12751,12 +12411,10 @@
           "ക്തൂ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ത",
+          "ക്ത.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12769,12 +12427,10 @@
         "name": "ക്ഷൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ.mini",
           "ൂ.mini"
@@ -12787,12 +12443,10 @@
           "ഗ്ഗൂ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12808,12 +12462,10 @@
           "ഗ്നൂ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12826,12 +12478,10 @@
         "name": "ഗ്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ.mini",
           "ൂ.mini"
@@ -12841,12 +12491,10 @@
         "name": "ങ്ങൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ.mini",
           "ൂ.mini"
@@ -12859,12 +12507,10 @@
           "ങ്കൂ"
         ],
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12880,12 +12526,10 @@
           "ച്ഛൂ"
         ],
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12901,12 +12545,10 @@
           "ജ്ജൂ"
         ],
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -12919,12 +12561,10 @@
         "name": "ജ്ഞൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ.mini",
           "ൂ.mini"
@@ -12934,12 +12574,10 @@
         "name": "ഞ്ചൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച.mini",
           "ൂ.mini"
@@ -12949,12 +12587,10 @@
         "name": "ഞ്ഞൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ.mini",
           "ൂ.mini"
@@ -12964,12 +12600,10 @@
         "name": "ട്ടൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
-          "്",
-          "ട",
+          "ട്ട.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട.mini",
           "ൂ.mini"
@@ -12979,12 +12613,10 @@
         "name": "ഡ്ഡൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ.mini",
           "ൂ.mini"
@@ -12994,12 +12626,10 @@
         "name": "ണ്ടൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട.mini",
           "ൂ.mini"
@@ -13009,12 +12639,10 @@
         "name": "ണ്ഡൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ.mini",
           "ൂ.mini"
@@ -13027,12 +12655,10 @@
           "ണ്ണൂ"
         ],
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13045,12 +12671,10 @@
         "name": "ണ്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ.mini",
           "ൂ.mini"
@@ -13063,12 +12687,10 @@
           "ത്തൂ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ത",
+          "ത്ത.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13081,12 +12703,10 @@
         "name": "ത്ഥൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ.mini",
           "ൂ.mini"
@@ -13096,12 +12716,10 @@
         "name": "ത്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "മ",
+          "ത്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ.mini",
           "ൂ.mini"
@@ -13114,12 +12732,10 @@
           "ത്നൂ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ന",
+          "ത്ന.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13132,12 +12748,10 @@
         "name": "ദ്ദൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ.mini",
           "ൂ.mini"
@@ -13147,12 +12761,10 @@
         "name": "ദ്ധൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ.mini",
           "ൂ.mini"
@@ -13165,12 +12777,10 @@
           "ന്തൂ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ത",
+          "ന്ത.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13183,12 +12793,10 @@
         "name": "ന്ഥൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ.mini",
           "ൂ.mini"
@@ -13198,12 +12806,10 @@
         "name": "ന്ദൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ.mini",
           "ൂ.mini"
@@ -13213,12 +12819,10 @@
         "name": "ന്ധൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ.mini",
           "ൂ.mini"
@@ -13228,12 +12832,10 @@
         "name": "ന്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "മ",
+          "ന്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ.mini",
           "ൂ.mini"
@@ -13246,12 +12848,10 @@
           "ന്നൂ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ന",
+          "ന്ന.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13264,12 +12864,10 @@
         "name": "ന്റൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "റ",
+          "ന്റ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ.mini",
           "ൂ.mini"
@@ -13279,12 +12877,10 @@
         "name": "ൻ്റൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ.mini",
           "ൂ.mini"
@@ -13294,12 +12890,10 @@
         "name": "പ്പൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
-          "്",
-          "പ",
+          "പ്പ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ.mini",
           "ൂ.mini"
@@ -13309,12 +12903,10 @@
         "name": "മ്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "മ",
+          "മ്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ.mini",
           "ൂ.mini"
@@ -13324,12 +12916,10 @@
         "name": "മ്പൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "പ",
+          "മ്പ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ.mini",
           "ൂ.mini"
@@ -13339,12 +12929,10 @@
         "name": "ള്ളൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
-          "്",
-          "ള",
+          "ള്ള.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള.mini",
           "ൂ.mini"
@@ -13357,12 +12945,10 @@
           "ശ്ശൂ"
         ],
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13375,12 +12961,10 @@
         "name": "ശ്ചൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച.mini",
           "ൂ.mini"
@@ -13390,12 +12974,10 @@
         "name": "സ്സൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "സ",
+          "സ്സ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ.mini",
           "ൂ.mini"
@@ -13405,12 +12987,10 @@
         "name": "സ്ഥൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ.mini",
           "ൂ.mini"
@@ -13423,12 +13003,10 @@
           "സ്റ്റൂ"
         ],
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13441,12 +13019,10 @@
         "name": "ത്സൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "സ",
+          "ത്സ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ.mini",
           "ൂ.mini"
@@ -13456,12 +13032,10 @@
         "name": "ഹ്മൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ.mini",
           "ൂ.mini"
@@ -13474,12 +13048,10 @@
           "ഹ്നൂ"
         ],
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13492,12 +13064,10 @@
         "name": "റ്റൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
-          "്",
-          "റ",
+          "റ്റ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ.mini",
           "ൂ.mini"
@@ -13507,12 +13077,10 @@
         "name": "ബ്ബൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ.mini",
           "ൂ.mini"
@@ -13522,12 +13090,10 @@
         "name": "ച്ചൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ച",
+          "ച്ച.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച.mini",
           "ൂ.mini"
@@ -13537,12 +13103,10 @@
         "name": "യ്യൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
-          "്",
-          "യ",
+          "യ്യ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ.mini",
           "ൂ.mini"
@@ -13552,12 +13116,10 @@
         "name": "വ്വൂ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
-          "്",
-          "വ",
+          "വ്വ.mini",
           "ൂ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ.mini",
           "ൂ.mini"
@@ -13572,11 +13134,10 @@
         "name": "്യൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "യ",
+          "്യ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ.mini",
           "ൃ.mini"
@@ -13589,11 +13150,10 @@
           "്രൃ"
         ],
         "liga": [
-          "്",
-          "്",
-          "ര",
+          "്ര.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13606,11 +13166,10 @@
         "name": "്വൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "വ",
+          "്വ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ.mini",
           "ൃ.mini"
@@ -13620,11 +13179,10 @@
         "name": "ൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "ല",
+          ".mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           ".mini",
           "ൃ.mini"
@@ -13637,10 +13195,10 @@
           "ൃ"
         ],
         "liga": [
-          "്",
-          "",
+          ".mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13656,10 +13214,10 @@
           "ൎൃ"
         ],
         "liga": [
-          "്",
-          "ൎ",
+          "ൎ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13675,12 +13233,10 @@
           "ക്കൃ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ക",
+          "ക്ക.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13696,12 +13252,10 @@
           "ക്തൃ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ത",
+          "ക്ത.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13714,12 +13268,10 @@
         "name": "ക്ഷൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ.mini",
           "ൃ.mini"
@@ -13732,12 +13284,10 @@
           "ഗ്ഗൃ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13753,12 +13303,10 @@
           "ഗ്നൃ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13771,12 +13319,10 @@
         "name": "ഗ്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ.mini",
           "ൃ.mini"
@@ -13786,12 +13332,10 @@
         "name": "ങ്ങൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ.mini",
           "ൃ.mini"
@@ -13804,12 +13348,10 @@
           "ങ്കൃ"
         ],
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13825,12 +13367,10 @@
           "ച്ഛൃ"
         ],
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13846,12 +13386,10 @@
           "ജ്ജൃ"
         ],
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13864,12 +13402,10 @@
         "name": "ജ്ഞൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ.mini",
           "ൃ.mini"
@@ -13879,12 +13415,10 @@
         "name": "ഞ്ചൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച.mini",
           "ൃ.mini"
@@ -13894,12 +13428,10 @@
         "name": "ഞ്ഞൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ.mini",
           "ൃ.mini"
@@ -13909,12 +13441,10 @@
         "name": "ട്ടൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
-          "്",
-          "ട",
+          "ട്ട.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട.mini",
           "ൃ.mini"
@@ -13924,12 +13454,10 @@
         "name": "ഡ്ഡൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ.mini",
           "ൃ.mini"
@@ -13939,12 +13467,10 @@
         "name": "ണ്ടൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട.mini",
           "ൃ.mini"
@@ -13954,12 +13480,10 @@
         "name": "ണ്ഡൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ.mini",
           "ൃ.mini"
@@ -13972,12 +13496,10 @@
           "ണ്ണൃ"
         ],
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -13990,12 +13512,10 @@
         "name": "ണ്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ.mini",
           "ൃ.mini"
@@ -14008,12 +13528,10 @@
           "ത്തൃ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ത",
+          "ത്ത.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14026,12 +13544,10 @@
         "name": "ത്ഥൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ.mini",
           "ൃ.mini"
@@ -14041,12 +13557,10 @@
         "name": "ത്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "മ",
+          "ത്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ.mini",
           "ൃ.mini"
@@ -14059,12 +13573,10 @@
           "ത്നൃ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ന",
+          "ത്ന.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14077,12 +13589,10 @@
         "name": "ദ്ദൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ.mini",
           "ൃ.mini"
@@ -14092,12 +13602,10 @@
         "name": "ദ്ധൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ.mini",
           "ൃ.mini"
@@ -14110,12 +13618,10 @@
           "ന്തൃ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ത",
+          "ന്ത.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14128,12 +13634,10 @@
         "name": "ന്ഥൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ.mini",
           "ൃ.mini"
@@ -14143,12 +13647,10 @@
         "name": "ന്ദൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ.mini",
           "ൃ.mini"
@@ -14158,12 +13660,10 @@
         "name": "ന്ധൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ.mini",
           "ൃ.mini"
@@ -14173,12 +13673,10 @@
         "name": "ന്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "മ",
+          "ന്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ.mini",
           "ൃ.mini"
@@ -14191,12 +13689,10 @@
           "ന്നൃ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ന",
+          "ന്ന.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14209,12 +13705,10 @@
         "name": "ന്റൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "റ",
+          "ന്റ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ.mini",
           "ൃ.mini"
@@ -14224,12 +13718,10 @@
         "name": "ൻ്റൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ.mini",
           "ൃ.mini"
@@ -14239,12 +13731,10 @@
         "name": "പ്പൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
-          "്",
-          "പ",
+          "പ്പ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ.mini",
           "ൃ.mini"
@@ -14254,12 +13744,10 @@
         "name": "മ്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "മ",
+          "മ്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ.mini",
           "ൃ.mini"
@@ -14269,12 +13757,10 @@
         "name": "മ്പൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "പ",
+          "മ്പ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ.mini",
           "ൃ.mini"
@@ -14284,12 +13770,10 @@
         "name": "ള്ളൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
-          "്",
-          "ള",
+          "ള്ള.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള.mini",
           "ൃ.mini"
@@ -14302,12 +13786,10 @@
           "ശ്ശൃ"
         ],
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14320,12 +13802,10 @@
         "name": "ശ്ചൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച.mini",
           "ൃ.mini"
@@ -14335,12 +13815,10 @@
         "name": "സ്സൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "സ",
+          "സ്സ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ.mini",
           "ൃ.mini"
@@ -14350,12 +13828,10 @@
         "name": "സ്ഥൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ.mini",
           "ൃ.mini"
@@ -14368,12 +13844,10 @@
           "സ്റ്റൃ"
         ],
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14386,12 +13860,10 @@
         "name": "ത്സൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "സ",
+          "ത്സ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ.mini",
           "ൃ.mini"
@@ -14401,12 +13873,10 @@
         "name": "ഹ്മൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ.mini",
           "ൃ.mini"
@@ -14419,12 +13889,10 @@
           "ഹ്നൃ"
         ],
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14437,12 +13905,10 @@
         "name": "റ്റൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
-          "്",
-          "റ",
+          "റ്റ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ.mini",
           "ൃ.mini"
@@ -14452,12 +13918,10 @@
         "name": "ബ്ബൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ.mini",
           "ൃ.mini"
@@ -14467,12 +13931,10 @@
         "name": "ച്ചൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ച",
+          "ച്ച.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച.mini",
           "ൃ.mini"
@@ -14482,12 +13944,10 @@
         "name": "യ്യൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
-          "്",
-          "യ",
+          "യ്യ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ.mini",
           "ൃ.mini"
@@ -14497,12 +13957,10 @@
         "name": "വ്വൃ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
-          "്",
-          "വ",
+          "വ്വ.mini",
           "ൃ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ.mini",
           "ൃ.mini"
@@ -14517,11 +13975,10 @@
         "name": "്യൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "യ",
+          "്യ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "്യ.mini",
           "ൄ.mini"
@@ -14534,11 +13991,10 @@
           "്രൄ"
         ],
         "liga": [
-          "്",
-          "്",
-          "ര",
+          "്ര.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14551,11 +14007,10 @@
         "name": "്വൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "വ",
+          "്വ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "്വ.mini",
           "ൄ.mini"
@@ -14565,11 +14020,10 @@
         "name": "ൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "്",
-          "ല",
+          ".mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           ".mini",
           "ൄ.mini"
@@ -14582,10 +14036,10 @@
           "ൄ"
         ],
         "liga": [
-          "്",
-          "",
+          ".mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14601,10 +14055,10 @@
           "ൎൄ"
         ],
         "liga": [
-          "്",
-          "ൎ",
+          "ൎ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14620,12 +14074,10 @@
           "ക്കൄ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ക",
+          "ക്ക.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14641,12 +14093,10 @@
           "ക്തൄ"
         ],
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ത",
+          "ക്ത.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14659,12 +14109,10 @@
         "name": "ക്ഷൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ക",
-          "്",
-          "ഷ",
+          "ക്ഷ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ക്ഷ.mini",
           "ൄ.mini"
@@ -14677,12 +14125,10 @@
           "ഗ്ഗൄ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ഗ",
+          "ഗ്ഗ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14698,12 +14144,10 @@
           "ഗ്നൄ"
         ],
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "ന",
+          "ഗ്ന.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14716,12 +14160,10 @@
         "name": "ഗ്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഗ",
-          "്",
-          "മ",
+          "ഗ്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഗ്മ.mini",
           "ൄ.mini"
@@ -14731,12 +14173,10 @@
         "name": "ങ്ങൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ങ",
+          "ങ്ങ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ങ്ങ.mini",
           "ൄ.mini"
@@ -14749,12 +14189,10 @@
           "ങ്കൄ"
         ],
         "liga": [
-          "്",
-          "ങ",
-          "്",
-          "ക",
+          "ങ്ക.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14770,12 +14208,10 @@
           "ച്ഛൄ"
         ],
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ഛ",
+          "ച്ഛ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14791,12 +14227,10 @@
           "ജ്ജൄ"
         ],
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ജ",
+          "ജ്ജ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14809,12 +14243,10 @@
         "name": "ജ്ഞൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ജ",
-          "്",
-          "ഞ",
+          "ജ്ഞ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ജ്ഞ.mini",
           "ൄ.mini"
@@ -14824,12 +14256,10 @@
         "name": "ഞ്ചൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ച",
+          "ഞ്ച.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ച.mini",
           "ൄ.mini"
@@ -14839,12 +14269,10 @@
         "name": "ഞ്ഞൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഞ",
-          "്",
-          "ഞ",
+          "ഞ്ഞ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഞ്ഞ.mini",
           "ൄ.mini"
@@ -14854,12 +14282,10 @@
         "name": "ട്ടൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ട",
-          "്",
-          "ട",
+          "ട്ട.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ട്ട.mini",
           "ൄ.mini"
@@ -14869,12 +14295,10 @@
         "name": "ഡ്ഡൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഡ",
-          "്",
-          "ഡ",
+          "ഡ്ഡ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഡ്ഡ.mini",
           "ൄ.mini"
@@ -14884,12 +14308,10 @@
         "name": "ണ്ടൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ട",
+          "ണ്ട.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ട.mini",
           "ൄ.mini"
@@ -14899,12 +14321,10 @@
         "name": "ണ്ഡൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ഡ",
+          "ണ്ഡ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്ഡ.mini",
           "ൄ.mini"
@@ -14917,12 +14337,10 @@
           "ണ്ണൄ"
         ],
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "ണ",
+          "ണ്ണ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14935,12 +14353,10 @@
         "name": "ണ്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ണ",
-          "്",
-          "മ",
+          "ണ്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ണ്മ.mini",
           "ൄ.mini"
@@ -14953,12 +14369,10 @@
           "ത്തൄ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ത",
+          "ത്ത.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -14971,12 +14385,10 @@
         "name": "ത്ഥൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ഥ",
+          "ത്ഥ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്ഥ.mini",
           "ൄ.mini"
@@ -14986,12 +14398,10 @@
         "name": "ത്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "മ",
+          "ത്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്മ.mini",
           "ൄ.mini"
@@ -15004,12 +14414,10 @@
           "ത്നൄ"
         ],
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "ന",
+          "ത്ന.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15022,12 +14430,10 @@
         "name": "ദ്ദൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ദ",
+          "ദ്ദ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ദ.mini",
           "ൄ.mini"
@@ -15037,12 +14443,10 @@
         "name": "ദ്ധൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ദ",
-          "്",
-          "ധ",
+          "ദ്ധ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ദ്ധ.mini",
           "ൄ.mini"
@@ -15055,12 +14459,10 @@
           "ന്തൄ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ത",
+          "ന്ത.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15073,12 +14475,10 @@
         "name": "ന്ഥൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ഥ",
+          "ന്ഥ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ഥ.mini",
           "ൄ.mini"
@@ -15088,12 +14488,10 @@
         "name": "ന്ദൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ദ",
+          "ന്ദ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ദ.mini",
           "ൄ.mini"
@@ -15103,12 +14501,10 @@
         "name": "ന്ധൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ധ",
+          "ന്ധ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്ധ.mini",
           "ൄ.mini"
@@ -15118,12 +14514,10 @@
         "name": "ന്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "മ",
+          "ന്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്മ.mini",
           "ൄ.mini"
@@ -15136,12 +14530,10 @@
           "ന്നൄ"
         ],
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "ന",
+          "ന്ന.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15154,12 +14546,10 @@
         "name": "ന്റൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ന",
-          "്",
-          "റ",
+          "ന്റ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ന്റ.mini",
           "ൄ.mini"
@@ -15169,12 +14559,10 @@
         "name": "ൻ്റൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ൻ",
-          "്",
-          "റ",
+          "ൻ്റ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ൻ്റ.mini",
           "ൄ.mini"
@@ -15184,12 +14572,10 @@
         "name": "പ്പൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "പ",
-          "്",
-          "പ",
+          "പ്പ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "പ്പ.mini",
           "ൄ.mini"
@@ -15199,12 +14585,10 @@
         "name": "മ്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "മ",
+          "മ്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്മ.mini",
           "ൄ.mini"
@@ -15214,12 +14598,10 @@
         "name": "മ്പൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "മ",
-          "്",
-          "പ",
+          "മ്പ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "മ്പ.mini",
           "ൄ.mini"
@@ -15229,12 +14611,10 @@
         "name": "ള്ളൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ള",
-          "്",
-          "ള",
+          "ള്ള.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ള്ള.mini",
           "ൄ.mini"
@@ -15247,12 +14627,10 @@
           "ശ്ശൄ"
         ],
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ശ",
+          "ശ്ശ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15265,12 +14643,10 @@
         "name": "ശ്ചൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ശ",
-          "്",
-          "ച",
+          "ശ്ച.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ശ്ച.mini",
           "ൄ.mini"
@@ -15280,12 +14656,10 @@
         "name": "സ്സൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "സ",
+          "സ്സ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്സ.mini",
           "ൄ.mini"
@@ -15295,12 +14669,10 @@
         "name": "സ്ഥൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "ഥ",
+          "സ്ഥ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "സ്ഥ.mini",
           "ൄ.mini"
@@ -15313,12 +14685,10 @@
           "സ്റ്റൄ"
         ],
         "liga": [
-          "്",
-          "സ",
-          "്",
-          "റ്റ",
+          "സ്റ്റ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15331,12 +14701,10 @@
         "name": "ത്സൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ത",
-          "്",
-          "സ",
+          "ത്സ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ത്സ.mini",
           "ൄ.mini"
@@ -15346,12 +14714,10 @@
         "name": "ഹ്മൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "മ",
+          "ഹ്മ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ഹ്മ.mini",
           "ൄ.mini"
@@ -15364,12 +14730,10 @@
           "ഹ്നൄ"
         ],
         "liga": [
-          "്",
-          "ഹ",
-          "്",
-          "ന",
+          "ഹ്ന.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "compositeTransform": [
           {
             "scale": 0.6,
@@ -15382,12 +14746,10 @@
         "name": "റ്റൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "റ",
-          "്",
-          "റ",
+          "റ്റ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "റ്റ.mini",
           "ൄ.mini"
@@ -15397,12 +14759,10 @@
         "name": "ബ്ബൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ബ",
-          "്",
-          "ബ",
+          "ബ്ബ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ബ്ബ.mini",
           "ൄ.mini"
@@ -15412,12 +14772,10 @@
         "name": "ച്ചൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "ച",
-          "്",
-          "ച",
+          "ച്ച.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "ച്ച.mini",
           "ൄ.mini"
@@ -15427,12 +14785,10 @@
         "name": "യ്യൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "യ",
-          "്",
-          "യ",
+          "യ്യ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "യ്യ.mini",
           "ൄ.mini"
@@ -15442,12 +14798,10 @@
         "name": "വ്വൄ.mini",
         "glyphClass": "ligature",
         "liga": [
-          "്",
-          "വ",
-          "്",
-          "വ",
+          "വ്വ.mini",
           "ൄ"
         ],
+        "gsub": "blws",
         "position": [
           "വ്വ.mini",
           "ൄ.mini"
@@ -16494,7 +15848,9 @@
           "്",
           "സ",
           "്",
-          "റ്റ",
+          "റ",
+          "്",
+          "റ",
           "്",
           "ര"
         ],
