@@ -29,13 +29,6 @@ const resolveTarget = (target: Step['target']): Element | null => {
 /** A dialog is open (one of the app's, or a page like Help): no tip may appear over it. */
 const dialogOpen = (): boolean => !!document.querySelector('[role="dialog"][aria-modal="true"], #mobile-nav-drawer');
 
-/** For tips on header buttons: the distance that puts the tip below the whole header, not over its second row. */
-const belowHeaderOffset = (selector: string): number => {
-    const target = document.querySelector(selector)?.getBoundingClientRect();
-    const header = document.querySelector('header')?.getBoundingClientRect();
-    return target && header ? Math.max(10, Math.round(header.bottom - target.bottom) + 10) : 10;
-};
-
 export const useJITHints = (
     translations: Record<string, string> | null,
     isLargeScreen: boolean
@@ -59,6 +52,11 @@ export const useJITHints = (
     // Tips shouldn't arrive one on top of the other: after one closes, wait a little before the next.
     const TIP_GAP_MS = 8000;
     const lastTipEndedAt = useRef(0);
+    // The Test and Export hints are for the moment someone comes back to the grid after drawing,
+    // not for opening a project that already has letters (row 113): track that moment.
+    const drawnWhenEditorOpened = useRef<number | null>(null);
+    const [drewSinceOpen, setDrewSinceOpen] = useState(false);
+    const [gapTick, setGapTick] = useState(0);
     const wasRunning = useRef(false);
     useEffect(() => {
         if (wasRunning.current && !run) lastTipEndedAt.current = Date.now();
@@ -115,15 +113,33 @@ export const useJITHints = (
         return count;
     }, [glyphDataMap, version]);
 
+    // Opening a letter remembers how many were drawn; coming back with more drawn is the moment
+    // for the Test/Export hints. Once shown, they stay seen (their own storage keys).
+    // (On a phone the letter is saved as the editor closes, so the count can rise just after.)
+    useEffect(() => {
+        if (selectedCharacter) {
+            if (drawnWhenEditorOpened.current === null) drawnWhenEditorOpened.current = drawnCount;
+        } else if (drawnWhenEditorOpened.current !== null && drawnCount > drawnWhenEditorOpened.current) {
+            setDrewSinceOpen(true);
+            drawnWhenEditorOpened.current = null;
+        }
+    }, [selectedCharacter, drawnCount]);
+
     // Triggers
     useEffect(() => {
         if (!translations || isTutorialActive || activeModal || run || isMetricsSelectionMode) return;
-        if (Date.now() - lastTipEndedAt.current < TIP_GAP_MS) return;
+        // Right after another tip: look again once the gap is over (otherwise the hint was lost
+        // until something else changed, e.g. the Test hint after the phone's first-stroke tip).
+        const sinceLastTip = Date.now() - lastTipEndedAt.current;
+        if (sinceLastTip < TIP_GAP_MS) {
+            const retry = window.setTimeout(() => setGapTick(n => n + 1), TIP_GAP_MS - sinceLastTip + 50);
+            return () => window.clearTimeout(retry);
+        }
         
         // Global Header Hints: Test & Export. Only on the grid, never while a letter is open: they
         // used to arrive mid-letter and eat the next strokes (U14).
         const isHeaderVisible = !['creator', 'settings', 'comparison', 'rules'].includes(currentView);
-        const canShowHeaderHints = isHeaderVisible && !selectedCharacter && !isNavDrawerOpen;
+        const canShowHeaderHints = isHeaderVisible && !selectedCharacter && !isNavDrawerOpen && drewSinceOpen;
 
         if (canShowHeaderHints) {
             const exportUnseen = drawnCount >= 3 && !localStorage.getItem('hint_export_seen');
@@ -136,7 +152,6 @@ export const useJITHints = (
                         if (dialogOpen()) return;
                         setSteps([{
                             target: '[data-tour="header-export"]',
-                            offset: belowHeaderOffset('[data-tour="header-export"]'),
                             content: (
                                 <div>
                                     <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintExportTitle}</h3>
@@ -160,7 +175,6 @@ export const useJITHints = (
                         if (dialogOpen()) return;
                         setSteps([{
                             target: '[data-tour="header-test"]',
-                            offset: belowHeaderOffset('[data-tour="header-test"]'),
                             content: (
                                 <div>
                                     <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintTestTitle}</h3>
@@ -696,7 +710,7 @@ export const useJITHints = (
             }
         }
         
-    }, [isTutorialActive, workspace, currentView, selectedCharacter, activeModal, translations, run, drawnCount, isLargeScreen, isMetricsSelectionMode, isNavDrawerOpen]);
+    }, [isTutorialActive, workspace, currentView, selectedCharacter, activeModal, translations, run, drawnCount, isLargeScreen, isMetricsSelectionMode, isNavDrawerOpen, drewSinceOpen, gapTick]);
 
     // Combined Polling Effect for Positioning & Kerning JIT Hints
     useEffect(() => {
