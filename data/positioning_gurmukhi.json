@@ -1,35 +1,36 @@
 [
-   {
+  {
     "groups": {
       "consFused": ["$consonants"],
-      "spacingMarksRight": [ "ਾ", "ੀ", "ੋ", "ੌ"],
+      "spacingMarksRight": ["ਾ", "ੀ"],
       "spacingMarksLeft": ["ਿ"],
-      "aboveMarks": [ "ਂ", "ੰ", "ੱ", "ੇ", "ੈ", "ੇੱ", "ੇੰ", "ੇਂ", "ੋੱ", "ੋੰ", "ੋਂ", "ੈੱ", "ੈੰ", "ੈਂ", "ੌੱ", "ੌੰ", "ੌਂ", "ੑ" ],
-      "belowMarks": [ "ੁ", "ੂ", "਼", "੍ਹ", "੍ਰ", "੍ਵ", "ੵ" ]
+      "aboveMarks": ["ਂ", "ੰ", "ੱ", "ੇ", "ੈ", "ੋ", "ੌ", "ੇੱ", "ੇੰ", "ੇਂ", "ੋੱ", "ੋੰ", "ੋਂ", "ੈੱ", "ੈੰ", "ੈਂ", "ੌੱ", "ੌੰ", "ੌਂ"],
+      "belowMarks": ["ੁ", "ੂ", "਼", "੍ਹ", "੍ਰ", "੍ਵ", "ੵ", "ੑ"]
     }
-   },
-  { "positioning": [
-    {
-      "base": ["$vowels"],
-      "mark": ["ਂ","ੰ"],
-      "gpos": "abvm"
-    },
-    {
-      "base": ["$spacingMarksRight"],
-      "mark": ["ਂ", "ੰ", "ੱ"],
-      "gpos": "abvm"
-    },
-    {
-      "base": ["$consFused"],
-      "mark": ["$aboveMarks"],
-      "gpos": "abvm"
-    },
-    {
-      "base": ["$consFused"],
-      "mark": ["$belowMarks", "੍"],
-      "gpos": "blwm"
-    }
-  ],
+  },
+  {
+    "positioning": [
+      {
+        "base": ["$vowels"],
+        "mark": ["ਂ", "ੰ"],
+        "gpos": "abvm"
+      },
+      {
+        "base": ["$spacingMarksRight"],
+        "mark": ["ਂ", "ੰ", "ੱ"],
+        "gpos": "abvm"
+      },
+      {
+        "base": ["$consFused"],
+        "mark": ["$aboveMarks"],
+        "gpos": "abvm"
+      },
+      {
+        "base": ["$consFused"],
+        "mark": ["$belowMarks", "੍"],
+        "gpos": "blwm"
+      }
+    ],
     "markAttachmentClass": [
       {
         "members": ["ੁ", "ੂ"],
@@ -39,51 +40,66 @@
         "members": ["਼", "੍ਹ", "੍ਰ", "੍ਵ", "ੵ"]
       },
       {
-        "members": [ "ੇ", "ੈ", "ੇੱ", "ੇੰ", "ੇਂ", "ੋੱ", "ੋੰ", "ੋਂ", "ੈੱ", "ੈੰ", "ੈਂ", "ੌੱ", "ੌੰ", "ੌਂ"]
+        "members": ["ੇ", "ੈ", "ੋ", "ੌ", "ੇੱ", "ੇੰ", "ੇਂ", "ੋੱ", "ੋੰ", "ੋਂ", "ੈੱ", "ੈੰ", "ੈਂ", "ੌੱ", "ੌੰ", "ੌਂ"]
       },
       {
-        "members": [ "ਂ", "ੰ", "ੱ", "ੑ"]
+        "members": ["ੰ", "ੱ"]
       }
     ],
     "baseAttachmentClass": []
   },
-  { "markAttachment": {
-    "$vowels":  {
-      "ਂ": ["bottomCenter", "topCenter", "0", "20"],
-      "ੰ": ["bottomCenter", "topCenter", "0", "20"]
-    },
-    "$consFused":  {
-      "ਂ": ["bottomCenter", "topCenter", "0", "20"],
-      "ੰ": ["bottomCenter", "topCenter", "0", "20"],
-      "ੱ": ["bottomCenter", "topCenter", "0", "20"],
-      "ੑ": ["bottomCenter", "topCenter", "0", "20"],
-      "ੇ": ["bottomLeft", "topRight"],
-      "ੈ": ["bottomLeft", "topRight"],
-      "ੇੱ": ["bottomLeft", "topRight"],
-      "ੇੰ": ["bottomLeft", "topRight"],
-      "ੇਂ": ["bottomLeft", "topRight"],
-      "ੋੱ": ["bottomLeft", "topRight"],
-      "ੋੰ": ["bottomLeft", "topRight"],
-      "ੋਂ": ["bottomLeft", "topRight"],
-      "ੈੱ": ["bottomLeft", "topRight"],
-      "ੈੰ": ["bottomLeft", "topRight"],
-      "ੈਂ": ["bottomLeft", "topRight"],
-      "ੌੱ": ["bottomLeft", "topRight"],
-      "ੌੰ": ["bottomLeft", "topRight"],
-      "ੌਂ": ["bottomLeft", "topRight"],
-      "ੁ": ["topCenter", "bottomCenter"],
-      "ੂ": ["topCenter", "bottomCenter"],
-      "਼": ["topCenter", "bottomCenter"],
-      "੍ਹ": ["topCenter", "bottomCenter"],
-      "੍ਰ": ["topCenter", "bottomCenter"],
-      "੍ਵ": ["topCenter", "bottomCenter"],
-      "ੵ": ["topCenter", "bottomCenter"],
-      "੍": ["topCenter", "bottomCenter"]
+  {
+    "markAttachment": {
+      "$vowels": {
+        "ਂ": ["topRight", "bottomRight", "-33", "-45"],
+        "ੰ": ["topRight", "bottomRight", "4", "-26"]
+      },
+      "ਾ": {
+        "ਂ": ["topCenter", "bottomCenter", "0", "-45"],
+        "ੰ": ["topCenter", "bottomCenter", "0", "-26"],
+        "ੱ": ["topCenter", "bottomCenter", "0", "-28"]
+      },
+      "ੀ": {
+        "ਂ": ["topRight", "topLeft", "-10", "0"],
+        "ੰ": ["topRight", "bottomRight", "0", "-26"],
+        "ੱ": ["topRight", "bottomRight", "0", "-27"]
+      },
+      "$consFused": {
+        "ਂ": ["topRight", "bottomRight", "-45", "-45"],
+        "ੰ": ["topRight", "bottomRight", "0", "-26"],
+        "ੱ": ["topRight", "bottomRight", "0", "-27"],
+        "ੇ": ["topCenter", "bottomCenter"],
+        "ੈ": ["topCenter", "bottomCenter"],
+        "ੋ": ["topCenter", "bottomCenter"],
+        "ੌ": ["topCenter", "bottomCenter", "0", "-25"],
+        "ੇੱ": ["topCenter", "bottomCenter"],
+        "ੇੰ": ["topCenter", "bottomCenter"],
+        "ੇਂ": ["topCenter", "bottomCenter"],
+        "ੋੱ": ["topCenter", "bottomCenter"],
+        "ੋੰ": ["topCenter", "bottomCenter"],
+        "ੋਂ": ["topCenter", "bottomCenter"],
+        "ੈੱ": ["topCenter", "bottomCenter"],
+        "ੈੰ": ["topCenter", "bottomCenter"],
+        "ੈਂ": ["topCenter", "bottomCenter"],
+        "ੌੱ": ["topCenter", "bottomCenter", "0", "-25"],
+        "ੌੰ": ["topCenter", "bottomCenter", "0", "-25"],
+        "ੌਂ": ["topCenter", "bottomCenter", "0", "-25"],
+        "ੁ": ["bottomCenter", "topCenter", "0", "25"],
+        "ੂ": ["bottomCenter", "topCenter", "0", "20"],
+        "਼": ["bottomCenter", "topCenter", "0", "10"],
+        "੍ਹ": ["bottomRight", "topRight", "-27", "0"],
+        "੍ਰ": ["bottomCenter", "topCenter"],
+        "੍ਵ": ["bottomRight", "topRight", "-18", "0"],
+        "ੵ": ["bottomRight", "topRight", "12", "18"],
+        "ੑ": ["bottomRight", "topCenter", "0", "14"],
+        "੍": ["bottomRight", "topCenter", "-8", "16"]
       }
-  } },
-  { "recommendedKerning": [
+    }
+  },
+  {
+    "recommendedKerning": [
       ["$consFused", "$spacingMarksRight"],
       ["$spacingMarksLeft", "$consFused"]
-      ]
+    ]
   }
 ]

@@ -9,8 +9,8 @@
       { "name": "ੂ", "glyphClass": "mark", "advWidth": 0 },
       { "name": "ੇ", "glyphClass": "mark", "advWidth": 0 },
       { "name": "ੈ", "glyphClass": "mark", "advWidth": 0 },
-      { "name": "ੋ", "glyphClass": "base" },
-      { "name": "ੌ", "glyphClass": "base" },
+      { "name": "ੋ", "glyphClass": "mark", "advWidth": 0 },
+      { "name": "ੌ", "glyphClass": "mark", "advWidth": 0 },
       { "name": "ਂ", "glyphClass": "mark", "advWidth": 0 },
       { "name": "ੰ", "glyphClass": "mark", "advWidth": 0 },
       { "name": "ੱ", "glyphClass": "mark", "advWidth": 0 },
@@ -50,6 +50,7 @@
       { "name": "ਊ", "glyphClass": "base", "composite": ["ੳ", "ੂ"] },
       { "name": "ਏ", "glyphClass": "base", "composite": ["ੲ", "ੇ"] },
       { "name": "ਐ", "glyphClass": "base", "composite": ["ਅ", "ੈ"] },
+      { "name": "ਓ", "glyphClass": "base", "composite": ["ੳ"] },
       { "name": "ਔ", "glyphClass": "base", "composite": ["ਅ", "ੌ"] }
     ]
   },
