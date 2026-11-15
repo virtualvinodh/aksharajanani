@@ -17,7 +17,7 @@ Duplicates are merged into one row, with every source listed. The F and "New" fi
 - **Ease:** **S** = under 2 hours · **M** = half a day to a day · **L** = two days or more.
 - **Your input:** **Yes** = a decision or something only you can do (the recommendation is in the last column) · **–** = I can just do it.
 
-**Totals:** 110 rows. P0: 43 · P1: 39 · P2: 28. 23 need your input; 13 of them are P0. (Rows 97–101 were added on 15 November, found while fixing the 26; rows 102–109 come from the persona runs.)
+**Totals:** 113 rows. P0: 43 · P1: 41 · P2: 29. 23 need your input; 13 of them are P0. (Rows 97–101 were added on 15 November, found while fixing the 26; rows 102–109 come from the persona runs.)
 
 ## Progress (15 November)
 
@@ -307,6 +307,9 @@ The rows marked **Yes**, in order. Each has my recommendation; a "go" is enough 
 | 108 | The header shows "Devanagari" under the project name where a Hindi speaker expects "Hindi" | Persona B | P1 | S | – | Show the language the project was started in |
 | 109 | Tamil Test page title wraps to three lines on a phone | Persona A | P2 | S | – | |
 | 110 | Spacing and the editor re-measure every built letter after each saved stroke, in up to four places at once; slow for big sets (Tamil, Devanagari) | Code review 15 Nov | P2 | M | – | One shared result, rebuilt only for the letters an edit affects |
+| 111 | **Importing a font messes up its OpenType rules** (your report, 16 Nov). To check: import fonts with real GSUB/GPOS (Noto Sans Tamil, Kannada, Devanagari, a Latin font with kerning and mark positioning), export without changes, and compare the rules and shaping before and after (HarfBuzz on the same text; tools/font/fea-dump.ts for the generated feature code). Find what's lost or changed: lookups, contextual rules, mark classes, kerning classes, feature/script/language tags | You, 16 Nov | P1 | M | – | Measure first, then fix what breaks; report a list of what import keeps, changes and drops |
+| 112 | On a phone in Tamil, the grid's progress line ("476/478 … (100%)") overlaps the "What do these mean?" link | 16 Nov (row 81 check) | P2 | S | – | |
+| 113 | Tour tips from the new tutorial open on the grid and over the header without being asked (seen by the start-page check) | 16 Nov (row 81 check) | P1 | S | – | Tours should start only from Help → Tours or at the place they belong, once |
 
 ### Features (after the beta)
 
