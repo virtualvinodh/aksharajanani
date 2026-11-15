@@ -43,7 +43,7 @@ const ToolsSettings: React.FC<ToolsSettingsProps> = ({ settings, onSettingsChang
 
             <div>
                 <label htmlFor="contrast-ratio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Contrast Ratio (Thick/Thin): <span className="font-bold text-indigo-600 dark:text-indigo-400">{settings.contrast !== undefined ? settings.contrast.toFixed(2) : '1.00'}</span>
+                {t('contrastRatioLabel')}: <span className="font-bold text-indigo-600 dark:text-indigo-400">{settings.contrast !== undefined ? settings.contrast.toFixed(2) : '1.00'}</span>
                 </label>
                 <input
                 id="contrast-ratio"
@@ -56,8 +56,8 @@ const ToolsSettings: React.FC<ToolsSettingsProps> = ({ settings, onSettingsChang
                 className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600 dark:accent-indigo-500"
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span>High Contrast (Calligraphic)</span>
-                    <span>Monoline (Uniform)</span>
+                    <span>{t('penHighContrast')}</span>
+                    <span>{t('penMonoline')}</span>
                 </div>
             </div>
             

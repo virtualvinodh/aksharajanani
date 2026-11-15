@@ -272,13 +272,34 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
             await p.waitForTimeout(700);
         }
         tile = p.locator(sel).first();
-        // Not every letter in the data is in the project: of two variants (Telugu క్ర), only the
-        // one chosen at the start is. Report it and go on.
-        if (!(await tile.count())) { log(`“${item.name}” isn't in this project (a variant not chosen?)`); return false; }
+        // With an editor open, the grid is a narrow side list that only renders the cards near where
+        // it's scrolled, and a tip can cover it (Malayalam Traditional: ഡൃ after ഠൃ). If the card
+        // isn't there or won't take a click, open the letter through the search (Ctrl+K) instead.
+        const viaSearch = async () => {
+            await closeTips();
+            await p.keyboard.press('Control+k'); await p.waitForTimeout(500);
+            const input = p.locator('input[placeholder*="command"]').last();
+            if (!(await input.isVisible().catch(() => false))) return false;
+            await input.fill(item.name); await p.waitForTimeout(600);
+            const hit = p.locator('li > button').filter({ has: p.locator('div.font-semibold').getByText(item.name, { exact: true }) }).first();
+            if (!(await hit.count())) { await p.keyboard.press('Escape'); return false; }
+            await hit.click(); await p.waitForTimeout(1300); await closeTips();
+            return true;
+        };
+        if (!(await tile.count())) {
+            if (await viaSearch()) return true;
+            // Not every letter in the data is in the project: of two variants (Telugu క్ര), only the
+            // one chosen at the start is. Report it and go on.
+            log(`“${item.name}” isn't in this project (a variant not chosen?)`); return false;
+        }
         await tile.scrollIntoViewIfNeeded().catch(() => {});
         // A grid tip (with a dark overlay) can open just as we get back to the grid: close it and retry.
         await closeTips();
-        await tile.click({ timeout: 5000 }).catch(async () => { await p.waitForTimeout(800); await closeTips(); await tile.click(); });
+        const clicked = await tile.click({ timeout: 5000 }).then(() => true).catch(async () => {
+            await p.waitForTimeout(800); await closeTips();
+            return tile.click({ timeout: 5000 }).then(() => true).catch(() => false);
+        });
+        if (!clicked) return viaSearch();
         await p.waitForTimeout(1300); await closeTips();
         return true;
     };

@@ -1,12 +1,15 @@
 
 import { ProjectData, ProjectSnapshot } from '../types';
 import { IDBPDatabase, openDB } from 'idb';
+import { buildProjectSummary, ProjectSummary } from '../utils/projectSummary';
 
 const DB_NAME = 'FontCreatorDB';
-const DB_VERSION = 4; // Upgraded version
+const DB_VERSION = 5; // 5: project summaries for the start page
 const STORE_NAME = 'projects';
 const CACHE_STORE_NAME = 'fontCache';
 const SNAPSHOT_STORE_NAME = 'snapshots';
+/** Name, language, date and a few letter outlines per project, for the start page's list (F47). */
+const SUMMARY_STORE_NAME = 'projectSummaries';
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
@@ -38,6 +41,10 @@ const getDb = (): Promise<IDBPDatabase> => {
                     snapshotStore.createIndex('projectId', 'projectId', { unique: false });
                     snapshotStore.createIndex('timestamp', 'timestamp', { unique: false });
                 }
+                if (oldVersion < 5 && !db.objectStoreNames.contains(SUMMARY_STORE_NAME)) {
+                    const summaries = db.createObjectStore(SUMMARY_STORE_NAME, { keyPath: 'projectId' });
+                    summaries.createIndex('savedAt', 'savedAt', { unique: false });
+                }
             },
             // A newer version of the app opened the database in another tab (P3). Close this
             // connection so its upgrade isn't stuck, and ask this tab to reload.
@@ -54,19 +61,22 @@ const getDb = (): Promise<IDBPDatabase> => {
     return dbPromise;
 };
 
+// Every write of a project also writes its summary, in the same transaction, so the list is never stale.
 export const addProject = async (projectData: Omit<ProjectData, 'projectId'>): Promise<number> => {
     const db = await getDb();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const id = await store.add(projectData);
+    const tx = db.transaction([STORE_NAME, SUMMARY_STORE_NAME], 'readwrite');
+    const id = await tx.objectStore(STORE_NAME).add(projectData) as number;
+    await tx.objectStore(SUMMARY_STORE_NAME).put(buildProjectSummary({ ...projectData, projectId: id }));
     await tx.done;
-    return id as number;
+    return id;
 };
 
 export const updateProject = async (projectId: number, projectData: ProjectData): Promise<void> => {
     const db = await getDb();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    await tx.store.put(projectData);
+    const tx = db.transaction([STORE_NAME, SUMMARY_STORE_NAME], 'readwrite');
+    await tx.objectStore(STORE_NAME).put(projectData);
+    const id = projectData.projectId ?? projectId;
+    await tx.objectStore(SUMMARY_STORE_NAME).put(buildProjectSummary({ ...projectData, projectId: id }));
     await tx.done;
 };
 
@@ -89,12 +99,50 @@ export const getRecentProjects = async (limit: number = 5): Promise<ProjectData[
     return projects;
 };
 
+/**
+ * Projects saved before summaries existed get one, built once from the full project. After that
+ * the start page reads summaries only.
+ */
+let summariesChecked: Promise<void> | null = null;
+const ensureSummaries = (db: IDBPDatabase): Promise<void> => {
+    if (!summariesChecked) {
+        summariesChecked = (async () => {
+            const [projects, summaries] = await Promise.all([db.getAllKeys(STORE_NAME), db.getAllKeys(SUMMARY_STORE_NAME)]);
+            const have = new Set(summaries);
+            const missing = projects.filter(k => !have.has(k));
+            for (const key of missing) {
+                const project = await db.get(STORE_NAME, key) as ProjectData | undefined;
+                if (project) await db.put(SUMMARY_STORE_NAME, buildProjectSummary({ ...project, projectId: key as number }));
+            }
+        })().catch(err => { summariesChecked = null; throw err; });
+    }
+    return summariesChecked;
+};
+
+/** The most recently saved projects' summaries, newest first: `limit` of them after skipping `offset`. */
+export const getRecentProjectSummaries = async (limit = 10, offset = 0): Promise<{ summaries: ProjectSummary[]; total: number }> => {
+    const db = await getDb();
+    await ensureSummaries(db);
+    const tx = db.transaction(SUMMARY_STORE_NAME, 'readonly');
+    const total = await tx.store.count();
+    const summaries: ProjectSummary[] = [];
+    let cursor = await tx.store.index('savedAt').openCursor(null, 'prev');
+    if (cursor && offset > 0) cursor = await cursor.advance(offset);
+    while (cursor && summaries.length < limit) {
+        summaries.push(cursor.value);
+        cursor = await cursor.continue();
+    }
+    await tx.done;
+    return { summaries, total };
+};
+
 /** Every saved project's name, for picking a name nobody uses yet ("My Tamil font 2"). */
 export const getAllProjectNames = async (): Promise<string[]> => {
     try {
         const db = await getDb();
-        const all = await db.getAll(STORE_NAME);
-        return all.map((p: ProjectData) => p.name || p.settings?.fontName || '').filter(Boolean);
+        await ensureSummaries(db);
+        const all = await db.getAll(SUMMARY_STORE_NAME) as ProjectSummary[];
+        return all.map(p => p.name).filter(Boolean);
     } catch {
         return [];
     }
@@ -102,9 +150,10 @@ export const getAllProjectNames = async (): Promise<string[]> => {
 
 export const deleteProject = async (projectId: number): Promise<void> => {
     const db = await getDb();
-    const tx = db.transaction([STORE_NAME, CACHE_STORE_NAME, SNAPSHOT_STORE_NAME], 'readwrite');
+    const tx = db.transaction([STORE_NAME, CACHE_STORE_NAME, SNAPSHOT_STORE_NAME, SUMMARY_STORE_NAME], 'readwrite');
     await tx.objectStore(STORE_NAME).delete(projectId);
     await tx.objectStore(CACHE_STORE_NAME).delete(projectId);
+    await tx.objectStore(SUMMARY_STORE_NAME).delete(projectId);
     
     // Delete all snapshots associated with this project
     const snapshotStore = tx.objectStore(SNAPSHOT_STORE_NAME);

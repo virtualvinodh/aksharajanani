@@ -1,5 +1,6 @@
 
 import { CharacterSet } from '../types';
+import { isGroupRef } from '../utils/groupRef';
 
 /**
  * Expands a list of items which may contain direct glyph names or group references (starting with $ or @)
@@ -21,7 +22,7 @@ export const expandMembers = (
         const trimmed = item.trim();
         if (!trimmed) return;
 
-        if (trimmed.startsWith('$') || trimmed.startsWith('@')) {
+        if (isGroupRef(trimmed)) {
             const groupName = trimmed.substring(1);
             
             // Prevent infinite recursion
@@ -69,7 +70,7 @@ export const isCharInList = (
         for (const item of currentList) {
             if (item === charName) return true;
 
-            if (item.startsWith('$') || item.startsWith('@')) {
+            if (isGroupRef(item)) {
                 const groupName = item.substring(1);
                 if (!visitedGroups.has(groupName)) {
                     visitedGroups.add(groupName);

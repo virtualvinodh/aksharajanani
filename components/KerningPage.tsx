@@ -196,10 +196,8 @@ const KerningPage: React.FC<KerningPageProps> = ({
     const filteredPairs = useMemo(() => {
         let result = [...allPairsInContext];
         
-        if (filterMode === 'ignored') {
-            result = result.filter(p => ignoredPairs.has(`${p.left.unicode}-${p.right.unicode}`));
-        } else {
-            // By default, exclude ignored pairs from other views
+        {
+            // Pairs left out of the font (the old "Ignore") stay out of the list too.
             result = result.filter(p => !ignoredPairs.has(`${p.left.unicode}-${p.right.unicode}`));
             
             // Spaced = in the font, by hand or automatically.
@@ -268,33 +266,6 @@ const KerningPage: React.FC<KerningPageProps> = ({
         if (target === 'next' && nextPair) setEditingPair(nextPair);
     };
 
-    const handleDeletePair = useCallback(() => {
-        const pair = editingPair;
-        if (!pair) return;
-
-        const key = `${pair.left.unicode}-${pair.right.unicode}`;
-        
-        if (filterMode === 'ignored') {
-            kerningDispatch({ type: 'UNIGNORE_PAIR', payload: key });
-            showNotification(t('pairUnignored'), 'success');
-        } else {
-            const newMap = new Map(kerningMap);
-            newMap.delete(key);
-            kerningDispatch({ type: 'SET_MAP', payload: newMap });
-            kerningDispatch({ type: 'REMOVE_SUGGESTIONS', payload: [key] });
-        }
-        setEditingPair(null);
-    }, [editingPair, kerningMap, kerningDispatch, filterMode, showNotification, t]);
-
-    const handleIgnorePair = useCallback(() => {
-        const pair = editingPair;
-        if (!pair) return;
-        const key = `${pair.left.unicode}-${pair.right.unicode}`;
-        kerningDispatch({ type: 'IGNORE_PAIR', payload: key });
-        showNotification(t('pairIgnored'), 'info');
-        setEditingPair(null);
-    }, [editingPair, kerningDispatch, showNotification, t]);
-
     if (editingPair) {
         const pair = editingPair;
         const key = `${pair.left.unicode}-${pair.right.unicode}`;
@@ -319,18 +290,25 @@ const KerningPage: React.FC<KerningPageProps> = ({
                     kerningDispatch({ type: 'SET_MAP', payload: newMap });
                 }}
                 onRemove={() => {
+                    // "Back to usual", the one way to undo a pair fix (row 39): the pair follows the
+                    // overall spacing again, as a choice made by hand (counts as checked; automatic
+                    // spacing won't fix it again), with Undo.
+                    const snap = { kerning: new Map(kerningMap), suggested: new Map(suggestedKerningMap) };
                     const newMap = new Map(kerningMap);
-                    newMap.delete(key);
+                    newMap.set(key, 0);
                     kerningDispatch({ type: 'SET_MAP', payload: newMap });
                     kerningDispatch({ type: 'REMOVE_SUGGESTIONS', payload: [key] });
+                    showNotification(t('pairFixBackToUsualDone', { pair: `${pair.left.name} ${pair.right.name}` }), 'success', {
+                        onUndo: () => {
+                            kerningDispatch({ type: 'SET_MAP', payload: snap.kerning });
+                            kerningDispatch({ type: 'SET_SUGGESTIONS', payload: snap.suggested });
+                        },
+                    });
                 }}
                 onClose={() => setEditingPair(null)} onNavigate={handleNavigate}
                 hasPrev={!!prevPair} hasNext={!!nextPair}
                 glyphVersion={glyphVersion}
                 isKerned={isKerned}
-                onDelete={handleDeletePair}
-                onIgnore={handleIgnorePair}
-                isIgnored={filterMode === 'ignored'}
                 allCharacterSets={characterSets!}
                 allCharsByName={allCharsByName}
                 character={character}

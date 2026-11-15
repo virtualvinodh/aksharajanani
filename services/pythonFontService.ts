@@ -340,6 +340,64 @@ def patch_font(base_data, delta_data):
     base_font.save(out_buffer)
     return out_buffer.getvalue()
 
+def _cff_to_glyf(font, max_err=1.0):
+    """CFF (cubic) outlines to TrueType (quadratic) ones, as in fontTools' otf2ttf snippet."""
+    from fontTools.pens.cu2quPen import Cu2QuPen
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+    from fontTools.ttLib import newTable
+    glyph_order = font.getGlyphOrder()
+    glyph_set = font.getGlyphSet()
+    quad = {}
+    for name in glyph_order:
+        tt_pen = TTGlyphPen(glyph_set)
+        glyph_set[name].draw(Cu2QuPen(tt_pen, max_err, reverse_direction=True))
+        quad[name] = tt_pen.glyph()
+    font["loca"] = newTable("loca")
+    font["glyf"] = glyf = newTable("glyf")
+    glyf.glyphOrder = glyph_order
+    glyf.glyphs = quad
+    del font["CFF "]
+    if "VORG" in font:
+        del font["VORG"]
+    glyf.compile(font)
+    hmtx = font["hmtx"]
+    for name, glyph in glyf.glyphs.items():
+        if hasattr(glyph, "xMin"):
+            hmtx[name] = (hmtx[name][0], glyph.xMin)
+    font["maxp"] = maxp = newTable("maxp")
+    maxp.tableVersion = 0x00010000
+    maxp.maxZones = 1
+    maxp.maxTwilightPoints = 0
+    maxp.maxStorage = 0
+    maxp.maxFunctionDefs = 0
+    maxp.maxInstructionDefs = 0
+    maxp.maxStackElements = 0
+    maxp.maxSizeOfInstructions = 0
+    maxp.maxComponentElements = max([len(getattr(g, "components", None) or []) for g in glyf.glyphs.values()] or [0])
+    maxp.compile(font)
+    post = font["post"]
+    post.formatType = 2.0
+    post.extraNames = []
+    post.mapping = {}
+    post.glyphOrder = glyph_order
+    try:
+        post.compile(font)
+    except OverflowError:
+        post.formatType = 3.0
+    font["head"].glyphDataFormat = 0
+    font.sfntVersion = chr(0) + chr(1) + chr(0) + chr(0)  # TrueType (no escapes: this code sits in JS template strings)
+
+def convert_font(font_data, fmt):
+    """The same font in another format: 'woff2' (websites), 'ttf' (TrueType outlines) or
+    'sfnt' (a plain OTF/TTF, e.g. unpacked from a WOFF/WOFF2 file being imported)."""
+    font = TTFont(io.BytesIO(font_data.to_py()))
+    if fmt == "ttf" and "CFF " in font:
+        _cff_to_glyf(font)
+    font.flavor = "woff2" if fmt == "woff2" else None
+    out = io.BytesIO()
+    font.save(out)
+    return out.getvalue()
+
 def extract_fea(font_data):
     """Extracts a basic FEA structure from the font."""
     try:
@@ -467,6 +525,26 @@ self.onmessage = async (event) => {
                     id,
                     message: error instanceof Error ? error.message : 'Unknown patching error'
                 }
+            });
+        }
+    } else if (type === 'convert') {
+        const { fontBuffer, format, id } = payload;
+        if (!pyodide) {
+             self.postMessage({ type: 'error', payload: { id, message: 'Pyodide not initialized yet.' } });
+             return;
+        }
+        try {
+            // WOFF2 needs Brotli, loaded only when a WOFF2 is written or read (from the same place as Pyodide).
+            await pyodide.loadPackage('brotli');
+            const convertFont = pyodide.globals.get('convert_font');
+            const resultProxy = convertFont(fontBuffer, format);
+            const converted = resultProxy.toJs();
+            resultProxy.destroy();
+            self.postMessage({ type: 'result', payload: { id, blobBuffer: converted.buffer } }, [converted.buffer]);
+        } catch (error) {
+            self.postMessage({
+                type: 'error',
+                payload: { id, message: error instanceof Error ? error.message : 'Unknown conversion error' }
             });
         }
     } else if (type === 'extract') {
@@ -625,6 +703,32 @@ function sendRequest<T>(activeWorker: Worker, type: string, payload: Record<stri
         requestMap.set(currentId, { resolve: (res) => resolve(mapResult(res)), reject, timer });
         activeWorker.postMessage({ type, payload: { id: currentId, ...payload } }, transfer);
     });
+}
+
+export type FontFileFormat = 'otf' | 'woff2' | 'ttf';
+
+const FORMAT_MIME: Record<FontFileFormat, string> = { otf: 'font/otf', woff2: 'font/woff2', ttf: 'font/ttf' };
+
+/** The same font as WOFF2 (for websites) or TTF (TrueType outlines, for older apps); OTF is returned as is (M11). */
+export async function convertFont(fontBlob: Blob, format: FontFileFormat): Promise<Blob> {
+    if (format === 'otf') return fontBlob;
+    const activeWorker = await ensurePyodideReady();
+    const fontBuffer = await fontBlob.arrayBuffer();
+    const blob = await sendRequest<Blob>(activeWorker, 'convert', { fontBuffer, format }, [fontBuffer], res => res.blob);
+    return new Blob([blob], { type: FORMAT_MIME[format] });
+}
+
+/**
+ * A WOFF2 file unpacked to a plain font file, so it can be imported (opentype.js reads OTF, TTF and
+ * WOFF, but not WOFF2). Other files are returned unchanged.
+ */
+export async function unwrapWoff2(file: File): Promise<File> {
+    const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    if (String.fromCharCode(...head) !== 'wOF2') return file;
+    const activeWorker = await ensurePyodideReady();
+    const fontBuffer = await file.arrayBuffer();
+    const blob = await sendRequest<Blob>(activeWorker, 'convert', { fontBuffer, format: 'sfnt' }, [fontBuffer], res => res.blob);
+    return new File([blob], file.name.replace(/\.woff2$/i, '.otf'), { type: 'font/otf' });
 }
 
 export async function extractFea(

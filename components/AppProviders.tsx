@@ -10,6 +10,7 @@ import { KerningProvider } from '../contexts/KerningContext';
 import { SettingsProvider } from '../contexts/SettingsContext';
 import { ClipboardProvider } from '../contexts/ClipboardContext';
 import { ProjectProvider } from '../contexts/ProjectContext';
+import { MeasurableGlyphsProvider } from '../hooks/kerning/useMeasurableGlyphs';
 
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -23,7 +24,9 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                   <ClipboardProvider>
                     <PositioningProvider>
                       <RulesProvider>
-                        {children}
+                        <MeasurableGlyphsProvider>
+                          {children}
+                        </MeasurableGlyphsProvider>
                       </RulesProvider>
                     </PositioningProvider>
                   </ClipboardProvider>

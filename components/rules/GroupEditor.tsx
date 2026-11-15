@@ -7,6 +7,7 @@ import { CharacterSet } from '../../types';
 import { useProject } from '../../contexts/ProjectContext';
 import { useRules } from '../../contexts/RulesContext';
 import { sanitizeIdentifier } from '../../utils/stringUtils';
+import { toGroupRef } from '../../utils/groupRef';
 
 interface GroupEditorProps {
     onSave: (data: { originalKey?: string, newKey: string, members: string[] }) => void;
@@ -27,7 +28,7 @@ const GroupEditor: React.FC<GroupEditorProps> = ({ onSave, onCancel, initialData
     const [key, setKey] = useState(initialData?.key || '');
     const [members, setMembers] = useState(initialData?.members || []);
     const [showHint, setShowHint] = useState(false);
-    const availableSets = characterSets.map(cs => `$${cs.nameKey}`);
+    const availableSets = characterSets.map(cs => toGroupRef(cs.nameKey));
 
     const handleNameChange = (val: string) => {
         const sanitized = sanitizeIdentifier(val);
@@ -47,7 +48,7 @@ const GroupEditor: React.FC<GroupEditorProps> = ({ onSave, onCancel, initialData
             showNotification(t('errorGroupNameRequired'), 'error');
             return;
         }
-        if (newKey.startsWith('$')) {
+        if (newKey.startsWith('$') || newKey.startsWith('@')) {
              showNotification(t('errorGroupNoDollar'), 'error');
              return;
         }
@@ -85,7 +86,7 @@ const GroupEditor: React.FC<GroupEditorProps> = ({ onSave, onCancel, initialData
                     type="text"
                     value={key}
                     onChange={e => handleNameChange(e.target.value)}
-                    placeholder="e.g., virama"
+                    placeholder={t('groupNameExample')}
                     className={`w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 mt-1 ${showHint ? 'border-amber-500 ring-1 ring-amber-500' : ''}`}
                 />
                 {showHint && (
@@ -96,7 +97,7 @@ const GroupEditor: React.FC<GroupEditorProps> = ({ onSave, onCancel, initialData
             </div>
             <div>
                 <label className="font-semibold text-sm">{t('members')}</label>
-                <TagInput tags={members} setTags={setMembers} placeholder="Add glyph name or $set..." availableSets={availableSets} />
+                <TagInput tags={members} setTags={setMembers} placeholder={t('addGlyphOrSet')} availableSets={availableSets} />
             </div>
             <div className="flex justify-end gap-2">
                 <button onClick={onCancel} className="px-3 py-1 bg-gray-500 text-white rounded">{t('cancel')}</button>

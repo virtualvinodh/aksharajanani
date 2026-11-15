@@ -54,6 +54,7 @@ const CoordinateInput: React.FC<{
     onFocus: (focused: boolean) => void;
     disabled: boolean;
 }> = ({ axis, value, onChange, onCommit, onFocus, disabled }) => {
+    const { t } = useLocale();
     const [localValue, setLocalValue] = useState(value);
 
     // Sync from parent if externally changed (e.g. on drag)
@@ -63,9 +64,11 @@ const CoordinateInput: React.FC<{
 
     return (
         <div className="flex flex-col items-center gap-0.5">
-            <label className="text-[11px] font-black text-gray-400 uppercase leading-none">{axis}</label>
+            {/* Arrows instead of a bare "x"/"y" (F51); the full words are in the title. */}
+            <label className="text-[11px] font-black text-gray-400 uppercase leading-none" title={t(axis === 'x' ? 'axisAcross' : 'axisUpDown')}>{axis === 'x' ? '↔' : '↕'}</label>
             <input
                 type="text"
+                aria-label={t(axis === 'x' ? 'axisAcross' : 'axisUpDown')}
                 value={localValue}
                 onChange={(e) => {
                     const val = e.target.value;

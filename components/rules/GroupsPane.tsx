@@ -6,6 +6,7 @@ import { CharacterSet } from '../../types';
 import SmartGlyphInput from './manager/SmartGlyphInput';
 import { useLayout } from '../../contexts/LayoutContext';
 import { sanitizeIdentifier } from '../../utils/stringUtils';
+import { normalizeGroupRef } from '../../utils/groupRef';
 import { useProject } from '../../contexts/ProjectContext';
 
 interface GroupsPaneProps {
@@ -35,7 +36,8 @@ const GroupCard: React.FC<{
         ? "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300"
         : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300";
     
-    const badgeText = isReadOnly ? "@PosGroup" : "@Group";
+    // A group defined in the placement rules (read-only here) or one of these OpenType groups.
+    const badgeText = isReadOnly ? t('groupBadgePlacement') : t('groupBadge');
 
     return (
         <div className={`bg-white dark:bg-gray-800 border ${isReadOnly ? 'border-dashed border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700'} rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow relative group`}>
@@ -48,7 +50,7 @@ const GroupCard: React.FC<{
                 </div>
                 
                 {isReadOnly ? (
-                    <div className="text-gray-400 p-1.5" title="Managed in Positioning Workspace">
+                    <div className="text-gray-400 p-1.5" title={t('managedInPositioning')}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                             <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
                         </svg>
@@ -64,7 +66,7 @@ const GroupCard: React.FC<{
             <div className={`flex flex-wrap gap-1 mb-2 ${isReadOnly ? 'opacity-75' : ''}`}>
                 {members.slice(0, 8).map((m, i) => (
                     <span key={i} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded border dark:border-gray-600 font-mono" style={fontStyle}>
-                        {m}
+                        {normalizeGroupRef(m)}
                     </span>
                 ))}
                 {members.length > 8 && (
@@ -105,7 +107,7 @@ const ChipInput: React.FC<{
             <div className="flex flex-wrap gap-2 mb-2 p-2 min-h-[40px] bg-white dark:bg-gray-900 border rounded dark:border-gray-600">
                 {items.map(m => (
                     <span key={m} className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 px-2 py-1 rounded text-sm font-mono group" style={fontStyle}>
-                        {m}
+                        {normalizeGroupRef(m)}
                         <button onClick={() => onChange(items.filter(x => x !== m))} className="hover:text-red-500 ml-1">&times;</button>
                     </span>
                 ))}
@@ -254,7 +256,7 @@ const GroupsPane: React.FC<GroupsPaneProps> = ({ groups, onSave, onDelete, chara
                          <p className="text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2">
                             <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                              <span>
-                                <strong>Note:</strong> Groups tagged with a lock icon are managed automatically by the Positioning workspace.
+                                <strong>{t('note')}</strong> {t('groupsLockedNote')}
                              </span>
                         </p>
                     </div>
@@ -319,7 +321,7 @@ const GroupsPane: React.FC<GroupsPaneProps> = ({ groups, onSave, onDelete, chara
             
             {allGroups.length === 0 && !editingState && (
                 <div className="text-center py-10 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
-                    <p className="text-gray-400">No groups defined yet.</p>
+                    <p className="text-gray-400">{t('noGroupsYet')}</p>
                 </div>
             )}
         </div>

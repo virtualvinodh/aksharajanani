@@ -5,11 +5,12 @@ import { useProject } from '../contexts/ProjectContext';
 import { useSettings } from '../contexts/SettingsContext';
 import Modal from './Modal';
 import { ProjectData, GlyphData, Character, ScriptConfig } from '../types';
-import { SpinnerIcon, ImportIcon } from '../constants';
+import { SpinnerIcon, ImportIcon, ADDED_CHARACTERS_SET } from '../constants';
 import { isGlyphDrawn } from '../utils/glyphUtils';
 import GlyphTile from './GlyphTile';
 import * as dbService from '../services/dbService';
 import { parseFontFile, extractProjectData } from '../services/importFontService';
+import { unwrapWoff2 } from '../services/pythonFontService';
 import { safeJsonParse } from '../utils/safeJson';
 
 interface ImportGlyphsModalProps {
@@ -106,7 +107,7 @@ const ImportGlyphsModal: React.FC<ImportGlyphsModalProps> = ({ isOpen, onClose, 
         setIsParsingFont(true);
         setParsingStatus(t('parsingFontFile') || 'Parsing font file...');
         try {
-            const font = await parseFontFile(file);
+            const font = await parseFontFile(await unwrapWoff2(file)); // WOFF2 → plain font file first
             const projectData = await extractProjectData(font, file.name, (p, s) => {
                 setParsingStatus(s);
             });
@@ -381,7 +382,7 @@ const ImportGlyphsModal: React.FC<ImportGlyphsModalProps> = ({ isOpen, onClose, 
     if (newCharactersToAdd.length > 0) {
         dispatchCharacterAction({ 
             type: 'ADD_CHARACTERS', 
-            payload: { characters: newCharactersToAdd, activeTabNameKey: 'Custom_Glyphs' } 
+            payload: { characters: newCharactersToAdd, activeTabNameKey: ADDED_CHARACTERS_SET }
         });
     }
 

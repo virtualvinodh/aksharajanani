@@ -25,10 +25,14 @@ export const useKerningCanvas = ({
     canvasRef, leftChar, rightChar, glyphDataMap, strokeThickness, metrics,
     kernValue, onKernChange, tool, zoom, setZoom, viewOffset, setViewOffset, baseScale
 }: UseKerningCanvasProps) => {
-    const [isDragging, setIsDragging] = useState(false);
+    // Either letter can be dragged (F46): dragging the right one right, or the left one left, moves them apart.
+    const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
+    const isDragging = dragSide !== null;
+    const setIsDragging = (v: false) => { if (!v) setDragSide(null); };
     const dragStartPointRef = useRef<Point>({ x: 0, y: 0 });
     const kernAtStartRef = useRef<number>(0);
     const rightGlyphHitBox = useRef<{x: number, y: number, w: number, h: number} | null>(null);
+    const leftGlyphHitBox = useRef<{x: number, y: number, w: number, h: number} | null>(null);
 
     const zoomRef = useRef(zoom);
     const viewOffsetRef = useRef(viewOffset);
@@ -65,6 +69,12 @@ export const useKerningCanvas = ({
             w: rBox.width * finalScale + HIT_PADDING * 2,
             h: rBox.height * finalScale + HIT_PADDING * 2
         };
+        leftGlyphHitBox.current = {
+            x: tx + lBox.x * finalScale - HIT_PADDING,
+            y: ty + lBox.y * finalScale - HIT_PADDING,
+            w: lBox.width * finalScale + HIT_PADDING * 2,
+            h: lBox.height * finalScale + HIT_PADDING * 2
+        };
     }, [leftChar, rightChar, glyphDataMap, strokeThickness, metrics, kernValue, zoom, viewOffset, baseScale, canvasRef]);
 
     const getViewportPoint = useCallback((e: React.MouseEvent | React.TouchEvent | MouseEvent, touchIndex = 0): Point | null => {
@@ -77,6 +87,15 @@ export const useKerningCanvas = ({
         const scaleY = canvas.height / rect.height;
         return { x: (pointSource.clientX - rect.left) * scaleX, y: (pointSource.clientY - rect.top) * scaleY };
     }, [canvasRef]);
+
+    /** Which letter is under the point: the right one wins where they overlap. */
+    const sideAt = (pt: Point): 'left' | 'right' | null => {
+        const inBox = (b: {x: number, y: number, w: number, h: number} | null) => !!b && pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= b.y && pt.y <= b.y + b.h;
+        return inBox(rightGlyphHitBox.current) ? 'right' : inBox(leftGlyphHitBox.current) ? 'left' : null;
+    };
+    const dragDelta = (deltaDesignX: number) => (dragSideRef.current === 'left' ? -deltaDesignX : deltaDesignX);
+    const dragSideRef = useRef<'left' | 'right' | null>(null);
+    useEffect(() => { dragSideRef.current = dragSide; }, [dragSide]);
 
     const panTool = usePanTool({ 
         onPan: (newOffset) => setViewOffset(newOffset) 
@@ -91,16 +110,14 @@ export const useKerningCanvas = ({
             return;
         }
 
-        const isOverRightGlyph = rightGlyphHitBox.current ? (
-            viewportPoint.x >= rightGlyphHitBox.current.x && viewportPoint.x <= rightGlyphHitBox.current.x + rightGlyphHitBox.current.w &&
-            viewportPoint.y >= rightGlyphHitBox.current.y && viewportPoint.y <= rightGlyphHitBox.current.y + rightGlyphHitBox.current.h
-        ) : false;
-
-        if (isOverRightGlyph) {
-            setIsDragging(true);
+        const side = sideAt(viewportPoint);
+        if (side) {
+            dragSideRef.current = side;
+            setDragSide(side);
             dragStartPointRef.current = viewportPoint;
             kernAtStartRef.current = parseInt(kernValue, 10) || 0;
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tool, kernValue, getViewportPoint, panTool, viewOffset]);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -116,7 +133,7 @@ export const useKerningCanvas = ({
             const finalScale = baseScale * zoomRef.current;
             const deltaViewportX = viewportPoint.x - dragStartPointRef.current.x;
             const deltaDesignX = Math.round(deltaViewportX / finalScale);
-            onKernChange(String(kernAtStartRef.current + deltaDesignX));
+            onKernChange(String(kernAtStartRef.current + dragDelta(deltaDesignX)));
         }
     }, [isDragging, panTool, getViewportPoint, baseScale, onKernChange]);
 
@@ -157,18 +174,16 @@ export const useKerningCanvas = ({
             const viewportPoint = getViewportPoint(e);
             if (!viewportPoint) return;
     
-            const isOverRightGlyph = rightGlyphHitBox.current ? (
-                viewportPoint.x >= rightGlyphHitBox.current.x && viewportPoint.x <= rightGlyphHitBox.current.x + rightGlyphHitBox.current.w &&
-                viewportPoint.y >= rightGlyphHitBox.current.y && viewportPoint.y <= rightGlyphHitBox.current.y + rightGlyphHitBox.current.h
-            ) : false;
-    
-            if (isOverRightGlyph) {
+            const side = sideAt(viewportPoint);
+            if (side) {
                 e.preventDefault();
-                setIsDragging(true);
+                dragSideRef.current = side;
+                setDragSide(side);
                 dragStartPointRef.current = viewportPoint;
                 kernAtStartRef.current = parseInt(kernValue, 10) || 0;
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tool, kernValue, getViewportPoint, panTool, viewOffset]);
     
     const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -185,7 +200,7 @@ export const useKerningCanvas = ({
             const finalScale = baseScale * zoomRef.current;
             const deltaViewportX = viewportPoint.x - dragStartPointRef.current.x;
             const deltaDesignX = Math.round(deltaViewportX / finalScale);
-            onKernChange(String(kernAtStartRef.current + deltaDesignX));
+            onKernChange(String(kernAtStartRef.current + dragDelta(deltaDesignX)));
         }
     }, [isDragging, panTool, getViewportPoint, baseScale, onKernChange]);
 
@@ -197,6 +212,6 @@ export const useKerningCanvas = ({
     return {
         handleMouseDown, handleMouseMove, handleMouseUp,
         handleTouchStart, handleTouchMove, handleTouchEnd,
-        isPanning: panTool.isPanning, isDragging
+        isPanning: panTool.isPanning, isDragging, dragSide
     };
 };

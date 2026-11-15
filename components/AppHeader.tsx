@@ -4,7 +4,7 @@ import { AppSettings, ScriptConfig, PositioningRules, KerningMap, Character, Rec
 import { useLocale } from '../contexts/LocaleContext';
 import { useLayout, Workspace } from '../contexts/LayoutContext';
 import { useProject } from '../contexts/ProjectContext';
-import { SaveIcon, ExportIcon, SettingsIcon, CompareIcon, TestIcon, EditIcon, KerningIcon, PositioningIcon, RulesIcon, TestCaseIcon, CheckCircleIcon, SpinnerIcon, CodeBracketsIcon, CopyIcon, WrenchIcon, ImportIcon, SearchIcon, BatchIcon, CameraIcon, HistoryIcon, CreatorIcon, MoreIcon, BackIcon } from '../constants';
+import { HelpIcon, SaveIcon, ExportIcon, SettingsIcon, CompareIcon, TestIcon, EditIcon, KerningIcon, PositioningIcon, RulesIcon, TestCaseIcon, CheckCircleIcon, SpinnerIcon, CodeBracketsIcon, CopyIcon, WrenchIcon, ImportIcon, SearchIcon, BatchIcon, CameraIcon, HistoryIcon, CreatorIcon, MoreIcon, BackIcon } from '../constants';
 import { IS_DEV_BUILD } from '../utils/buildInfo';
 import CommandPalette from './CommandPalette';
 import { ExportingType } from '../hooks/actions/useExportActions';
@@ -29,6 +29,8 @@ interface AppHeaderProps {
     onAddGlyphClick: (options?: { prefillName?: string; targetSet?: string }) => void;
     onAddBlock: () => void;
     onExportClick: () => void;
+    /** Export the font as WOFF2 (websites) or TTF (older apps) instead of OTF. */
+    onExportFormat?: (format: 'woff2' | 'ttf') => void;
     onTestClick: () => void;
     onCreatorClick: () => void;
     onCompareClick: () => void;
@@ -69,6 +71,7 @@ const WorkspaceTab: React.FC<{
     progress: Progress;
     dataTour?: string;
 }> = React.memo(({ workspaceId, label, icon, showUnsavedIndicator = false, onWorkspaceChange, activeWorkspace, progress, dataTour }) => {
+    const { t } = useLocale();
     const isActive = activeWorkspace === workspaceId;
     const isComplete = progress.total > 0 && progress.completed >= progress.total;
     const showCompletion = workspaceId !== 'metrics' && isComplete;
@@ -87,7 +90,7 @@ const WorkspaceTab: React.FC<{
         {icon}
         <span className="hidden sm:inline">{label}</span>
         {showCompletion && !showUnsavedIndicator && <CheckCircleIcon className="h-4 w-4 text-accent" />}
-        {showUnsavedIndicator && <div className="ml-2 w-2 h-2 bg-yellow-400 rounded-full" title="Unsaved changes"></div>}
+        {showUnsavedIndicator && <div className="ml-2 w-2 h-2 bg-yellow-400 rounded-full" title={t('unsavedChangesIndicator')}></div>}
       </button>
     );
   });
@@ -95,8 +98,8 @@ WorkspaceTab.displayName = 'WorkspaceTab';
 
 
 const AppHeader: React.FC<AppHeaderProps> = ({
-    script, settings, exportingType, onSaveProject, onSaveToDB, onLoadProject, onImportGlyphsClick, onAddGlyphClick, onExportClick,
-    onTestClick, onCompareClick, onSettingsClick, onChangeScriptClick, onShowTestCases, onWorkspaceChange, activeWorkspace, hasUnsavedChanges, hasUnsavedRules,
+    script, settings, exportingType, onSaveProject, onSaveToDB, onLoadProject, onImportGlyphsClick, onAddGlyphClick, onExportClick, onExportFormat,
+    onTestClick, onCompareClick, onSettingsClick, onChangeScriptClick, onShowTestCases, onShowHelp, onWorkspaceChange, activeWorkspace, hasUnsavedChanges, hasUnsavedRules,
     hasPositioning, hasKerning, drawingProgress, positioningProgress, kerningProgress, positioningRules,
     kerningMap, allCharsByUnicode, recommendedKerning, onTakeSnapshot, onRestoreSnapshot, hasSnapshot, onSaveAs, onExportTemplate,
     onQuickAddGlyph, onCreatorClick
@@ -230,6 +233,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                                 <button onClick={() => { onSaveProject(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CodeBracketsIcon /> {t('downloadBackup')}</button>
                                 <button onClick={() => { onSaveAs(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><CopyIcon /> {t('saveCopy')}</button>
+                                {/* The same font for websites or older apps; always here, even when the after-export dialog is turned off (row 92). */}
+                                {onExportFormat && <>
+                                    <button onClick={() => { onExportFormat('woff2'); setIsMoreMenuOpen(false); }} disabled={isAnyExporting} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"><ExportIcon /> {t('menuExportWoff2')}</button>
+                                    <button onClick={() => { onExportFormat('ttf'); setIsMoreMenuOpen(false); }} disabled={isAnyExporting} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"><ExportIcon /> {t('menuExportTtf')}</button>
+                                </>}
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                                 <button onClick={() => { onImportGlyphsClick(); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ImportIcon /> {t('importFromProject')}</button>
                                 <button onClick={() => { onImportGlyphsClick(true); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><ImportIcon /> {t('importFromFont') || 'Import from Font'}</button>
@@ -241,7 +249,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                 <button
                                     onClick={() => { setCurrentView('rules'); setIsMoreMenuOpen(false); }} 
                                     disabled={script.isImportedFont}
-                                    title={script.isImportedFont ? "Character Behavior cannot be edited for imported fonts." : ""}
+                                    title={script.isImportedFont ? t('rulesLockedImported') : ""}
                                     className={`w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${script.isImportedFont ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <RulesIcon /> {t('workspaceRules')}
                                     {hasUnsavedRules && <span className="ml-auto w-2 h-2 bg-yellow-400 rounded-full" title={t('unsavedChangesIndicator')}></span>}
@@ -249,11 +257,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                 <button 
                                     onClick={() => { openModal('positioningRulesManager'); setIsMoreMenuOpen(false); }} 
                                     disabled={script.isImportedFont}
-                                    title={script.isImportedFont ? "Positioning rules cannot be edited for imported fonts." : ""}
+                                    title={script.isImportedFont ? t('positioningRulesLockedImported') : ""}
                                     className={`w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${script.isImportedFont ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <WrenchIcon /> {t('managePositioningRules')}
                                 </button>
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                {/* Help (and its Tours) from inside a project too (row 62). */}
+                                <button onClick={() => { onShowHelp(); setIsMoreMenuOpen(false); }} data-testid="menu-help" className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><HelpIcon /> {t('help')}</button>
                                 <button onClick={() => { setIsFeedbackOpen(true); setIsMoreMenuOpen(false); }} className="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"><MessageSquare className="w-5 h-5" aria-hidden="true" /> {t('feedbackTitle')}</button>
                                 {/* The app's own QA checklist: development builds only (F33). */}
                                 {IS_DEV_BUILD && <>
@@ -287,7 +297,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                 className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm sm:text-base"
                             >
                                 <SearchIcon className="w-5 h-5" />
-                                <span className="hidden md:inline xl:hidden min-[1800px]:inline">Command</span>
+                                <span className="hidden md:inline xl:hidden min-[1800px]:inline">{t('commandShort')}</span>
                             </button>
                             
                             <FilterMenu />

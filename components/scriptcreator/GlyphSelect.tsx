@@ -2,6 +2,7 @@
 import React, { useMemo } from 'react';
 import { CharacterSet } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
+import { toGroupRef } from '../../utils/groupRef';
 
 interface GlyphSelectProps {
     characterSets: CharacterSet[];
@@ -35,10 +36,10 @@ const GlyphSelect: React.FC<GlyphSelectProps> = ({ characterSets, value, onChang
             <option value="" style={fontStyle}>{label}</option>
             
             {showCharacterSets && characterSets.length > 0 && (
-                <optgroup label="Character Sets">
+                <optgroup label={t('characterSets')}>
                     {characterSets.map(set => (
-                        <option key={`set-${set.nameKey}`} value={`$${set.nameKey}`} style={fontStyle}>
-                            ${t(set.nameKey)}
+                        <option key={`set-${set.nameKey}`} value={toGroupRef(set.nameKey)} style={fontStyle}>
+                            {toGroupRef(t(set.nameKey))}
                         </option>
                     ))}
                 </optgroup>
@@ -47,7 +48,7 @@ const GlyphSelect: React.FC<GlyphSelectProps> = ({ characterSets, value, onChang
             {groups && Object.keys(groups).length > 0 && (
                 <optgroup label={t('glyphGroups')}>
                     {Object.keys(groups).map(groupName => (
-                        <option key={`group-${groupName}`} value={`$${groupName}`} style={fontStyle}>
+                        <option key={`group-${groupName}`} value={toGroupRef(groupName)} style={fontStyle}>
                             @{groupName}
                         </option>
                     ))}

@@ -12,6 +12,9 @@ import { useSettings } from '../contexts/SettingsContext';
 import { useProject } from '../contexts/ProjectContext';
 import { useLayout } from '../contexts/LayoutContext';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
+import { useGlyphData } from '../contexts/GlyphDataContext';
+import { isGlyphDrawn } from '../utils/glyphUtils';
+import Modal from './Modal';
 
 interface SettingsPageProps {
   toolRanges: ToolRanges;
@@ -55,15 +58,31 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
   // Scroll Logic
   const { visibility, handleScroll, scrollRef } = useHorizontalScroll();
 
-  const handleClose = () => {
+  const { glyphDataMap } = useGlyphData();
+  const [penConfirmCount, setPenConfirmCount] = useState(0);
+
+  const save = (s: typeof localSettings) => {
     // With "Same as project name", a name typed here renames the project too (row 40).
-    const typed = localSettings.fontName?.trim();
-    if (localSettings.fontNameFollowsProject !== false && typed && typed !== projectName) setProjectName(typed);
-    dispatch({ type: 'SET_SETTINGS', payload: localSettings });
+    const typed = s.fontName?.trim();
+    if (s.fontNameFollowsProject !== false && typed && typed !== projectName) setProjectName(typed);
+    dispatch({ type: 'SET_SETTINGS', payload: s });
     dispatch({ type: 'SET_METRICS', payload: localMetrics });
     // Commit GuideFont to ProjectContext
     setGuideFont(localGuideFont);
     handleBack();
+  };
+
+  // The pen (thickness and contrast) is one setting for the whole font, so changing it changes
+  // every letter already drawn. Say so before saving (row 103); it can be changed back any time.
+  const penChanged = !!settings && (localSettings.strokeThickness !== settings.strokeThickness || (localSettings.contrast ?? 1) !== (settings.contrast ?? 1));
+  const handleClose = () => {
+    const drawn = penChanged ? [...glyphDataMap.values()].filter(isGlyphDrawn).length : 0;
+    if (drawn > 0) { setPenConfirmCount(drawn); return; }
+    save(localSettings);
+  };
+  const keepOldPen = () => {
+    setPenConfirmCount(0);
+    save({ ...localSettings, strokeThickness: settings!.strokeThickness, contrast: settings!.contrast });
   };
 
   return (
@@ -102,7 +121,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
                     ref={scrollRef} 
                     className="overflow-x-auto overflow-y-hidden no-scrollbar flex flex-nowrap"
                 >
-                    <nav className="-mb-px flex" aria-label="Tabs">
+                    <nav className="-mb-px flex" aria-label={t('tabs')}>
                         <TabButton tabId="tools" label={t('settingsTabTools')} activeTab={activeTab} onClick={setActiveTab} />
                         <TabButton tabId="editor" label={t('editorSettings')} activeTab={activeTab} onClick={setActiveTab} />
                         <TabButton tabId="meta" label={t('settingsTabMetaData')} activeTab={activeTab} onClick={setActiveTab} />
@@ -157,6 +176,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
         </div>
       </main>
       <Footer hideOnMobile={true} />
+      <Modal isOpen={penConfirmCount > 0} onClose={() => setPenConfirmCount(0)} size="md"
+        title={penConfirmCount === 1 ? t('penChangeTitleOne') : t('penChangeTitle', { count: penConfirmCount })}
+        footer={<>
+          <button type="button" onClick={keepOldPen} className="px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">{t('penKeepOld')}</button>
+          <button type="button" onClick={() => { setPenConfirmCount(0); save(localSettings); }} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">{t('penChangeAll')}</button>
+        </>}>
+        <p>{t('penChangeBody', { from: settings?.strokeThickness ?? '', to: localSettings.strokeThickness })}</p>
+        <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">{t('penChangeBoldTip')}</p>
+      </Modal>
     </div>
   );
 };

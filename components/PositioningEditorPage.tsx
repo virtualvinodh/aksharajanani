@@ -29,7 +29,8 @@ interface PositioningEditorPageProps {
     onSave: (base: Character, mark: Character, targetLigature: Character, newGlyphData: GlyphData, newOffset: Point, newMetadata: any, isAutosave?: boolean, isManual?: boolean) => void;
     onConfirmPosition: (base: Character, mark: Character, ligature: Character) => void;
     onClose: () => void;
-    onDelete: () => void;
+    /** Only for a letter opened from the grid: deletes the letter itself (F20). */
+    onDelete?: () => void;
     onReset: (baseChar: Character, markChar: Character, targetLigature: Character) => void;
     settings: AppSettings;
     metrics: FontMetrics;
@@ -87,7 +88,7 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
     const onSaveConstruction = useCallback((type: 'drawing' | 'composite' | 'link' | 'positioning' | 'kerning', components: string[], transforms?: ComponentTransform[]) => {
         const character = props.targetLigature;
         if (!character.unicode) {
-            showNotification("Cannot modify a character without a Unicode ID.", "error");
+            showNotification(t('errorNoUnicode'), "error");
             return;
         }
 
@@ -152,9 +153,9 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
             glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: character.unicode } });
         } 
         
-        showNotification("Construction type changed.", "success");
+        showNotification(t('constructionChanged'), "success");
     
-    }, [props, characterDispatch, glyphDataDispatch, showNotification, markPositioningMap, positioningDispatch, session.gpos, session.gsub, session.glyphClass, session.advWidth]);
+    }, [props, characterDispatch, glyphDataDispatch, showNotification, markPositioningMap, positioningDispatch, session.gpos, session.gsub, session.glyphClass, session.advWidth, t]);
 
 
     const isPositioned = useMemo(() => props.markPositioningMap.has(`${props.baseChar.unicode}-${props.markChar.unicode}`), [props.markPositioningMap, props.baseChar, props.markChar]);
@@ -327,7 +328,7 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
                 pageTool={pageTool} onToggleTool={() => setPageTool(t => t === 'select' ? 'pan' : 'select')} zoom={session.zoom} setZoom={session.setZoom}
                 viewOffset={session.viewOffset} setViewOffset={session.setViewOffset} onZoom={handleZoomAction}
                 onReuseClick={() => setIsReusePanelOpen(!isReusePanelOpen)} canEdit={session.canEdit} 
-                lockedMessage={!session.canEdit ? t('This pair is synced to {pivot}. Unlink to edit this specific pair, or edit {pivot} to update the whole class.', { pivot: session.pivotName || 'Class Representative' }) : undefined}
+                lockedMessage={!session.canEdit ? t('pairSyncedLocked', { pivot: session.pivotName || t('classRepresentative') }) : undefined}
                 movementConstraint={session.movementConstraint as 'horizontal' | 'vertical' | 'none'} settings={props.settings} metrics={props.metrics} showStrip={!!session.activeAttachmentClass}
                 classSiblings={classSiblings} activePair={{ base: props.baseChar, mark: props.markChar, ligature: props.targetLigature }} 
                 pivotChar={session.isPivot ? (session.activeAttachmentClass?.name ? null : props.markChar) : (session.pivotName ? props.allChars.get(session.pivotName) : null)}
@@ -356,7 +357,7 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
                         
                         {reuseSources.some(s => s.type === 'same-base') && (
                             <div>
-                                <div className="text-xs font-bold text-gray-500 uppercase mb-2">Same Base (Other Marks)</div>
+                                <div className="text-xs font-bold text-gray-500 uppercase mb-2">{t('sameBaseOtherMarks')}</div>
                                 <div className="grid grid-cols-2 gap-3">
                                     {reuseSources.filter(s => s.type === 'same-base').map(s => (
                                         <ReusePreviewCard 
@@ -377,7 +378,7 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
 
                         {reuseSources.some(s => s.type === 'same-mark') && (
                             <div>
-                                <div className="text-xs font-bold text-gray-500 uppercase mb-2">Other Bases (Same Mark)</div>
+                                <div className="text-xs font-bold text-gray-500 uppercase mb-2">{t('otherBasesSameMark')}</div>
                                 <div className="grid grid-cols-2 gap-3">
                                     {reuseSources.filter(s => s.type === 'same-mark').map(s => (
                                         <ReusePreviewCard 
@@ -405,10 +406,10 @@ const PositioningEditorPage: React.FC<PositioningEditorPageProps> = (props) => {
             <Modal 
                 isOpen={isDetachConfirmOpen} 
                 onClose={() => setIsDetachConfirmOpen(false)} 
-                title="Detach Rule?" 
-                footer={<><button onClick={() => setIsDetachConfirmOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded">{t('cancel')}</button><button onClick={handleDetach} className="px-4 py-2 bg-indigo-600 text-white rounded">Detach & Edit</button></>}
+                title={t('detachRuleTitle')} 
+                footer={<><button onClick={() => setIsDetachConfirmOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded">{t('cancel')}</button><button onClick={handleDetach} className="px-4 py-2 bg-indigo-600 text-white rounded">{t('detachAndEdit')}</button></>}
             >
-                <p>This will convert the positioning rule into a static composite glyph. It will no longer update automatically if the rule changes, but you will be able to edit the paths manually.</p>
+                <p>{t('detachRuleBody')}</p>
             </Modal>
         </div>
     );

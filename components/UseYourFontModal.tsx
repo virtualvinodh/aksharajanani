@@ -26,10 +26,41 @@ interface UseYourFontModalProps {
     fileName?: string;
     /** Something the person should know about this font, e.g. rules that were left out. */
     warning?: string;
+    /** Downloads the same font as WOFF2 or TTF; resolves to the file name (M11). */
+    onOtherFormat?: (format: 'woff2' | 'ttf') => Promise<string>;
 }
 
+/** The OTF that was downloaded, also as WOFF2 (websites) or TTF (older apps). */
+const OtherFormats: React.FC<{ onOtherFormat: (format: 'woff2' | 'ttf') => Promise<string> }> = ({ onOtherFormat }) => {
+    const { t } = useLocale();
+    const [busy, setBusy] = useState<'woff2' | 'ttf' | null>(null);
+    const [done, setDone] = useState<string | null>(null);
+    const [failed, setFailed] = useState(false);
+    const get = async (format: 'woff2' | 'ttf') => {
+        setBusy(format); setFailed(false); setDone(null);
+        try { setDone(await onOtherFormat(format)); } catch (e) { console.error(e); setFailed(true); } finally { setBusy(null); }
+    };
+    const button = (format: 'woff2' | 'ttf', label: string) => (
+        <button type="button" onClick={() => get(format)} disabled={!!busy}
+            className="px-3 py-1.5 rounded-lg text-sm border border-gray-300 dark:border-gray-600 hover:border-indigo-500 disabled:opacity-50">
+            {busy === format ? t('fontFormatPreparing') : label}
+        </button>
+    );
+    return (
+        <div className="mt-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('fontFormatOther')}</p>
+            <div className="flex flex-wrap gap-2">
+                {button('woff2', t('fontFormatWoff2'))}
+                {button('ttf', t('fontFormatTtf'))}
+            </div>
+            {done && <p className="mt-2 text-sm text-green-700 dark:text-green-400" role="status">{t('fontFormatDownloaded', { file: done })}</p>}
+            {failed && <p className="mt-2 text-sm text-red-600" role="alert">{t('fontFormatFailed')}</p>}
+        </div>
+    );
+};
+
 /** After export: where the file went and how to use it, per place people use fonts (UX §8, M5). */
-const UseYourFontModal: React.FC<UseYourFontModalProps> = ({ isOpen, onClose, fileName, warning }) => {
+const UseYourFontModal: React.FC<UseYourFontModalProps> = ({ isOpen, onClose, fileName, warning, onOtherFormat }) => {
     const { t } = useLocale();
     const [place, setPlace] = useState<typeof PLACES[number]>(() => {
         const ua = navigator.userAgent;
@@ -74,6 +105,7 @@ const UseYourFontModal: React.FC<UseYourFontModalProps> = ({ isOpen, onClose, fi
             <div role="tabpanel" className="rounded-lg bg-gray-50 dark:bg-gray-900/50 p-4 leading-relaxed">
                 {renderFormattedText(t(`useYourFontHow${place}`))}
             </div>
+            {onOtherFormat && <OtherFormats onOtherFormat={onOtherFormat} />}
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">{renderFormattedText(t('useYourFontUpdating'))}</p>
             {/* Said here rather than in a message, which would cover this dialog on a phone. */}
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{renderFormattedText(t('backupReminderAfterExport'))}</p>

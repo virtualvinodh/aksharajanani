@@ -76,7 +76,7 @@ const MetaDataSettings: React.FC<MetaDataSettingsProps> = ({ settings, onSetting
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 space-y-4">
-                <h4 className="font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-2">Authoring Information</h4>
+                <h4 className="font-bold text-gray-900 dark:text-white border-b dark:border-gray-700 pb-2">{t('authoringInformation')}</h4>
                 <div>
                     <label htmlFor="font-manufacturer" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('fontMetaManufacturer')}</label>
                     <input type="text" id="font-manufacturer" value={settings.manufacturer || ''} onChange={handleSettingChange('manufacturer')} className="mt-1 block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm"/>

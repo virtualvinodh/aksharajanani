@@ -152,14 +152,14 @@ const AddBlockModal: React.FC<AddBlockModalProps> = ({ isOpen, onClose, onAddBlo
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="e.g., Latin, Cyrillic, Symbols..."
+                  placeholder={t('searchBlocksExample')}
                   className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md p-2"
                   autoFocus
                 />
               </div>
               <div>
                 <label htmlFor="block-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Unicode Block
+                  {t('unicodeBlockLabel')}
                 </label>
                 <select
                   id="block-select"

@@ -11,6 +11,7 @@ import { Character, GlyphData, Point, ComponentTransform } from '../../types';
 import { isGlyphDrawn, isSingleCopyTemplate, sameShape } from '../../utils/glyphUtils';
 import { generateCompositeGlyphData, getAccurateGlyphBBox, calculateDefaultMarkOffset } from '../../services/glyphRenderService';
 import * as dbService from '../../services/dbService';
+import { ADDED_CHARACTERS_SET } from '../../constants';
 import { deepClone } from '../../utils/cloneUtils';
 import { findCharacterLocations, restoreCharacters, pairEntriesInvolving } from '../../utils/undoHelpers';
 import { findDependents, planDetach, withoutSources } from '../../utils/deleteHelpers';
@@ -114,7 +115,7 @@ export const useGlyphActions = (
             } else if (type === 'error') {
                 console.error("Cascade worker failed:", error);
                 if (isMounted.current) {
-                    layoutRef.current.showNotification(`Error updating dependents: ${error}`, 'error');
+                    layoutRef.current.showNotification(tRef.current('errorUpdatingDependents', { error: String(error) }), 'error');
                 }
             }
         };
@@ -425,7 +426,7 @@ export const useGlyphActions = (
         layout.selectCharacter(newChar);
     }, [characterDispatch, layout, t, allCharsByUnicode, getNextAtomicPua]);
     
-    const handleQuickAddGlyph = useCallback((input: string, targetSetName: string = 'Custom_Glyphs') => {
+    const handleQuickAddGlyph = useCallback((input: string, targetSetName: string = ADDED_CHARACTERS_SET) => {
         const trimmedInput = input.trim();
         if (!trimmedInput) return;
 

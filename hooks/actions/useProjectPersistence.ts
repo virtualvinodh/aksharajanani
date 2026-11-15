@@ -166,10 +166,10 @@ export const useProjectPersistence = (
             return true;
         } catch (error) {
             console.error("Failed to save project to DB:", error);
-            layoutRef.current.showNotification("Error saving project to database.", 'error');
+            layoutRef.current.showNotification(t('errorSavingProject'), 'error');
             return false;
         }
-    }, [rulesDispatch, setProjectId, setLastSavedState, canSaveRef]);
+    }, [rulesDispatch, setProjectId, setLastSavedState, canSaveRef, t]);
 
     // Saves are queued: a save requested while another runs starts after it, with the latest state.
     const saveChainRef = useRef<Promise<boolean>>(Promise.resolve(true));

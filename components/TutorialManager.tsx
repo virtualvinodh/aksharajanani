@@ -46,9 +46,8 @@ const TutorialManager: React.FC = () => {
     const jitEngine = useJITHints(translations, isLargeScreen);
 
     // Arbitration: Linear tutorial takes precedence if running
-    const activeEngine = (script?.id === 'tutorial' && linearEngine.steps.length > 0) 
-        ? linearEngine 
-        : jitEngine;
+    const isLinear = script?.id === 'tutorial' && linearEngine.steps.length > 0;
+    const activeEngine = isLinear ? linearEngine : jitEngine;
 
     // Scroll Offset Logic (UI specific)
     const updateScrollOffset = useCallback(() => {
@@ -107,6 +106,7 @@ const TutorialManager: React.FC = () => {
         <>
             {activeModal && <TutorialStateProvider onToolChange={handleToolChange} />}
             <Joyride
+                key={isLinear ? `tour-${linearEngine.activeTour}-${linearEngine.session}` : 'hints'}
                 steps={activeEngine.steps}
                 run={activeEngine.run}
                 stepIndex={activeEngine.stepIndex}

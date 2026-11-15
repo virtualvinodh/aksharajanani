@@ -5,6 +5,7 @@ import GlyphTile from '../GlyphTile';
 import { ClearIcon, EditIcon, TrashIcon, AddIcon } from '../../constants';
 import { Character, GlyphData, CharacterSet } from '../../types';
 import SmartGlyphInput from './manager/SmartGlyphInput';
+import { isGroupRef } from '../../utils/groupRef';
 
 interface DistContextualRuleValue {
     target: string;
@@ -209,7 +210,7 @@ const DistRulesEditor: React.FC<DistRulesEditorProps> = ({
             );
         }
 
-        const isGroup = value ? (value.startsWith('@') || value.startsWith('$')) : false;
+        const isGroup = value ? isGroupRef(value) : false;
         const char = (value && !isGroup) ? allCharsByName.get(value) : null;
         const glyphData = char ? glyphDataMap.get(char.unicode) : undefined;
 
@@ -273,7 +274,7 @@ const DistRulesEditor: React.FC<DistRulesEditorProps> = ({
 
     // A name must be a glyph in the project, or a group / character set ($name or @name).
     const isKnownName = (name: string) => {
-        if (name.startsWith('$') || name.startsWith('@')) {
+        if (isGroupRef(name)) {
             const groupName = name.substring(1);
             return !!groups?.[groupName] || allCharacterSets.some(set => set.nameKey === groupName);
         }
@@ -392,7 +393,7 @@ const DistRulesEditor: React.FC<DistRulesEditorProps> = ({
             
             {simpleRules.length > 0 && <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">{t('simplePositioning')}</h3>}
             {simpleRules.map(([key, value]) => {
-                const isGroup = key.startsWith('@') || key.startsWith('$');
+                const isGroup = isGroupRef(key);
                 return (
                     <div key={key} className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 group">
                         {isGroup ? (
@@ -418,11 +419,11 @@ const DistRulesEditor: React.FC<DistRulesEditorProps> = ({
 
             {contextualRules.length > 0 && <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b pb-2">{t('contextualPositioning')}</h3>}
             {contextualRules.map((rule, index) => {
-                const isTargetGroup = rule.target.startsWith('@') || rule.target.startsWith('$');
+                const isTargetGroup = isGroupRef(rule.target);
                 return (
                     <div key={index} className="p-3 border bg-white dark:bg-gray-800 rounded-lg flex justify-between items-center dark:border-gray-700 group shadow-sm">
                         <div className="flex items-center gap-1 flex-wrap">
-                            {(rule.left || []).map((name: string, i: number) => (name.startsWith('@') || name.startsWith('$')) ? <span key={`l-${i}`} className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 px-2 py-1 rounded font-mono font-bold">{name}</span> : <div key={`l-${i}`} className="opacity-60 scale-75">{renderGlyph(name)}</div>)}
+                            {(rule.left || []).map((name: string, i: number) => isGroupRef(name) ? <span key={`l-${i}`} className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 px-2 py-1 rounded font-mono font-bold">{name}</span> : <div key={`l-${i}`} className="opacity-60 scale-75">{renderGlyph(name)}</div>)}
                             
                             {isTargetGroup ? (
                                 <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 px-2 py-1 rounded font-mono font-bold">{rule.target}</span>
@@ -430,7 +431,7 @@ const DistRulesEditor: React.FC<DistRulesEditorProps> = ({
                                 renderGlyph(rule.target)
                             )}
                             
-                            {(rule.right || []).map((name: string, i: number) => (name.startsWith('@') || name.startsWith('$')) ? <span key={`r-${i}`} className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 px-2 py-1 rounded font-mono font-bold">{name}</span> : <div key={`r-${i}`} className="opacity-60 scale-75">{renderGlyph(name)}</div>)}
+                            {(rule.right || []).map((name: string, i: number) => isGroupRef(name) ? <span key={`r-${i}`} className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 px-2 py-1 rounded font-mono font-bold">{name}</span> : <div key={`r-${i}`} className="opacity-60 scale-75">{renderGlyph(name)}</div>)}
                             <span className="text-xl font-bold mx-2 text-indigo-500 dark:text-indigo-400">→</span>
                             <span className="font-mono p-1.5 bg-gray-100 dark:bg-gray-700 rounded font-bold text-sm">{rule.space}</span>
                         </div>

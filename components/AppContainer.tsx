@@ -71,7 +71,7 @@ const AppContainer: React.FC = () => {
                 const data: ScriptsFile = await response.json();
                 setScriptsFile(data);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred');
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setIsLoading(false);
             }
@@ -118,11 +118,11 @@ const AppContainer: React.FC = () => {
     }
     
     if (error) {
-        return <div className="h-screen bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 flex flex-col items-center justify-center p-4"><h1 className="text-2xl font-bold mb-4">Application Error</h1><p className="text-center bg-gray-100 dark:bg-gray-800 p-4 rounded-md">{error}</p></div>;
+        return <div className="h-screen bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 flex flex-col items-center justify-center p-4"><h1 className="text-2xl font-bold mb-4">{t('appErrorTitle')}</h1><p className="text-center bg-gray-100 dark:bg-gray-800 p-4 rounded-md">{t('appConfigError')}<span className="block mt-2 text-xs opacity-70">{error}</span></p></div>;
     }
     
     if (!scriptsFile) {
-        return <div className="h-screen bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 flex items-center justify-center p-4"><h1 className="text-2xl font-semibold">Could not load script configuration.</h1></div>;
+        return <div className="h-screen bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 flex items-center justify-center p-4"><h1 className="text-2xl font-semibold">{t('appConfigError')}</h1></div>;
     }
     
     return (

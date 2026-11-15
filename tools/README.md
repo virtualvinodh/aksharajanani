@@ -188,3 +188,11 @@ uv run --with fonttools python3 tools/data/build_languages.py \
 | `font/kerndump.py font.otf` | A few glyphs' metrics, the most negative kerning pairs, any positive ones. |
 | `font/glyphsvg.py font.otf out.svg "DtB"` | Draws glyphs with origin and advance marked, to compare against what was drawn. |
 | `font/svg2png.cjs out.svg out.png` | Renders that SVG to PNG. |
+
+### `font/fea-dump.ts`: the feature code a project produces
+
+Prints the OpenType feature code (FEA) the app would generate for a saved project, without the browser. Useful to check that a change to the rules code or the data leaves the generated features unchanged (diff before and after):
+
+```sh
+npx tsx tools/font/fea-dump.ts tools/e2e/out/tamil/tamil-project.json > /tmp/tamil.fea
+```

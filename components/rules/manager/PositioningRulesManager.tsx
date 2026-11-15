@@ -43,7 +43,7 @@ const PositioningRulesManager: React.FC<PositioningRulesManagerProps> = (props) 
         <div className="flex flex-col h-full">
             {/* Tab Navigation */}
             <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-20">
-                <nav className="-mb-px flex space-x-4 px-4" aria-label="Tabs">
+                <nav className="-mb-px flex space-x-4 px-4" aria-label={t('tabs')}>
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}

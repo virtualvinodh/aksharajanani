@@ -195,10 +195,10 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
     characterDispatch({ type: 'SET_CHARACTER_SETS', payload: result.updatedCharacterSets });
     if (!isAutosave) {
         const propagatedCount = result.updatedMarkPositioningMap.size - markPositioningMap.size - 1;
-        if (propagatedCount > 0) showNotification(`Saved and propagated to ${propagatedCount} similar pairs.`, 'success');
-        else showNotification(`Positioning saved.`, 'success');
+        if (propagatedCount > 0) showNotification(t('positioningSavedPropagated', { count: propagatedCount }), 'success');
+        else showNotification(t('positioningSaved'), 'success');
     }
-  }, [allCharsByName, allLigaturesByKey, markAttachmentClasses, baseAttachmentClasses, markPositioningMap, allGlyphData, allCharacterSets, positioningRules, markAttachmentRules, groups, settings.strokeThickness, metrics, positioningDispatch, glyphDataDispatch, characterDispatch, showNotification]);
+  }, [allCharsByName, allLigaturesByKey, markAttachmentClasses, baseAttachmentClasses, markPositioningMap, allGlyphData, allCharacterSets, positioningRules, markAttachmentRules, groups, settings.strokeThickness, metrics, positioningDispatch, glyphDataDispatch, characterDispatch, showNotification, t]);
 
   const handleConfirmPosition = useCallback((base: Character, mark: Character, ligature: Character) => {
     const baseGlyph = placementGlyphs.get(base.unicode!);
@@ -242,8 +242,8 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
       if (compositeData) glyphDataDispatch({ type: 'SET_GLYPH', payload: { unicode: newChar.unicode, data: compositeData } });
       characterDispatch({ type: 'UPDATE_CHARACTER_SETS', payload: (prevSets: CharacterSet[] | null) => prevSets ? prevSets.map(set => ({ ...set, characters: set.characters.map(c => c.unicode === newChar.unicode ? newChar : c) })) : null });
       onNavigate(newChar);
-      showNotification("Converted to standard composite glyph.", "success");
-  }, [character, markPositioningMap, kerningMap, allCharsByName, allGlyphData, settings, metrics, markAttachmentRules, allCharacterSets, groups, positioningDispatch, kerningDispatch, glyphDataDispatch, characterDispatch, showNotification, onNavigate]);
+      showNotification(t('convertedToComposite'), "success");
+  }, [character, markPositioningMap, kerningMap, allCharsByName, allGlyphData, settings, metrics, markAttachmentRules, allCharacterSets, groups, positioningDispatch, kerningDispatch, glyphDataDispatch, characterDispatch, showNotification, onNavigate, t]);
 
   const renderActivePage = () => {
     const pageKey = character.unicode || character.name;
@@ -263,12 +263,13 @@ const UnifiedEditorModal: React.FC<UnifiedEditorModalProps> = ({
                         kerningDispatch({ type: 'SET_MAP', payload: newMap }); 
                     }}
                     onRemove={() => { 
+                        // "Back to usual" (row 39): follows the overall spacing, kept as checked.
                         const newMap = new Map(kerningMap); 
-                        newMap.delete(key); 
+                        newMap.set(key, 0); 
                         kerningDispatch({ type: 'SET_MAP', payload: newMap }); 
                         kerningDispatch({ type: 'REMOVE_SUGGESTIONS', payload: [key] });
                     }}
-                    onClose={() => onClose()} onDelete={() => onDelete(character.unicode!)} onNavigate={handlePageNavigate}
+                    onClose={() => onClose()} onDeleteLetter={() => onDelete(character.unicode!)} onNavigate={handlePageNavigate}
                     hasPrev={!!prevCharacter} hasNext={!!nextCharacter} glyphVersion={glyphVersion} isKerned={kerningMap.has(key)}
                     allCharacterSets={allCharacterSets} 
                     onConvertToComposite={handleConvertToComposite} 

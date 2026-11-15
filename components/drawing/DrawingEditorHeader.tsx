@@ -191,7 +191,7 @@ const DrawingEditorHeader: React.FC<DrawingEditorHeaderProps> = (props) => {
                         onClick={() => { props.onDeleteClick(); setIsMoreMenuOpen(false); }} 
                         disabled={script?.isImportedFont}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
-                        title={script?.isImportedFont ? "Deletion disabled for imported fonts" : t('deleteGlyph')}
+                        title={script?.isImportedFont ? t('deletionDisabledImported') : t('deleteGlyph')}
                       >
                           <TrashIcon /> <span>{t('deleteGlyph')}</span>
                       </button>

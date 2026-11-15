@@ -11,6 +11,7 @@ import {
 } from '../types';
 import { VEC } from '../utils/vectorUtils';
 import { expandMembers } from './groupExpansionService';
+import { isGroupRef } from '../utils/groupRef';
 
 export const getAttachmentPointCoords = (bbox: BoundingBox, pointName: AttachmentPoint): Point => {
     const { x, y, width, height } = bbox;
@@ -62,7 +63,7 @@ export const resolveAttachmentRule = (
     // 2. Group/Class Match: Look for group keys like $consonants or @BaseClass
     if (!rule && (characterSets || (groups && Object.keys(groups).length > 0))) {
         for (const baseKey in markAttachmentRules) {
-            if (baseKey.startsWith('$') || baseKey.startsWith('@')) {
+            if (isGroupRef(baseKey)) {
                 const safeGroups = groups || {};
                 const members = expandMembers([baseKey], safeGroups, characterSets);
                 
@@ -72,7 +73,7 @@ export const resolveAttachmentRule = (
                     if (rule) break;
 
                     for (const markKey in categoryRules) {
-                        if ((markKey.startsWith('$') || markKey.startsWith('@'))) {
+                        if (isGroupRef(markKey)) {
                             const markMembers = expandMembers([markKey], safeGroups, characterSets);
                             if (markMembers.includes(markName)) {
                                 rule = categoryRules[markKey];

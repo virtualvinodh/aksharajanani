@@ -229,7 +229,7 @@ const SiblingThumbnail: React.FC<{
                  </div>
             )}
             {isThisSiblingAnException && !isActive && (
-                <div className="absolute top-0.5 right-0.5 bg-orange-100 text-orange-600 rounded-full p-0.5 border border-orange-200 z-20 shadow-sm" title="Exception (Unlinked)">
+                <div className="absolute top-0.5 right-0.5 bg-orange-100 text-orange-600 rounded-full p-0.5 border border-orange-200 z-20 shadow-sm" title={t('exceptionUnlinked')}>
                     <BrokenLinkIcon className="w-2.5 h-2.5" />
                 </div>
             )}
@@ -378,13 +378,13 @@ const ClassPreviewStrip: React.FC<ClassPreviewStripProps> = ({
                                 ? 'bg-indigo-600 text-white hover:bg-indigo-700 ring-2 ring-indigo-200 dark:ring-indigo-900' 
                                 : 'bg-orange-100 text-orange-600 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 ring-2 ring-orange-50 dark:ring-orange-950'
                             } ${collapsed ? 'hidden' : 'block'}`}
-                            title={isLinked ? "Synced: Click to Break Sync (Make Exception)" : "Exception: Click to Relink to Class"}
+                            title={isLinked ? t('syncedClickToBreak') : t('exceptionClickToRelink')}
                         >
                             {isLinked ? <LinkIcon className="w-5 h-5" /> : <BrokenLinkIcon className="w-5 h-5" />}
                         </button>
                         
                         <span className={`text-[11px] font-bold uppercase tracking-tight leading-tight ${isLinked ? 'text-indigo-500' : 'text-orange-600'} ${collapsed ? 'text-left flex gap-2 items-center' : 'text-center'}`}>
-                            {isLinked ? 'Synced' : 'Override'}
+                            {isLinked ? t('synced') : t('override')}
                             {collapsed && <span className="text-gray-300 dark:text-gray-600">•</span>}
                             {collapsed && <span className="text-gray-500 dark:text-gray-400">{activeClass?.name || t('group')}</span>}
                         </span>
@@ -393,14 +393,14 @@ const ClassPreviewStrip: React.FC<ClassPreviewStripProps> = ({
                             <button 
                                 onClick={toggleCollapse}
                                 className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-400 transition-colors"
-                                title={collapsed ? "Expand" : "Minimize"}
+                                title={collapsed ? t('expand') : t('minimize')}
                             >
                                 {collapsed ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
                             </button>
                             <button 
                                 onClick={() => setIsExpanded(true)}
                                 className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-400 transition-colors"
-                                title="Expand to Fullscreen"
+                                title={t('expandFullscreen')}
                             >
                                 <FoldIcon className="w-4 h-4 rotate-180" />
                             </button>

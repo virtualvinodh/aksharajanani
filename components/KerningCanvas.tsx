@@ -35,7 +35,7 @@ const KerningCanvas: React.FC<KerningCanvasProps> = ({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { theme } = useTheme();
 
-    const { handleMouseDown, handleMouseMove, handleMouseUp, isPanning, isDragging, handleTouchStart, handleTouchMove, handleTouchEnd } = useKerningCanvas({
+    const { handleMouseDown, handleMouseMove, handleMouseUp, isPanning, isDragging, dragSide, handleTouchStart, handleTouchMove, handleTouchEnd } = useKerningCanvas({
         canvasRef, leftChar, rightChar, glyphDataMap, strokeThickness, metrics,
         kernValue, onKernChange, tool, zoom, setZoom, viewOffset, setViewOffset, baseScale
     });
@@ -99,9 +99,10 @@ const KerningCanvas: React.FC<KerningCanvasProps> = ({
 
         const referenceGrey = theme === 'dark' ? '#525252' : '#A3A3A3';
         const glyphColor = theme === 'dark' ? '#E5E5E5' : '#262626';
-        const rightColor = isDragging ? accentFor(theme) : glyphColor;
+        const rightColor = dragSide === 'right' ? accentFor(theme) : glyphColor;
+        const leftColor = dragSide === 'left' ? accentFor(theme) : referenceGrey;
 
-        renderPaths(ctx, leftGlyph.paths, { strokeThickness, color: referenceGrey });
+        renderPaths(ctx, leftGlyph.paths, { strokeThickness, color: leftColor });
 
         ctx.save();
         ctx.translate(rightTranslateX, 0);
@@ -160,7 +161,7 @@ const KerningCanvas: React.FC<KerningCanvasProps> = ({
             }
         }
         ctx.restore();
-    }, [width, height, leftChar, rightChar, kernValue, zoom, viewOffset, theme, baseScale, showMeasurement, glyphDataMap, metrics, strokeThickness, isDragging, settings.isDebugKerningEnabled]);
+    }, [width, height, leftChar, rightChar, kernValue, zoom, viewOffset, theme, baseScale, showMeasurement, glyphDataMap, metrics, strokeThickness, isDragging, dragSide, settings.isDebugKerningEnabled]);
 
     return (
         <canvas

@@ -1,27 +1,63 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { CallBackProps, STATUS, EVENTS, ACTIONS } from 'react-joyride';
 import { useProject } from '../../contexts/ProjectContext';
 import { useLayout } from '../../contexts/LayoutContext';
 import { usePositioning } from '../../contexts/PositioningContext';
 import { useKerning } from '../../contexts/KerningContext';
 import { useTutorialSteps } from './useTutorialSteps';
+import { TourId, START_TOUR_EVENT, isTourId, takePendingTour } from './tours';
+
+/** Whether a step's target is on the page and visible (a hidden one makes the tip float loose). */
+const targetVisible = (target: unknown): boolean => {
+    if (target === 'body') return true;
+    const el = typeof target === 'string' ? document.querySelector(target) : target instanceof Element ? target : null;
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+};
 
 export const useLinearTutorial = (
     translations: Record<string, string> | null,
     isLargeScreen: boolean
 ) => {
     const { script, allCharsByName } = useProject();
-    const { selectedCharacter, activeModal, workspace, isNavDrawerOpen } = useLayout();
+    const { selectedCharacter, activeModal, workspace, isNavDrawerOpen, closeCharacterModal, setWorkspace, setCurrentView } = useLayout();
     const { markPositioningMap } = usePositioning();
     const { kerningMap } = useKerning();
 
     const [run, setRun] = useState(false);
     const [stepIndex, setStepIndex] = useState(0);
     const [hasUserSkipped, setHasUserSkipped] = useState(false);
-    const steps = useTutorialSteps(translations, isLargeScreen);
+    // The short core runs first; Help → Tours runs the others (row 62).
+    const [activeTour, setActiveTour] = useState<TourId>('core');
+    // A new number for every tour start: Joyride stays "finished" when handed the same steps again,
+    // so the manager gives it a fresh start (key) each time.
+    const [session, setSession] = useState(0);
+    const chapters = useTutorialSteps(translations, isLargeScreen);
+    const steps = chapters[activeTour];
 
     const isActive = script?.id === 'tutorial';
+
+    // A tour started from Help while the practice project is open: start from the letters grid.
+    useEffect(() => {
+        if (!isActive) return;
+        const onStart = (e: Event) => {
+            const id = (e as CustomEvent).detail;
+            if (!isTourId(id)) return;
+            closeCharacterModal();
+            setWorkspace('drawing');
+            setCurrentView('grid');
+            setActiveTour(id);
+            setSession(n => n + 1);
+            setStepIndex(0);
+            setHasUserSkipped(false);
+            setRun(false);
+            setTimeout(() => setRun(true), 600);
+        };
+        window.addEventListener(START_TOUR_EVENT, onStart);
+        return () => window.removeEventListener(START_TOUR_EVENT, onStart);
+    }, [isActive, closeCharacterModal, setWorkspace, setCurrentView]);
 
     // Resume Listener for View Transitions
     useEffect(() => {
@@ -52,6 +88,9 @@ export const useLinearTutorial = (
     // Initialize / Reset
     useEffect(() => {
         if (isActive) {
+            // Help may have asked for a particular tour before opening the practice project.
+            setActiveTour(takePendingTour());
+            setStepIndex(0);
             const isDismissed = localStorage.getItem('tutorial_dismissed') === 'true';
             if (!isDismissed && !hasUserSkipped) {
                 setRun(true);
@@ -60,6 +99,7 @@ export const useLinearTutorial = (
              setRun(false);
              setStepIndex(0);
              setHasUserSkipped(false);
+             setActiveTour('core');
         }
     }, [isActive]);
 
@@ -159,6 +199,29 @@ export const useLinearTutorial = (
         }
     }, [stepIndex, selectedCharacter, activeModal, run, isActive, steps, isNavDrawerOpen, workspace, allCharsByName, markPositioningMap, kerningMap]);
 
+    // A step whose target isn't on screen yet (the Test page still building the font, a screen
+    // still opening): wait for it and show the step then; skip it if it never comes.
+    const [waitingFor, setWaitingFor] = useState<number | null>(null);
+    const stepsRef = useRef(steps);
+    stepsRef.current = steps;
+    useEffect(() => {
+        if (waitingFor === null || !isActive) return;
+        const started = Date.now();
+        const timer = setInterval(() => {
+            const step = stepsRef.current[waitingFor];
+            if (!step) { clearInterval(timer); setWaitingFor(null); return; }
+            if (targetVisible(step.target)) {
+                clearInterval(timer); setWaitingFor(null);
+                setRun(false); setTimeout(() => setRun(true), 50);
+            } else if (Date.now() - started > 20000) {
+                clearInterval(timer); setWaitingFor(null);
+                setStepIndex(waitingFor + 1);
+                setRun(false); setTimeout(() => setRun(true), 50);
+            }
+        }, 400);
+        return () => clearInterval(timer);
+    }, [waitingFor, isActive]);
+
     const handleCallback = useCallback((data: CallBackProps) => {
         if (!isActive) return;
         const { status, type, action, index } = data;
@@ -177,12 +240,15 @@ export const useLinearTutorial = (
                  }
                  return;
              }
+             setWaitingFor(index);
+             return;
         }
         
         if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
-            if (status === STATUS.SKIPPED) {
-                setHasUserSkipped(true);
-            }
+            // Done or exited: don't start over by itself (finishing used to restart the tutorial
+            // as soon as the grid showed again). Help → Tours starts any part again.
+            setHasUserSkipped(true);
+            try { localStorage.setItem('tutorial_dismissed', 'true'); } catch { /* storage blocked */ }
             setRun(false);
             setStepIndex(0);
         } else if (type === EVENTS.STEP_AFTER) {
@@ -195,5 +261,5 @@ export const useLinearTutorial = (
         }
     }, [isActive, steps, activeModal, selectedCharacter]);
 
-    return { run, stepIndex, steps, handleCallback };
+    return { run, stepIndex, steps, handleCallback, activeTour, session };
 };

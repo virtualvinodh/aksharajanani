@@ -81,7 +81,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             <input type="checkbox" checked={settings.isBackgroundAutoKerningEnabled ?? false} onChange={handleToggleChange('isBackgroundAutoKerningEnabled')} className="h-4 w-4 rounded accent-indigo-500" />
                             <div className="flex items-center gap-1">
                                 <SparklesIcon className="w-4 h-4 opacity-70" />
-                                <span>Enable Background Auto-Kerning</span>
+                                <span>{t('enableBackgroundAutoSpacing')}</span>
                             </div>
                         </label>
 
@@ -89,7 +89,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             <input type="checkbox" checked={settings.showHiddenGlyphs ?? false} onChange={handleToggleChange('showHiddenGlyphs')} className="h-4 w-4 rounded accent-indigo-500" />
                             <div className="flex items-center gap-1">
                                 <EyeOffIcon className="w-4 h-4 opacity-70" />
-                                <span>Show Hidden Glyphs</span>
+                                <span>{t('showHiddenGlyphs')}</span>
                             </div>
                         </label>
 
@@ -97,7 +97,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             <input type="checkbox" checked={!!settings.showGlyphNames} onChange={handleToggleChange('showGlyphNames')} className="h-4 w-4 rounded accent-indigo-500" />
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-xs border border-gray-400 dark:border-gray-500 px-1 rounded opacity-70">Aa</span>
-                                <span>Show Glyph Names</span>
+                                <span>{t('showGlyphNames')}</span>
                             </div>
                         </label>
 
@@ -105,13 +105,13 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             <input type="checkbox" checked={settings.showUnicodeValues ?? false} onChange={handleToggleChange('showUnicodeValues')} className="h-4 w-4 rounded accent-indigo-500" />
                             <div className="flex items-center gap-1">
                                 <span className="font-mono text-xs border border-gray-400 dark:border-gray-500 px-1 rounded opacity-70">U+</span>
-                                <span>Show Unicode Values</span>
+                                <span>{t('showUnicodeValues')}</span>
                             </div>
                         </label>
                         
                         <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-300 select-none">
                             <input type="checkbox" checked={settings.preferKerningTerm ?? false} onChange={handleToggleChange('preferKerningTerm')} className="h-4 w-4 rounded accent-indigo-500" />
-                            <span>Use &quot;Kerning&quot; terminology</span>
+                            <span>{t('useKerningTerminology')}</span>
                         </label>
                     </div>
                 </div>
@@ -120,7 +120,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
             {/* Guide Font Section - Moved here */}
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 space-y-4">
                 <h4 className="text-lg font-bold text-gray-900 dark:text-white">{t('guideFontSettings')}</h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Configure a reference font to appear in the background while you draw.</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('guideFontHelp')}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('guideFontName')}</label>
@@ -128,7 +128,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             type="text" 
                             value={guideFont.fontName} 
                             onChange={handleGuideFontChange('fontName')} 
-                            placeholder="e.g. Noto Sans"
+                            placeholder={t('guideFontNameExample')}
                             className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-sm"
                         />
                     </div>
@@ -148,7 +148,7 @@ const EditorSettings: React.FC<EditorSettingsProps> = ({ settings, onSettingsCha
                             type="text" 
                             value={guideFont.stylisticSet} 
                             onChange={handleGuideFontChange('stylisticSet')} 
-                            placeholder="e.g. 'ss01' or 'normal'"
+                            placeholder={t('stylisticSetExample')}
                             className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-sm"
                         />
                     </div>

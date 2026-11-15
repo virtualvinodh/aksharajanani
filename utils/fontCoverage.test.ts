@@ -29,4 +29,15 @@ describe('fontCoverage', () => {
     it('does not count spaces, line breaks or joiners as missing', () => {
         expect(missingLetters('a \n‍a', has('a'))).toEqual([]);
     });
+
+    it('names only the parts that are not drawn, not the whole cluster (नमस्ते with न म स drawn)', () => {
+        const font = has('नमस');
+        expect(missingLetters('नमस्ते', font)).toEqual(['्', 'त', 'े']);
+        // The grey box still keeps the letter and its signs together.
+        expect(splitByCoverage('नमस्ते', font)).toEqual([{ text: 'नम', missing: false }, { text: 'स्ते', missing: true }]);
+    });
+
+    it('names undrawn Tamil vowel signs on their own', () => {
+        expect(missingLetters('கா கி', has('க'))).toEqual(['ா', 'ி']);
+    });
 });

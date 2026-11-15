@@ -5,6 +5,8 @@ import { isGlyphDrawn, isGlyphComplete, shouldExportEmpty } from '../utils/glyph
 import { useSettings } from '../contexts/SettingsContext';
 import { expandMembers } from '../services/groupExpansionService';
 import { useKerning } from '../contexts/KerningContext';
+import { isGroupRef } from '../utils/groupRef';
+import { useMeasurableGlyphs } from './kerning/useMeasurableGlyphs';
 
 interface UseProgressCalculatorsProps {
     characterSets: CharacterSet[] | null;
@@ -32,6 +34,19 @@ export const useProgressCalculators = ({
 
     const { settings } = useSettings();
     const showHidden = settings?.showHiddenGlyphs ?? false;
+
+    // Each letter's own drawing or its built shape: a pair whose letters both have a shape can be
+    // placed or spaced now; the others wait for letters that aren't drawn yet (row 104).
+    const measurable = useMeasurableGlyphs();
+    const pendingReady = (pairs: Set<string>, done: (key: string) => boolean) => {
+        let n = 0;
+        pairs.forEach(key => {
+            if (done(key)) return;
+            const [a, b] = key.split('-').map(Number);
+            if (isGlyphDrawn(measurable.get(a)) && isGlyphDrawn(measurable.get(b))) n++;
+        });
+        return n;
+    };
 
     // A pair is spaced when it's in the font: spaced automatically (applied straight away, row 27)
     // or set by hand (which wins). Both are exported, so both count.
@@ -70,7 +85,7 @@ export const useProgressCalculators = ({
      * regardless of whether component glyphs have been drawn yet.
      */
     const positioningProgress = useMemo(() => {
-        if (!positioningRules || !characterSets) return { completed: 0, total: 0 };
+        if (!positioningRules || !characterSets) return { completed: 0, total: 0, pendingReady: 0 };
         
         const groups = fontRules?.groups || {};
         const allRequiredPairs = new Set<string>();
@@ -113,15 +128,16 @@ export const useProgressCalculators = ({
             }
         });
         
-        return { completed: completedCount, total: allRequiredPairs.size };
-    }, [markPositioningMap, positioningRules, fontRules, characterSets, allCharsByName]);
+        return { completed: completedCount, total: allRequiredPairs.size, pendingReady: pendingReady(allRequiredPairs, k => markPositioningMap.has(k)) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [markPositioningMap, positioningRules, fontRules, characterSets, allCharsByName, measurable]);
 
     /**
      * Kerning Progress (Absolute Scope):
      * Calculates percentage of kerned pairs relative to ALL recommended pairs in the script.
      */
     const kerningProgress = useMemo(() => {
-        if (!recommendedKerning || !characterSets) return { completed: 0, total: 0 };
+        if (!recommendedKerning || !characterSets) return { completed: 0, total: 0, pendingReady: 0 };
         
         const groups = fontRules?.groups || {};
         const allRecommendedPairs = new Set<string>();
@@ -159,8 +175,9 @@ export const useProgressCalculators = ({
             }
         });
 
-        return { completed: completedCount, total: allRecommendedPairs.size };
-    }, [spacedMap, recommendedKerning, allCharsByName, fontRules, characterSets]);
+        return { completed: completedCount, total: allRecommendedPairs.size, pendingReady: pendingReady(allRecommendedPairs, k => spacedMap.has(k)) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [spacedMap, recommendedKerning, allCharsByName, fontRules, characterSets, measurable]);
 
     /**
      * Rules Progress:
@@ -180,11 +197,11 @@ export const useProgressCalculators = ({
                 const block = obj[type];
                 if (block) {
                     Object.entries(block).forEach(([key, val]) => {
-                        if (!key.startsWith('$') && !key.startsWith('@')) allReferencedNames.add(key);
+                        if (!isGroupRef(key)) allReferencedNames.add(key);
                         
                         if (Array.isArray(val)) {
                             val.forEach((v: any) => {
-                                if (typeof v === 'string' && !v.startsWith('$') && !v.startsWith('@')) {
+                                if (typeof v === 'string' && !isGroupRef(v)) {
                                     allReferencedNames.add(v);
                                 }
                             });
@@ -192,7 +209,7 @@ export const useProgressCalculators = ({
                             ['replace', 'left', 'right'].forEach(field => {
                                 if (Array.isArray((val as any)[field])) {
                                     (val as any)[field].forEach((v: string) => {
-                                        if (!v.startsWith('$') && !v.startsWith('@')) allReferencedNames.add(v);
+                                        if (!isGroupRef(v)) allReferencedNames.add(v);
                                     });
                                 }
                             });

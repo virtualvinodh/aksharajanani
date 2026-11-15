@@ -2,20 +2,21 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { Character, AppSettings, CharacterSet, Path, FontMetrics } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
-import { BackIcon, LeftArrowIcon, RightArrowIcon, SparklesIcon, SaveIcon, CheckIcon, UndoIcon, PropertiesIcon, TrashIcon, MoreIcon, BrokenLinkIcon, EyeOffIcon } from '../../constants';
+import { BackIcon, LeftArrowIcon, RightArrowIcon, SparklesIcon, SaveIcon, CheckIcon, UndoIcon, PropertiesIcon, TrashIcon, MoreIcon, BrokenLinkIcon } from '../../constants';
 import GlyphPropertiesPanel from '../GlyphPropertiesPanel';
 import { GlyphDataAction } from '../../contexts/GlyphDataContext';
 
 interface KerningEditorHeaderProps {
     pair: { left: Character, right: Character };
     onClose: () => void;
-    onDelete: () => void;
     onNavigate: (direction: 'prev' | 'next') => void;
     hasPrev: boolean;
     hasNext: boolean;
     onAutoKern: () => void;
     isAutoKerning: boolean;
     onSave: () => void;
+    /** Only for a letter in the grid that is built as a pair: deletes the letter itself. */
+    onDeleteLetter?: () => void;
     onRemove: () => void;
     isDirty: boolean;
     settings: AppSettings;
@@ -36,8 +37,6 @@ interface KerningEditorHeaderProps {
     metrics: FontMetrics;
     showPropertiesButton?: boolean;
     
-    onIgnore: () => void;
-    isIgnored: boolean;
 
     // ADD: Accept all construction-related props to pass down
     position?: [string, string];
@@ -191,14 +190,17 @@ const KerningEditorHeader: React.FC<KerningEditorHeaderProps> = (props) => {
                     </button>
                 )}
 
+                {/* The one way to undo a pair fix (row 39). */}
                 <button 
                     onClick={props.onRemove} 
-                    title={t('reset')} 
+                    title={t('pairFixBackToUsual')} 
+                    aria-label={t('pairFixBackToUsual')}
                     disabled={!props.isKerned}
-                    className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg disabled:opacity-50 transition-all active:scale-95 shadow-sm"
+                    data-tour="pair-back-to-usual"
+                    className="flex items-center gap-2 px-3 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg disabled:opacity-50 transition-all active:scale-95 shadow-sm"
                 >
                     <UndoIcon />
-                    <span className="hidden xl:inline font-semibold">{t('reset')}</span>
+                    <span className="hidden xl:inline font-semibold">{t('pairFixBackToUsual')}</span>
                 </button>
                 
                 {/* Properties Button - Conditionally Visible */}
@@ -212,41 +214,24 @@ const KerningEditorHeader: React.FC<KerningEditorHeaderProps> = (props) => {
                     </button>
                 )}
                 
-                {/* MORE MENU - Visible on All Screens */}
-                <div ref={moreMenuRef} className="relative">
-                    <button
-                        onClick={() => setIsMoreMenuOpen(prev => !prev)}
-                        className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-                        title={t('more')}
-                    >
-                        <MoreIcon />
-                    </button>
-                    {isMoreMenuOpen && (
-                        <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 z-50">
-                            <button 
-                                onClick={() => { props.onRemove(); setIsMoreMenuOpen(false); }} 
-                                disabled={!props.isKerned}
-                                className="w-full text-left px-4 py-2 text-sm text-yellow-600 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex sm:hidden items-center gap-2 disabled:opacity-50"
-                            >
-                                <UndoIcon /> <span>{t('reset')}</span>
-                            </button>
-                            {props.isIgnored ? (
-                                <button onClick={() => { props.onDelete(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                    <CheckIcon /> <span>{t('unignorePair')}</span>
+                {props.onDeleteLetter && (
+                    <div ref={moreMenuRef} className="relative">
+                        <button
+                            onClick={() => setIsMoreMenuOpen(prev => !prev)}
+                            className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
+                            title={t('more')} aria-label={t('more')} aria-expanded={isMoreMenuOpen}
+                        >
+                            <MoreIcon />
+                        </button>
+                        {isMoreMenuOpen && (
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 z-50">
+                                <button onClick={() => { props.onDeleteLetter!(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                                    <TrashIcon /> <span>{t('deleteGlyph')}</span>
                                 </button>
-                            ) : (
-                                <>
-                                    <button onClick={() => { props.onIgnore(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                        <EyeOffIcon /> <span>{t('ignorePair')}</span>
-                                    </button>
-                                    <button onClick={() => { props.onDelete(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                        <TrashIcon /> <span>{t('deleteGlyph')}</span>
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    )}
-                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
                 {isPropertiesPanelOpen && (
                     <GlyphPropertiesPanel 
                         lsb={props.lsb} setLsb={props.setLsb} 

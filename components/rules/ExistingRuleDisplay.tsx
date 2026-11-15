@@ -3,6 +3,7 @@ import { Character, GlyphData } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
 import GlyphTile from '../GlyphTile';
 import { EditIcon, ClearIcon } from '../../constants';
+import { isGroupRef } from '../../utils/groupRef';
 
 type RuleType = 'ligature' | 'contextual' | 'multiple' | 'single';
 type ContextualRuleValue = { replace: string[]; left?: string[]; right?: string[] };
@@ -43,7 +44,7 @@ const ExistingRuleDisplay: React.FC<ExistingRuleDisplayProps> = ({
         );
 
         const glyphOrGroupDisplay = (name: string, isContext: boolean = false) => {
-            if (name.startsWith('@') || name.startsWith('$')) {
+            if (isGroupRef(name)) {
                 return (
                     <SizedDisplay isContext={isContext}>
                         <div className="w-full h-full flex items-center justify-center p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg border border-gray-200 dark:border-gray-700">

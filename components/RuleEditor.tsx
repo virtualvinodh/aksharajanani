@@ -5,6 +5,7 @@ import { useLocale } from '../contexts/LocaleContext';
 import { ClearIcon, AddIcon } from '../constants';
 import GlyphTile from './GlyphTile';
 import SmartGlyphInput from './rules/manager/SmartGlyphInput';
+import { isGroupRef } from '../utils/groupRef';
 
 type LigatureRule = { ligatureName: string; componentNames: string[] };
 type ContextualRuleValue = { replace: string[]; left?: string[]; right?: string[] };
@@ -207,7 +208,7 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
             );
         }
 
-        const isGroup = value ? (value.startsWith('@') || value.startsWith('$')) : false;
+        const isGroup = value ? isGroupRef(value) : false;
         const char = (value && !isGroup) ? allCharsByName.get(value) : null;
         const glyphData = char ? glyphDataMap?.get(char.unicode) : undefined;
 
@@ -276,7 +277,7 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
     // Every name must be a glyph in the project, or a group / character set ($name or @name);
     // otherwise the rule is saved with an empty result and silently skipped at export (R13).
     const isKnownName = (name: string) => {
-        if (name.startsWith('$') || name.startsWith('@')) {
+        if (isGroupRef(name)) {
             const groupName = name.substring(1);
             return !!groups?.[groupName] || allCharacterSets.some(set => set.nameKey === groupName);
         }

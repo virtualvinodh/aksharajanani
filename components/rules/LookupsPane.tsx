@@ -198,7 +198,7 @@ const LookupsPane: React.FC<LookupsPaneProps> = ({
                                 <div className="mt-4 pt-4 border-t dark:border-gray-700 space-y-6">
                                     {lookupData.lookupflags && Object.keys(lookupData.lookupflags).length > 0 && (
                                         <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 rounded-md text-sm">
-                                            <h4 className="font-bold mb-1 text-blue-800 dark:text-blue-200">Lookup Flags</h4>
+                                            <h4 className="font-bold mb-1 text-blue-800 dark:text-blue-200">{t('lookupFlags')}</h4>
                                             <pre className="font-mono text-xs text-blue-700 dark:text-blue-300 whitespace-pre-wrap">
                                                 {formatLookupFlags(lookupData.lookupflags, '').trim()}
                                             </pre>

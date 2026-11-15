@@ -6,6 +6,7 @@ import { generateId, ToolHookProps } from './types';
 import { curveToPolyline, quadraticCurveToPolyline, getAccurateGlyphBBox } from '../../services/glyphRenderService';
 import { simplifyPath } from '../../utils/pathUtils';
 import { deepClone } from '../../utils/cloneUtils';
+import { eraserRadius as eraserRadiusFor } from '../../utils/eraserSize';
 
 export const useEraserTool = ({ isDrawing, setIsDrawing, currentPaths, setCurrentPaths, onPathsChange, settings, showNotification, t }: ToolHookProps) => {
     const pathsAtDragStart = useRef<Path[]>([]);
@@ -36,7 +37,10 @@ export const useEraserTool = ({ isDrawing, setIsDrawing, currentPaths, setCurren
                 pointsToCheck = path.points;
             }
             
-            if (['line', 'circle', 'ellipse'].includes(path.type)) {
+            // Test points every 2.5 units along every stroke, not only along shapes: a straight pen
+            // stroke is saved with just its two ends, so erasing its middle used to do nothing, and
+            // a small eraser needs points close together to take off a small bit (F40).
+            {
                 const interpolatedPoints: Point[] = [];
                 const isClosed = path.type === 'circle' || path.type === 'ellipse';
                 const totalPoints = pointsToCheck.length;
@@ -46,7 +50,7 @@ export const useEraserTool = ({ isDrawing, setIsDrawing, currentPaths, setCurren
                     const p2 = pointsToCheck[(j + 1) % totalPoints];
                     interpolatedPoints.push(p1);
                     const segmentDist = VEC.len(VEC.sub(p1, p2));
-                    const numSteps = Math.ceil(segmentDist / 5);
+                    const numSteps = Math.ceil(segmentDist / 2.5);
                     if (numSteps > 1) {
                         for (let i = 1; i < numSteps; i++) {
                             interpolatedPoints.push(VEC.add(p1, VEC.scale(VEC.sub(p2, p1), i / numSteps)));
@@ -67,7 +71,8 @@ export const useEraserTool = ({ isDrawing, setIsDrawing, currentPaths, setCurren
         if (!isDrawing) return;
         
         const lastPoint = eraserPath.current[eraserPath.current.length - 1];
-        const eraserRadius = settings.strokeThickness / 2;
+        // Its own size (small / pen / large), set next to the canvas (F40).
+        const eraserRadius = eraserRadiusFor(settings.strokeThickness);
 
         const dist = VEC.len(VEC.sub(point, lastPoint));
         const steps = Math.max(1, Math.floor(dist / (eraserRadius / 2)));

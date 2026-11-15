@@ -6,6 +6,8 @@ import { BackIcon } from '../constants';
 import Footer from './Footer';
 import { ScriptConfig } from '../types';
 import { appUrl } from '../utils/appUrl';
+import { useProject } from '../contexts/ProjectContext';
+import { TOURS, TUTORIAL_SCRIPT_ID, startTour } from './tutorial/tours';
 
 interface HelpPageProps {
   onClose: () => void;
@@ -49,6 +51,37 @@ const AccordionItem: React.FC<{ title: string; children: React.ReactNode }> = Re
 });
 
 AccordionItem.displayName = 'AccordionItem';
+
+/** Help → Tours (row 62): replay the tutorial's core or any of its tours in the practice project. */
+const ToursList: React.FC<{ hT: (key: string) => string; onStarted: () => void }> = ({ hT, onStarted }) => {
+    const { script } = useProject();
+    const inPractice = script?.id === TUTORIAL_SCRIPT_ID;
+    const inOtherProject = !!script && !inPractice;
+    return (
+        <div>
+            <p className="mb-4">{renderFormattedText(hT(inOtherProject ? 'toursFromOtherProject' : 'toursIntro'))}</p>
+            <ul className="space-y-3" data-testid="tours-list">
+                {TOURS.map(tour => (
+                    <li key={tour.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-900">
+                        <div className="flex-grow">
+                            <p className="font-semibold text-gray-800 dark:text-gray-100">{hT(tour.titleKey)}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{hT(tour.descKey)}</p>
+                        </div>
+                        <button
+                            type="button"
+                            disabled={inOtherProject}
+                            data-tour-start={tour.id}
+                            onClick={() => { startTour(tour.id, inPractice); onStarted(); }}
+                            className="self-start sm:self-auto px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:dark:bg-gray-700 disabled:cursor-not-allowed text-white text-sm font-semibold flex-shrink-0"
+                        >
+                            {hT('tourStart')}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
 const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
   const { locale, t: appT } = useLocale();
@@ -98,14 +131,14 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
 
   if (!helpTranslations || !fallbackTranslations) {
     return (
-        <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col items-center justify-center">
-            <p className="text-xl animate-pulse text-gray-700 dark:text-gray-300">Loading Help...</p>
+        <div className="fixed inset-0 bg-white dark:bg-gray-900 z-[60] flex flex-col items-center justify-center">
+            <p className="text-xl animate-pulse text-gray-700 dark:text-gray-300">{appT('loadingHelp')}</p>
         </div>
     );
   }
 
   return (
-    <div ref={pageRef} className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col focus:outline-none">
+    <div ref={pageRef} className="fixed inset-0 bg-white dark:bg-gray-900 z-[60] flex flex-col focus:outline-none">
       <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-4 flex justify-between items-center shadow-md w-full flex-shrink-0">
         <button
           onClick={onClose}
@@ -122,6 +155,9 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose, scripts }) => {
       <main className="flex-grow overflow-y-auto p-6 md:p-10 text-gray-700 dark:text-gray-300">
         <div className="max-w-4xl mx-auto">
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg shadow-md">
+            <AccordionItem title={hT('toursTitle')}>
+                <ToursList hT={hT} onStarted={onClose} />
+            </AccordionItem>
             <AccordionItem title={hT('helpQuickStartTitle')}>
                 {renderFormattedText(hT('helpQuickStartContent'))}
             </AccordionItem>

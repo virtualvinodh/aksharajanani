@@ -5,6 +5,7 @@ import { isGlyphDrawn } from '../../utils/glyphUtils';
 import { createVirtualCodePointAllocator } from '../../utils/virtualCodePoints';
 import { expandMembers } from '../../services/groupExpansionService';
 import { parseSearchQuery, getCharacterMatchScore } from '../../utils/searchUtils';
+import { isGroupRef } from '../../utils/groupRef';
 
 interface UsePositioningDataProps {
     positioningRules: PositioningRules[] | null;
@@ -98,13 +99,13 @@ export const usePositioningData = ({
                         
                         if (!targetLigatureName && rule.ligatureMap) {
                              for (const groupKey in rule.ligatureMap) {
-                                 if (groupKey.startsWith('$') || groupKey.startsWith('@')) {
+                                 if (isGroupRef(groupKey)) {
                                      if (expandMembers([groupKey], groups, characterSets).includes(baseName)) {
                                          const marksMap = rule.ligatureMap[groupKey];
                                          targetLigatureName = marksMap[markName];
                                          if(!targetLigatureName) {
                                               for(const markGroupKey in marksMap) {
-                                                   if ((markGroupKey.startsWith('$') || markGroupKey.startsWith('@')) && 
+                                                   if (isGroupRef(markGroupKey) && 
                                                        expandMembers([markGroupKey], groups, characterSets).includes(markName)) {
                                                         targetLigatureName = marksMap[markGroupKey];
                                                         break;
@@ -123,7 +124,7 @@ export const usePositioningData = ({
                         }
 
                         if (targetLigatureName) {
-                            if (!targetLigatureName.startsWith('$') && !targetLigatureName.startsWith('@')) {
+                            if (!isGroupRef(targetLigatureName)) {
                                 targetLigature = allChars.get(targetLigatureName);
                             }
                         }

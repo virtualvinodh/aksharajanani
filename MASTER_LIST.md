@@ -32,7 +32,26 @@ Duplicates are merged into one row, with every source listed. The F and "New" fi
 - **1 and 98 Gurmukhi:** done. Every placement rule had its two attachment points swapped, so every sign came out upside down. ੇ ੈ ੋ ੌ now sit centred on the headline (Noto centres them, so this differs from Hindi's े rule), ੋ ੌ are signs that sit on the letter, and ਂ ੰ ੱ sit above its right side. Checked against Noto Sans Gurmukhi; a native reader should still look.
 - **40 Font name:** done. Every project's font name follows the project name unless "Same as project name" is unticked in Settings. New projects are "My Tamil font" / "எனது தமிழ் எழுத்துரு" (numbered when taken: "… 2"). The first export asks for the name once. Style Regular (weight 400; Light/Bold get their weights). The internal name is plain ASCII (a short code for non-English names). File name = font name + version ("எனது தமிழ் எழுத்துரு 1.003.otf"). Also 107: empty licence/URL fields are left out of the font.
 - **27 Spacing "Accept":** done. "Space all automatically" applies straight away, with Undo; what's shown as spaced is what's exported. The Spacing screen redesign you chose (ideas 1, 3, 4) is done too (checked with English and Tamil e2e, font = screen; also 101 for pair cards): overall spacing and word space as a strip at the top (not a button), "Pair fixes" below with "Space all automatically" and Undo; pair fixes shown as differences ("A V · 12 closer", "Back to usual"); plain names throughout (Overall spacing, Word space, Pair fixes, Letter's own space). Idea 2 (click between letters in the sample to adjust, choosing "just this pair / this letter everywhere / all letters") and idea 5 (no separate list for a letter's own space) are for later.
-- **57 Where a language starts:** no. The order of the letter sets stays, as there is a reason for it. Still open: whether "ready" should count only letters, with punctuation and symbols as extras.
+- **57 Where a language starts:** no. The order of the letter sets stays, as there is a reason for it, and "ready" stays as it is.
+- **31 Default spacing:** you'll do it yourself.
+- **62 Tutorial:** in progress. A ~10-step core with progress shown; every other step kept as a short tour where it applies, replayable from Help. Also looking into the welcome tip that appeared in the centre.
+- **65 Plain names:** later, after the other fixes.
+- **67 English in the code:** in progress (with a table of the new Tamil strings for your review). **100 "Finish me" hint:** in progress.
+- **48 Cloud saving:** not for the beta. **59** optional.
+- **Export counter (GoatCounter):** not yet.
+- **Merge:** `main` fast-forwarded to `claude` (15 November).
+
+**Done since (15–16 November):**
+- **62 Tutorial:** a 10-step core with "Step N of 10"; every other step kept, in six tours under Help → Tours. Help is now in the ⋮ menu. The welcome tip attaches to a card that's on screen (moves if the card disappears); no tips during multi-select, the phone menu or dialogs.
+- **67** ~135 hard-coded English strings moved into the translation files with Tamil. **100** "Finish me" hint in the drawing screen. **102** Test page names the undrawn parts. **103** asks before a pen change re-draws every letter. **105** singular.
+- **21** Curve tool hint. **23** eraser sizes (Small / Pen size / Large; also fixed: the eraser couldn't erase the middle of a straight stroke), Slice makes ~30-point pieces instead of ~150. **73** multi-select bar at the bottom of the grid, no stray "0".
+- **35, 39** Spacing: the left letter of a pair can be dragged; "Back to usual" is the only way to undo a pair fix (Reset, Delete and Ignore gone). **104** export warning counts only what can be done with the drawn letters, and says "combining marks" for Indian scripts. **110** built letters are measured once, in one place, and only the ones an edit affects.
+- **45** Creator tip, labels, watermark. **81** start page lists the last 10 projects from a small summary (name, language, date, a few letter shapes) with "Show more". **109** Tamil Test page title on phones.
+- **52** after an accidental refresh, the project that was open opens again (same tab).
+- **75, 77, 78, 79** expert screens: `@` for groups everywhere (`$` still reads), plain labels, one name for added letters ("Custom Characters"), WOFF2 import works, "Back" instead of "Cancel"; rules_json.md and positioning_json.md updated.
+- **92** WOFF2 and TTF: from the "Your font is downloaded" dialog and from the ⋮ menu (Download font for websites / older apps).
+- **12** Japanese ゛ ゜ closer to the letter.
+- **10 Malayalam Traditional:** joining rules fixed; C്ര + ു/ൂ built by placing a circle mark (ു.ra, ൂ.ra) under the ra-sign letter. From here on you're fixing it yourself.
 
 **Code review before commit** (10 findings, 9 fixed):
 - Kannada ್ಖ… and Telugu ్ష… (shrunk copies of a letter) were counted as "Finish me" letters, so those fonts could never reach 100%. Fixed, with a test.

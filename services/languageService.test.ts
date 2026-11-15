@@ -73,7 +73,7 @@ describe('buildLanguageSets', () => {
 
     it('places marks above, below or attached, from where Unicode puts them', () => {
         const defs = buildLanguageSets(['ç', 'ọ', 'ô'], [], data.marks).definitions;
-        const rules = (defs.find(d => 'markAttachment' in d) as { markAttachment: Record<string, Record<string, string[]>> }).markAttachment[`$${LANGUAGE_LETTERS_SET}`];
+        const rules = (defs.find(d => 'markAttachment' in d) as { markAttachment: Record<string, Record<string, string[]>> }).markAttachment[`@${LANGUAGE_LETTERS_SET}`];
         expect(rules['̧']).toEqual(['bottomCenter', 'topCenter']);
         expect(rules['̣'].slice(0, 2)).toEqual(['bottomCenter', 'topCenter']);
         expect(rules['̂'].slice(0, 2)).toEqual(['topCenter', 'bottomCenter']);
@@ -87,8 +87,11 @@ describe('buildLanguageSets', () => {
         expect(byName(letters, 'が')?.position).toEqual(['か', '゙']);
         expect(byName(letters, 'パ')?.position).toEqual(['ハ', '゚']);
         expect(builtCount).toBe(53);
-        const rules = (definitions.find(d => 'markAttachment' in d) as { markAttachment: Record<string, Record<string, string[]>> }).markAttachment[`$${LANGUAGE_LETTERS_SET}`];
+        const rules = (definitions.find(d => 'markAttachment' in d) as { markAttachment: Record<string, Record<string, string[]>> }).markAttachment[`@${LANGUAGE_LETTERS_SET}`];
         expect(rules['゙'].slice(0, 2)).toEqual(['topRight', 'bottomLeft']);
+        // Tucked into the letter's top-right corner, close to Noto Sans JP (row 12).
+        expect(rules['゙']).toEqual(['topRight', 'bottomLeft', '-60', '55']);
+        expect(rules['゚']).toEqual(rules['゙']);
         expect(searchLanguages(data, 'hiragana')[0].code).toBe('ja');
     });
 

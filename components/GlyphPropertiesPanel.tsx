@@ -204,7 +204,7 @@ const ComponentListEditor: React.FC<{
                                         <div className="flex gap-2 items-center">
                                             <div className="flex-1 flex gap-1 items-end">
                                                 <div className="flex-1">
-                                                    <label className="block text-[11px] text-gray-500 uppercase">Scale X</label>
+                                                    <label className="block text-[11px] text-gray-500 uppercase">{t('scaleX')}</label>
                                                     <input 
                                                         type="text" 
                                                         value={sx} 
@@ -215,12 +215,12 @@ const ComponentListEditor: React.FC<{
                                                 <button 
                                                     onClick={() => toggleLink(index)}
                                                     className={`p-1 mb-0.5 rounded ${isLinked ? 'text-indigo-600 bg-indigo-100 dark:bg-indigo-900/30' : 'text-gray-400 hover:text-gray-600'}`}
-                                                    title={isLinked ? "Unlink Scale" : "Link Scale"}
+                                                    title={isLinked ? t('unlinkScale') : t('linkScale')}
                                                 >
                                                     {isLinked ? <Link className="w-3 h-3" /> : <Unlink className="w-3 h-3" />}
                                                 </button>
                                                 <div className="flex-1">
-                                                    <label className="block text-[11px] text-gray-500 uppercase">Scale Y</label>
+                                                    <label className="block text-[11px] text-gray-500 uppercase">{t('scaleY')}</label>
                                                     <input 
                                                         type="text" 
                                                         value={sy} 

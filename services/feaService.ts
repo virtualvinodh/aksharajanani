@@ -9,6 +9,7 @@ import { deepClone } from '../utils/cloneUtils';
 import { getIndicCategory } from '../utils/indicCategoryUtils';
 
 import indicScriptsData from '../data/indicScripts.json';
+import { groupRefName, isGroupRef } from '../utils/groupRef';
 
 // --- Layer 2 Safeguard: Sanitize FEA Identifiers ---
 // Ensures class names follow the Adobe FEA spec: Alphanumeric, underscores, periods, hyphens. No spaces.
@@ -92,7 +93,7 @@ export const computeMarkAnchorX = (args: {
 
 /**
  * Turns a rules-file `lookupflags` object into one FEA statement, e.g.
- * `{ IgnoreMarks: "true", UseMarkFilteringSet: "$virama" }` → `lookupflag IgnoreMarks UseMarkFilteringSet @virama;`.
+ * `{ IgnoreMarks: "true", UseMarkFilteringSet: "@virama" }` → `lookupflag IgnoreMarks UseMarkFilteringSet @virama;`.
  * Boolean flags are bare names (feaLib rejects `IgnoreMarks true`), and every flag goes into a
  * single statement, because each `lookupflag` statement replaces the previous one.
  */
@@ -495,23 +496,12 @@ export const generateFea = (
 
     // --- UNIVERSAL HELPERS for validation and name conversion ---
     const isItemDrawnOrNonEmptyGroup = (name: string): boolean => {
-        if (name.startsWith('$')) {
-            return isGroupNonEmpty(name.substring(1));
-        }
-        // Handle both conventions just in case, though '$' is user-facing
-        if (name.startsWith('@')) {
-             return isGroupNonEmpty(name.substring(1));
-        }
+        if (isGroupRef(name)) return isGroupNonEmpty(groupRefName(name));
         return isNameDrawn(name);
     };
 
     const toFeaName = (name: string): string | null => {
-        if (name.startsWith('$')) {
-            return `@${feaIdentifier(name.substring(1))}`;
-        }
-        if (name.startsWith('@')) {
-            return `@${feaIdentifier(name.substring(1))}`;
-        }
+        if (isGroupRef(name)) return `@${feaIdentifier(groupRefName(name))}`;
         return nameToGlyphName(name);
     };
 
@@ -626,9 +616,9 @@ export const generateFea = (
                     const inputName = inputNames[0];
         
                     // Group-to-group substitution
-                    if (outputName.startsWith('$') && inputName.startsWith('$')) {
-                        const outputGroupName = outputName.substring(1);
-                        const inputGroupName = inputName.substring(1);
+                    if (isGroupRef(outputName) && isGroupRef(inputName)) {
+                        const outputGroupName = groupRefName(outputName);
+                        const inputGroupName = groupRefName(inputName);
                         const outputGroupMembers = groups?.[outputGroupName];
                         const inputGroupMembers = groups?.[inputGroupName];
         
@@ -647,7 +637,7 @@ export const generateFea = (
                         }
                     } 
                     // Group-to-glyph substitution
-                    else if (inputName.startsWith('$')) {
+                    else if (isGroupRef(inputName)) {
                          if (isItemDrawnOrNonEmptyGroup(inputName) && isNameDrawn(outputName)) {
                              const inputFeaName = toFeaName(inputName);
                              const outputGlyph = nameToGlyphName(outputName);

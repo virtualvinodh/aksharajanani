@@ -11,7 +11,9 @@ interface PositioningEditorHeaderProps {
     prevPair: any;
     nextPair: any;
     onNavigate: (direction: 'prev' | 'next' | 'back') => void;
-    onDelete: () => void;
+    /** Only for a letter opened from the grid: deletes the letter itself. On the Positioning screen
+     * a pair has one way back, Reset (F20). */
+    onDelete?: () => void;
     activeAttachmentClass: any;
     isLinked: boolean;
     isPivot: boolean;
@@ -94,11 +96,11 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                     <button 
                         onClick={onConfirmPosition}
                         data-tour="header-accept-pos"
-                        title="Accept Default Position"
+                        title={t('acceptDefaultPosition')}
                         className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all active:scale-95 shadow-sm"
                     >
                         <CheckIcon />
-                        <span className="hidden xl:inline font-semibold">Accept</span>
+                        <span className="hidden xl:inline font-semibold">{t('accept')}</span>
                     </button>
                 );
             }
@@ -110,11 +112,11 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                     <button 
                         onClick={onConfirmPosition}
                         data-tour="header-accept-pos"
-                        title="Accept Default Position"
+                        title={t('acceptDefaultPosition')}
                         className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all active:scale-95 shadow-sm"
                     >
                         <CheckIcon />
-                        <span className="hidden xl:inline font-semibold">Accept Position</span>
+                        <span className="hidden xl:inline font-semibold">{t('acceptPosition')}</span>
                     </button>
                 );
             }
@@ -126,7 +128,7 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                         title={t('save')}
                     >
                         <SaveIcon />
-                        <span className="hidden xl:inline font-semibold">Save Changes</span>
+                        <span className="hidden xl:inline font-semibold">{t('saveChanges')}</span>
                     </button>
                 );
             }
@@ -134,7 +136,7 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
             return (
                 <div className="flex items-center gap-2 px-3 py-2 bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 font-semibold rounded-lg cursor-default">
                     <SaveIcon />
-                    <span className="hidden xl:inline">Saved</span>
+                    <span className="hidden xl:inline">{t('saved')}</span>
                 </div>
             );
         }
@@ -173,14 +175,14 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                             {isLinked ? (
                                 isPivot ? 
                                 <span className="text-[11px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                                    Leader
-                                </span> : 
+                                    {t('placementLeader')}
+                                </span> :
                                 <span className="text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full dark:bg-blue-900/20 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
-                                    Synced
+                                    {t('placementSynced')}
                                 </span>
                             ) : (
                                 <span className="text-[11px] font-bold uppercase tracking-wider bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full dark:bg-orange-900/20 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
-                                    Exception
+                                    {t('placementException')}
                                 </span>
                             )}
                         </div>
@@ -204,10 +206,10 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                         onClick={onDetach}
                         data-tour="header-detach-pos"
                         className="flex items-center gap-2 px-3 py-2 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 font-semibold rounded-lg hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-all active:scale-95 shadow-sm border border-orange-200 dark:border-orange-800"
-                        title="Detach and Convert to Composite Glyph"
+                        title={t('detachConvertTitle')}
                     >
                         <BrokenLinkIcon />
-                        <span className="hidden xl:inline">Detach</span>
+                        <span className="hidden xl:inline">{t('detachShort')}</span>
                     </button>
                 )}
 
@@ -232,8 +234,8 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                     </button>
                 )}
                 
-                {/* MORE MENU - Visible on All Screens */}
-                <div ref={moreMenuRef} className="relative">
+                {/* MORE MENU: Reset on phones; Delete only for a letter opened from the grid. */}
+                <div ref={moreMenuRef} className={`relative ${onDelete ? '' : 'sm:hidden'}`}>
                     <button
                         onClick={() => setIsMoreMenuOpen(prev => !prev)}
                         className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-100 transition-all active:scale-95"
@@ -250,9 +252,11 @@ const PositioningEditorHeader: React.FC<PositioningEditorHeaderProps> = ({
                             >
                                 <UndoIcon /> <span>{t('reset')}</span>
                             </button>
-                            <button onClick={() => { onDelete(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                <TrashIcon /> <span>{t('deleteGlyph')}</span>
-                            </button>
+                            {onDelete && (
+                                <button onClick={() => { onDelete(); setIsMoreMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                                    <TrashIcon /> <span>{t('deleteGlyph')}</span>
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

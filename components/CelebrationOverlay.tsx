@@ -5,6 +5,7 @@ import { GlyphData } from '../types';
 import { renderPaths } from '../services/glyphRenderService';
 import { isGlyphDrawn } from '../utils/glyphUtils';
 import { DRAWING_CANVAS_SIZE, RightArrowIcon } from '../constants';
+import { useLocale } from '../contexts/LocaleContext';
 
 interface CelebrationOverlayProps {
     glyphDataMap: Map<number, GlyphData>;
@@ -22,6 +23,7 @@ const CelebrationOverlay: React.FC<CelebrationOverlayProps> = ({
     glyphDataMap, nextStep, onProceed, onClose,
     customTitle, customMessage, primaryActionLabel, secondaryActionLabel
 }) => {
+    const { t } = useLocale();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { theme } = useTheme();
     const [opacity, setOpacity] = useState(0);
@@ -119,15 +121,15 @@ const CelebrationOverlay: React.FC<CelebrationOverlayProps> = ({
     }, [drawnGlyphs, theme]);
 
     // Default Texts
-    const title = customTitle || "Drawing Complete!";
-    const rawMessage = customMessage || "You've crafted the shapes. Now, let's take the next step.";
+    const title = customTitle || t('celebrateDrawingTitle');
+    const rawMessage = customMessage || t('celebrateDefaultMessage');
     
-    let defaultButtonText = "Next Step";
-    if (nextStep === 'positioning') defaultButtonText = "Go to Positioning";
-    else if (nextStep === 'kerning') defaultButtonText = "Go to Kerning";
+    let defaultButtonText = t('celebrateNextStep');
+    if (nextStep === 'positioning') defaultButtonText = t('celebrateGoPositioning');
+    else if (nextStep === 'kerning') defaultButtonText = t('celebrateGoSpacing');
     
     const buttonText = primaryActionLabel || defaultButtonText;
-    const secondText = secondaryActionLabel || "Stay here for now";
+    const secondText = secondaryActionLabel || t('celebrateStayHere');
 
     // Simple markdown bold parser for message
     const renderMessage = (text: string) => {

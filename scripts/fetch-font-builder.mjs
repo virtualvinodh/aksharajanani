@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Downloads the font builder (Pyodide + fontTools + fontFeatures, about 19 MB) into
+ * Downloads the font builder (Pyodide + fontTools + fontFeatures, about 20 MB; Brotli for WOFF2) into
  * public/font-builder/, so the app serves it from its own site instead of three outside
  * sites at export time (MASTER_LIST 80: schools often block CDNs; one origin is also faster).
  *
@@ -27,6 +27,8 @@ const FILES = [
     [PYODIDE + 'micropip-0.5.0-py3-none-any.whl', '8df6295822c842e312c71eee20c8561343b7a8f3b0f6a5debb91d390ae0d7d1e'],
     [PYODIDE + 'packaging-23.1-py3-none-any.whl', '952adfd0fbede825af3ddd33cf288778a247ef83d92de2118d02e7d188e2d917'],
     [PYODIDE + 'lxml-4.9.3-cp311-cp311-emscripten_3_1_46_wasm32.whl', 'b0591abd915683c44f04f128195aaea3f04f9406045e5b12101dea8c537bbd2e'],
+    // Brotli: only loaded when a WOFF2 font is exported or imported.
+    [PYODIDE + 'Brotli-1.0.9-cp311-cp311-emscripten_3_1_46_wasm32.whl', '365b3669eb68f4c02165bd264ccac110a5be339186b13bb4743085b051ece13c'],
     ['https://www.piwheels.org/simple/fonttools/fonttools-4.61.1-py3-none-any.whl', '018b2aa0b159683474b21d3a96e53f870115700525445e84c15726bbc2b552ef'],
     ['https://files.pythonhosted.org/packages/87/26/a0369ad3be7c74fa13cd2dc687c083b26d65380310957f5736c1a32395b0/fontfeatures-1.9.0-py3-none-any.whl', 'd7fcf48b77fa4f61fdffb5e28d588be05255fff0b54693c62de4013b129c3f1b'],
 ];

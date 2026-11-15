@@ -48,9 +48,16 @@ export const splitByCoverage = (text: string, available: Set<number>): TextRun[]
     return runs;
 };
 
-/** The distinct letters in the text that aren't drawn yet, in the order they appear. */
+/**
+ * The distinct characters in the text that aren't drawn yet, in the order they appear. Only the
+ * undrawn parts are named: in नमस्ते with न म स drawn that's ् त े, not the whole cluster स्ते
+ * (row 102). Shown on their own, signs get the browser's dotted circle (◌े) automatically.
+ */
 export const missingLetters = (text: string, available: Set<number>): string[] => {
     const seen = new Set<string>();
-    for (const cluster of graphemes(text)) if (isClusterMissing(cluster, available)) seen.add(cluster);
+    for (const ch of text) {
+        if (NEEDS_NO_GLYPH.test(ch) || available.has(ch.codePointAt(0)!)) continue;
+        seen.add(ch);
+    }
     return [...seen];
 };

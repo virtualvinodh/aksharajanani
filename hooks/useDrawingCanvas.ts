@@ -17,6 +17,7 @@ import { useLayout } from '../contexts/LayoutContext';
 import { useLocale } from '../contexts/LocaleContext';
 import { distanceToSegment, isPointOnDot } from '../utils/geometryUtils';
 import { useNonPassiveWheel } from './useNonPassiveWheel';
+import { useEraserSize, eraserRadius } from '../utils/eraserSize';
 import { getAccurateGlyphBBox, curveToPolyline, quadraticCurveToPolyline, paperScope } from '../services/glyphRenderService';
 
 export type { DraggedPointInfo, Handle };
@@ -485,6 +486,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
     }, [getViewportPoint, startAnimation]);
     useNonPassiveWheel(canvasRef, handleWheel);
     
+    const eraserSize = useEraserSize();
     const getCursor = useCallback(() => {
         if (hoveredMetric || draggingMetric) return 'col-resize';
         if (panTool.isPanning) return 'grabbing';
@@ -494,7 +496,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
             case 'edit': return editTool.getCursor();
             case 'slice': return sliceTool.getCursor();
             case 'eraser': {
-                const eraserDiameter = Math.max(4, Math.min(128, settings.strokeThickness * zoomRef.current));
+                const eraserDiameter = Math.max(4, Math.min(128, 2 * eraserRadius(settings.strokeThickness, eraserSize) * zoomRef.current));
                 const r = eraserDiameter / 2;
                 const strokeColor = theme === 'dark' ? 'white' : 'black';
                 const svg = `<svg width="${eraserDiameter}" height="${eraserDiameter}" xmlns="http://www.w3.org/2000/svg"><circle cx="${r}" cy="${r}" r="${r - 1}" fill="none" stroke="${strokeColor}" stroke-width="1.5" /></svg>`;
@@ -503,7 +505,7 @@ export const useDrawingCanvas = (props: UseDrawingCanvasProps) => {
             case 'curve': return curveTool.getCursor();
             default: return 'crosshair';
         }
-    }, [tool, panTool.isPanning, selectTool, editTool, curveTool, sliceTool, settings.strokeThickness, theme, hoveredMetric, draggingMetric]);
+    }, [tool, panTool.isPanning, selectTool, editTool, curveTool, sliceTool, settings.strokeThickness, eraserSize, theme, hoveredMetric, draggingMetric]);
     
     return {
         currentPaths, previewPath, marqueeBox: selectTool.marqueeBox, selectionBox: selectTool.selectionBox,

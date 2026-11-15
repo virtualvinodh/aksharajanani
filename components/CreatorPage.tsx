@@ -11,6 +11,15 @@ interface CreatorPageProps {
     fontBlob: Blob | null;
 }
 
+/** 0 (black) … 1 (white) for a #rrggbb colour. */
+const relativeLuminance = (hex: string): number => {
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+    if (!m) return 0;
+    const n = parseInt(m[1], 16);
+    const lin = (c: number) => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+};
+
 const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
     const { t } = useLocale();
     const { settings, dispatch: settingsDispatch } = useSettings();
@@ -21,7 +30,7 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     
     // State - initialized from saved settings or defaults
-    const [text, setText] = useState(saved?.text ?? 'Type your text here...');
+    const [text, setText] = useState(saved?.text ?? t('creatorDefaultText'));
     const [fontSize, setFontSize] = useState(saved?.fontSize ?? 60);
     const [textColor, setTextColor] = useState(saved?.textColor ?? '#ffffff');
     const [bgColor, setBgColor] = useState(saved?.bgColor ?? '#404040'); // neutral-700 default (monochrome theme)
@@ -50,8 +59,8 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
     const missing = useMemo(() => available ? missingLetters(text, available) : [], [available, text]);
     const missingNote = missing.length > 0 && (
         <p data-testid="creator-missing-letters" className="text-xs text-gray-600 dark:text-gray-400">
-            {t('creatorMissingLetters', { count: missing.length })}{' '}
-            <span style={{ fontFamily: 'var(--guide-font-family)' }}>{missing.slice(0, 20).join(' ')}{missing.length > 20 ? ' …' : ''}</span>
+            {missing.length === 1 ? t('creatorMissingLettersOne') : t('creatorMissingLetters', { count: missing.length })}{' '}
+            <span className="text-base leading-none">{missing.slice(0, 20).join('  ')}{missing.length > 20 ? ' …' : ''}</span>
         </p>
     );
 
@@ -221,21 +230,24 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
         });
 
         // 6. Draw Watermark
-        const watermarkText = "Made with Aksharajanani";
+        const watermarkText = t('creatorWatermark');
         const watermarkFontSize = Math.max(20, width * 0.022); 
         ctx.font = `italic 500 ${watermarkFontSize}px sans-serif`;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        // Subtle but readable: dark on a light background colour, light with a soft shadow on dark
+        // colours and photos (it used to be white on everything, so it vanished on light colours).
+        const lightBackground = !bgImage && relativeLuminance(bgColor) > 0.5;
+        ctx.fillStyle = lightBackground ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.6)";
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        ctx.shadowBlur = 2;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
+        ctx.shadowColor = lightBackground ? "transparent" : "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = lightBackground ? 0 : 2;
+        ctx.shadowOffsetX = lightBackground ? 0 : 1;
+        ctx.shadowOffsetY = lightBackground ? 0 : 1;
         
         const padding = width * 0.025;
         ctx.fillText(watermarkText, width - padding, height - padding);
 
-    }, [text, fontSize, textColor, bgColor, bgImage, overlayOpacity, textAlign, fontLoaded, aspectRatio, addShadow, textPos, available]);
+    }, [text, fontSize, textColor, bgColor, bgImage, overlayOpacity, textAlign, fontLoaded, aspectRatio, addShadow, textPos, available, t]);
 
     useEffect(() => {
         draw();
@@ -317,7 +329,7 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                     try {
                         await navigator.share({
                             files: [new File([blob], 'share.png', { type: 'image/png' })],
-                            title: 'My Font Creation',
+                            title: t('creatorShareTitle'),
                         });
                     } catch (err) {
                         console.error("Share failed", err);
@@ -350,30 +362,34 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                         onClick={() => changeAspectRatio(p.ratio)}
                         className={`flex-1 py-1 text-xs font-semibold rounded-md transition-colors ${aspectRatio === p.ratio ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400'}`}
                      >
-                         {p.name}
+                         {t(`creatorPreset${p.name}`)}
                      </button>
                  ))}
              </div>
 
              {/* Row 2: Size & Align */}
              <div className="flex items-center gap-3">
-                 <div className="flex-grow flex flex-col justify-center">
+                 <label className="flex-grow flex items-center gap-2">
+                    <span className="text-xs text-gray-500 font-semibold shrink-0">{t('creatorSize')}</span>
                     <input 
                         type="range" 
                         min="20" max="200" 
                         value={fontSize} 
                         onChange={(e) => setFontSize(Number(e.target.value))} 
                         className="w-full accent-indigo-600 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" 
-                        title="Text Size"
+                        title={t('creatorTextSize')}
+                        aria-label={t('creatorTextSize')}
                     />
-                 </div>
+                 </label>
                  <div className="flex bg-gray-100 dark:bg-gray-700/50 rounded-lg p-1 shrink-0">
                      {['left', 'center', 'right'].map((align) => (
                          <button
                              key={align}
                              onClick={() => setTextAlign(align as any)}
                              className={`p-1.5 rounded-md transition-all ${textAlign === align ? 'bg-white dark:bg-gray-600 shadow-sm text-indigo-600 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}
-                             title={`Align ${align}`}
+                             title={t(`creatorAlign_${align}`)}
+                             aria-label={t(`creatorAlign_${align}`)}
+                             aria-pressed={textAlign === align}
                          >
                             {/* Simple Align Icons */}
                             {align === 'left' && <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 5h12v2H3V9zm0 5h18v2H3v-2zm0 5h12v2H3v-2z"/></svg>}
@@ -388,17 +404,17 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
              <div className="grid grid-cols-4 gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg border dark:border-gray-700 items-center justify-items-center">
                 
                 {/* Text Color */}
-                <label className="flex flex-col items-center cursor-pointer group w-full" title="Text Color">
+                <label className="flex flex-col items-center cursor-pointer group w-full" title={t('creatorTextColor')}>
                     <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-600 shadow-sm flex items-center justify-center font-bold text-xs" style={{ backgroundColor: textColor, color: textColor === '#ffffff' ? '#000' : '#fff' }}>T</div>
                     <input type="color" className="sr-only" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
-                    <span className="text-[11px] text-gray-500 mt-1">Text</span>
+                    <span className="text-[11px] text-gray-500 mt-1">{t('creatorText')}</span>
                 </label>
 
                 {/* Bg Color */}
-                <label className={`flex flex-col items-center cursor-pointer group w-full ${bgImage ? 'opacity-50' : ''}`} title="Background Color">
+                <label className={`flex flex-col items-center cursor-pointer group w-full ${bgImage ? 'opacity-50' : ''}`} title={t('creatorBackgroundColor')}>
                     <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-600 shadow-sm flex items-center justify-center font-bold text-xs text-white" style={{ backgroundColor: bgColor }}>B</div>
                     <input type="color" className="sr-only" value={bgColor} onChange={(e) => setBgColor(e.target.value)} disabled={!!bgImage} />
-                    <span className="text-[11px] text-gray-500 mt-1">Back</span>
+                    <span className="text-[11px] text-gray-500 mt-1">{t('creatorBackground')}</span>
                 </label>
 
                 {/* Shadow Toggle */}
@@ -406,23 +422,25 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                     <button 
                         onClick={() => setAddShadow(!addShadow)}
                         className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors border-2 ${addShadow ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400'}`}
-                        title="Toggle Shadow"
+                        title={t('creatorToggleShadow')}
+                        aria-label={t('creatorToggleShadow')}
+                        aria-pressed={addShadow}
                     >
                         <span className="font-bold text-xs">S</span>
                     </button>
-                    <span className="text-[11px] text-gray-500 mt-1">Shadow</span>
+                    <span className="text-[11px] text-gray-500 mt-1">{t('creatorShadow')}</span>
                 </div>
 
                 {/* Image Upload */}
                 <div className="flex flex-col items-center w-full relative">
                     {bgImage ? (
-                        <button onClick={handleRemoveImage} className="w-8 h-8 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-900/20 rounded-full border border-red-200 hover:bg-red-100" title="Remove Image"><TrashIcon/></button>
+                        <button onClick={handleRemoveImage} className="w-8 h-8 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-900/20 rounded-full border border-red-200 hover:bg-red-100" title={t('creatorRemoveImage')} aria-label={t('creatorRemoveImage')}><TrashIcon/></button>
                     ) : (
-                        <button onClick={() => fileInputRef.current?.click()} className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 flex items-center justify-center" title="Add Background Image">
+                        <button onClick={() => fileInputRef.current?.click()} className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 flex items-center justify-center" title={t('creatorAddImage')} aria-label={t('creatorAddImage')}>
                             <ImageIcon />
                         </button>
                     )}
-                    <span className="text-[11px] text-gray-500 mt-1">Image</span>
+                    <span className="text-[11px] text-gray-500 mt-1">{t('creatorImage')}</span>
                     <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
                 </div>
              </div>
@@ -430,13 +448,14 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
              {/* Row 4: Conditional Opacity Slider */}
              {bgImage && (
                 <div className="flex items-center gap-3 px-1 animate-fade-in-up">
-                    <span className="text-xs text-gray-500 font-semibold w-12">Dimmer</span>
+                    <span className="text-xs text-gray-500 font-semibold w-12">{t('creatorDimmer')}</span>
                     <input 
                         type="range" 
                         min="0" max="0.8" step="0.1" 
                         value={overlayOpacity} 
                         onChange={(e) => setOverlayOpacity(Number(e.target.value))} 
                         className="flex-grow h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-600" 
+                        aria-label={t('creatorDimmer')}
                     />
                 </div>
              )}
@@ -447,16 +466,17 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
         <div className="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col animate-fade-in-up">
             {/* Header */}
             <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-3 flex justify-between items-center shadow-sm w-full flex-shrink-0 z-10 border-b dark:border-gray-700">
-                <button onClick={handleBack} className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200">
+                <button onClick={handleBack} title={t('back')} aria-label={t('back')} className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200">
                     <BackIcon />
                 </button>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Studio</h2>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('creatorStudioShort')}</h2>
                 <div className="flex gap-2">
-                    <button onClick={handleDownload} className="p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-md">
+                    <button onClick={handleDownload} title={t('creatorDownloadPicture')} aria-label={t('creatorDownloadPicture')} className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-md">
                         <DownloadIcon />
+                        <span className="hidden sm:inline text-sm font-semibold">{t('creatorDownloadShort')}</span>
                     </button>
                     {navigator.share && (
-                        <button onClick={handleShare} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white rounded-full hover:bg-gray-100 shadow-md">
+                        <button onClick={handleShare} title={t('creatorShare')} aria-label={t('creatorShare')} className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white rounded-full hover:bg-gray-100 shadow-md">
                             <ShareIcon />
                         </button>
                     )}
@@ -473,12 +493,12 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                         onChange={(e) => setText(e.target.value)}
                         className="w-full p-3 rounded-lg border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-accent shadow-sm resize-none"
                         rows={4}
-                        placeholder="Your text..."
+                        placeholder={t('creatorYourText')}
                     />
                     {missingNote}
                     {controls}
-                    <div className="mt-auto text-xs text-gray-400 text-center">
-                        Pro Tip: Use transparent backgrounds for stickers.
+                    <div className="mt-auto text-xs text-gray-500 dark:text-gray-400 text-center">
+                        {t('creatorTip')}
                     </div>
                 </div>
 
@@ -508,10 +528,11 @@ const CreatorPage: React.FC<CreatorPageProps> = ({ fontBlob }) => {
                         onChange={(e) => setText(e.target.value)}
                         className="w-full p-2 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-accent text-base resize-none"
                         rows={2}
-                        placeholder="Type here..."
+                        placeholder={t('typeHerePlaceholder')}
                     />
                     {missingNote}
                     {controls}
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center">{t('creatorTip')}</p>
                 </div>
             </div>
         </div>

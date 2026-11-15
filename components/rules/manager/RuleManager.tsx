@@ -3,6 +3,7 @@ import { MarkAttachmentRules, PositioningRules, AttachmentPoint, CharacterSet } 
 import { useLocale } from '../../../contexts/LocaleContext';
 import { AddIcon, TrashIcon, EditIcon, SaveIcon, CloseIcon } from '../../../constants';
 import SmartGlyphInput from './SmartGlyphInput';
+import { isGroupRef, normalizeGroupRef } from '../../../utils/groupRef';
 
 interface RuleManagerProps {
     positioningRules: PositioningRules[];
@@ -22,7 +23,7 @@ const Chip: React.FC<{ label: string, color?: 'purple' | 'gray' | 'teal' | 'blue
     };
     
     // Auto-detect group syntax
-    const effectiveColor = label.startsWith('$') || label.startsWith('@') ? 'purple' : color;
+    const effectiveColor = isGroupRef(label) ? 'purple' : color;
 
     return (
         <span 
@@ -32,7 +33,7 @@ const Chip: React.FC<{ label: string, color?: 'purple' | 'gray' | 'teal' | 'blue
                 fontFeatureSettings: 'var(--guide-font-feature-settings)'
             }}
         >
-            {label}
+            {normalizeGroupRef(label)}
         </span>
     );
 };
@@ -75,6 +76,11 @@ const RuleCard: React.FC<{
     </div>
 );
 
+const ExpandedChip: React.FC = () => {
+    const { t } = useLocale();
+    return <span className="text-[11px] text-indigo-400 italic">{t('expanded')}</span>;
+};
+
 const ManualRuleCard: React.FC<{ 
     base: string; 
     mark: string; 
@@ -82,8 +88,10 @@ const ManualRuleCard: React.FC<{
     onDelete: () => void;
     onEdit: () => void;
     isVirtual?: boolean;
-}> = ({ base, mark, points, onDelete, onEdit, isVirtual }) => (
-    <div className={`bg-white dark:bg-gray-800 border ${isVirtual ? 'border-dashed border-indigo-200 dark:border-indigo-900' : 'border-gray-200 dark:border-gray-700'} rounded-lg p-3 shadow-sm flex items-center justify-between group`}>
+}> = ({ base, mark, points, onDelete, onEdit, isVirtual }) => {
+    const { t } = useLocale();
+    return (
+    <div className={`bg-white dark:bg-gray-800 border ${isVirtual ? 'border-dashed border-indigo-200 dark:border-indigo-900' : 'border-gray-200 dark:border-gray-700'} rounded-lg p-3 shadow-sm flexitems-center justify-between group`}>
         <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
                 <Chip label={base} />
@@ -91,8 +99,8 @@ const ManualRuleCard: React.FC<{
                 <Chip label={mark} />
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-col">
-                <span>⚓ {points.base} : {points.mark}</span>
-                {(points.x !== '0' || points.y !== '0') && <span>Offset: ({points.x}, {points.y})</span>}
+                <span>⚓ {t(`point_${points.base}`)} : {t(`point_${points.mark}`)}</span>
+                {(points.x !== '0' || points.y !== '0') && <span>{t('anchorOffset', { x: points.x, y: points.y })}</span>}
             </div>
         </div>
         {!isVirtual && (
@@ -106,10 +114,11 @@ const ManualRuleCard: React.FC<{
             </div>
         )}
         {isVirtual && (
-            <span className="text-[11px] text-indigo-400 italic">Expanded</span>
+            <ExpandedChip />
         )}
     </div>
-);
+    );
+};
 
 // Glyph/group picker that adds a tag only when a suggestion is chosen or Enter is pressed;
 // typing just filters the suggestions.
@@ -248,7 +257,7 @@ const RuleEditor: React.FC<{
                             <span key={b} onClick={() => removeTag(setBase, base, b)} className="cursor-pointer hover:line-through"><Chip label={b} /></span>
                         ))}
                     </div>
-                    <TagAdder onAdd={(v) => addTag(setBase, v)} characterSets={characterSets} groups={groups} placeholder="Add base..." />
+                    <TagAdder onAdd={(v) => addTag(setBase, v)} characterSets={characterSets} groups={groups} placeholder={t('addBasePlaceholder')} />
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-500 uppercase">{t('markTargets')}</label>
@@ -257,7 +266,7 @@ const RuleEditor: React.FC<{
                             <span key={m} onClick={() => removeTag(setMark, mark, m)} className="cursor-pointer hover:line-through"><Chip label={m} /></span>
                         ))}
                     </div>
-                    <TagAdder onAdd={(v) => addTag(setMark, v)} characterSets={characterSets} groups={groups} placeholder="Add mark..." />
+                    <TagAdder onAdd={(v) => addTag(setMark, v)} characterSets={characterSets} groups={groups} placeholder={t('addMarkPlaceholder')} />
                 </div>
             </div>
 
@@ -286,17 +295,17 @@ const RuleEditor: React.FC<{
                      <span>▶</span> {t('ligatureNamingOverrides')} {ligOverrides.length > 0 && <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1.5 py-0.5 rounded-full text-[11px]">{ligOverrides.length}</span>}
                  </summary>
                  <div className="pl-4 space-y-3 pt-2">
-                     <p className="text-xs text-gray-400 mb-2">Map specific Base+Mark pairs to a named ligature or group. Supports groups (e.g. $cons replaced_by $ligs).</p>
+                     <p className="text-xs text-gray-400 mb-2">{t('ligatureOverridesHint')}</p>
                      
                      <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
                          {ligOverrides.map((o, idx) => (
                              <div key={idx} className={`flex items-center gap-2 text-sm p-2 rounded transition-colors ${editingOverrideIndex === idx ? 'bg-indigo-100 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-800' : 'bg-gray-100 dark:bg-gray-700'}`}>
                                  <span className="font-mono text-xs flex-1 flex gap-2">
-                                     <span className={o.base.startsWith('$') ? "text-purple-600 font-bold" : ""}>{o.base}</span>
+                                     <span className={isGroupRef(o.base) ? "text-purple-600 font-bold" : ""}>{o.base}</span>
                                      <span className="text-gray-400">+</span>
-                                     <span className={o.mark.startsWith('$') ? "text-purple-600 font-bold" : ""}>{o.mark}</span>
+                                     <span className={isGroupRef(o.mark) ? "text-purple-600 font-bold" : ""}>{o.mark}</span>
                                      <span className="text-gray-400">→</span>
-                                     <span className={o.lig.startsWith('$') ? "text-purple-600 font-bold" : ""}>{o.lig}</span>
+                                     <span className={isGroupRef(o.lig) ? "text-purple-600 font-bold" : ""}>{o.lig}</span>
                                  </span>
                                  <div className="flex gap-1">
                                     <button onClick={() => handleEditOverride(idx)} className="text-indigo-500 hover:bg-indigo-200 dark:hover:bg-indigo-900/60 p-1.5 rounded"><EditIcon className="w-3 h-3"/></button>
@@ -309,24 +318,24 @@ const RuleEditor: React.FC<{
                      <div className="flex gap-2 items-end pt-2 border-t border-dashed dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-2 rounded-b-lg">
                          <div className="flex-1">
                              <label className="text-[11px] uppercase text-gray-400 mb-1 block">{t('baseLabel')}</label>
-                             <SmartGlyphInput value={newOverride.base} onChange={v => setNewOverride({...newOverride, base: v})} characterSets={characterSets} groups={groups} placeholder="Base or $group" />
+                             <SmartGlyphInput value={newOverride.base} onChange={v => setNewOverride({...newOverride, base: v})} characterSets={characterSets} groups={groups} placeholder={t('baseOrGroup')} />
                          </div>
                          <span className="pb-2 text-gray-400 font-bold">+</span>
                          <div className="flex-1">
                              <label className="text-[11px] uppercase text-gray-400 mb-1 block">{t('markLabel')}</label>
-                             <SmartGlyphInput value={newOverride.mark} onChange={v => setNewOverride({...newOverride, mark: v})} characterSets={characterSets} groups={groups} placeholder="Mark or $group" />
+                             <SmartGlyphInput value={newOverride.mark} onChange={v => setNewOverride({...newOverride, mark: v})} characterSets={characterSets} groups={groups} placeholder={t('markOrGroup')} />
                          </div>
                          <span className="pb-2 text-gray-400 font-bold">→</span>
                          <div className="flex-1">
                              <label className="text-[11px] uppercase text-gray-400 mb-1 block">{t('ligatureName')}</label>
-                             <SmartGlyphInput value={newOverride.lig} onChange={v => setNewOverride({...newOverride, lig: v})} characterSets={characterSets} groups={groups} placeholder="Result or $group" />
+                             <SmartGlyphInput value={newOverride.lig} onChange={v => setNewOverride({...newOverride, lig: v})} characterSets={characterSets} groups={groups} placeholder={t('resultOrGroup')} />
                          </div>
                          <div className="flex gap-1">
-                            <button onClick={handleSaveOverride} disabled={!newOverride.base || !newOverride.mark || !newOverride.lig} className="px-3 py-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" title={editingOverrideIndex !== null ? "Update Override" : "Add Override"}>
+                            <button onClick={handleSaveOverride} disabled={!newOverride.base || !newOverride.mark || !newOverride.lig} className="px-3 py-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" title={editingOverrideIndex !== null ? t('updateOverride') : t('addOverride')}>
                                 {editingOverrideIndex !== null ? <SaveIcon className="w-5 h-5"/> : <AddIcon className="w-5 h-5"/>}
                             </button>
                             {editingOverrideIndex !== null && (
-                                <button onClick={handleCancelOverride} className="px-2 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title="Cancel">
+                                <button onClick={handleCancelOverride} className="px-2 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title={t('cancel')}>
                                     <CloseIcon className="w-4 h-4"/>
                                 </button>
                             )}
@@ -381,25 +390,25 @@ const ManualAnchorForm: React.FC<{
              <div className="flex gap-4">
                  <div className="flex-1">
                      <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">{t('baseLabel')}</label>
-                     <SmartGlyphInput value={base} onChange={setBase} characterSets={characterSets} groups={groups} placeholder="Base glyph..." />
+                     <SmartGlyphInput value={base} onChange={setBase} characterSets={characterSets} groups={groups} placeholder={t('baseGlyphPlaceholder')} />
                  </div>
                  <div className="flex-1">
                      <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">{t('markLabel')}</label>
-                     <SmartGlyphInput value={mark} onChange={setMark} characterSets={characterSets} groups={groups} placeholder="Mark glyph..." />
+                     <SmartGlyphInput value={mark} onChange={setMark} characterSets={characterSets} groups={groups} placeholder={t('markGlyphPlaceholder')} />
                  </div>
              </div>
              <div className="flex gap-2 items-end">
                   <div className="flex-1">
                      <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">{t('basePoint')}</label>
                      <select value={basePoint} onChange={e => setBasePoint(e.target.value as any)} className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600 text-sm">
-                         {attachmentPoints.map(p => <option key={p} value={p}>{p}</option>)}
+                         {attachmentPoints.map(p => <option key={p} value={p}>{t(`point_${p}`)}</option>)}
                      </select>
                   </div>
                   <span className="pb-2 text-gray-400">→</span>
                   <div className="flex-1">
                      <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">{t('markPoint')}</label>
                      <select value={markPoint} onChange={e => setMarkPoint(e.target.value as any)} className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600 text-sm">
-                         {attachmentPoints.map(p => <option key={p} value={p}>{p}</option>)}
+                         {attachmentPoints.map(p => <option key={p} value={p}>{t(`point_${p}`)}</option>)}
                      </select>
                   </div>
                   <div className="w-20">
@@ -532,7 +541,7 @@ const RuleManager: React.FC<RuleManagerProps> = ({
                     <div className="flex items-center gap-4">
                         {!isAddingAnchor && !editingAnchor && (
                             <button onClick={() => setIsAddingAnchor(true)} className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
-                                <AddIcon className="w-4 h-4" /> {t('add')} Anchor
+                                <AddIcon className="w-4 h-4" /> {t('addAnchor')}
                             </button>
                         )}
                     </div>

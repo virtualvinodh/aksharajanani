@@ -269,7 +269,7 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
                                                 ? 'bg-indigo-600 border-indigo-600 scale-110' 
                                                 : 'bg-white dark:bg-gray-800 border-gray-400 hover:border-indigo-500'}
                                         `}
-                                        title={isAllSelected ? "Deselect Group" : "Select Group"}
+                                        title={isAllSelected ? t('deselectGroup') : t('selectGroup')}
                                     >
                                         {isAllSelected && <CheckCircleIcon className="w-4 h-4 text-white" />}
                                         {isIndeterminate && <div className="w-3 h-0.5 bg-white rounded-full" />} 

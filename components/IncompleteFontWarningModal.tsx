@@ -12,6 +12,8 @@ interface IncompleteFontWarningModalProps {
     drawing: number;
     positioning: number;
     kerning: number;
+    /** "accents" (European languages) or "combining marks" (Indian and other scripts). */
+    accents?: boolean;
   };
 }
 
@@ -22,7 +24,7 @@ const IncompleteFontWarningModal: React.FC<IncompleteFontWarningModalProps> = ({
   const lines: string[] = [];
   const line = (key: string, count: number) => t(count === 1 ? `${key}One` : key, { count });
   if (status.drawing > 0) lines.push(line('incompleteLettersLine', status.drawing));
-  if (status.positioning > 0) lines.push(line('incompletePlacementLine', status.positioning));
+  if (status.positioning > 0) lines.push(line(status.accents === false ? 'incompletePlacementLineMarks' : 'incompletePlacementLine', status.positioning));
   if (status.kerning > 0) lines.push(line('incompleteSpacingLine', status.kerning));
 
   return (

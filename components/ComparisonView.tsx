@@ -406,7 +406,7 @@ const ComparisonView: React.FC = () => {
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-700 mb-4"></div>
 
-                <h4 className="font-bold text-indigo-600 dark:text-indigo-400 mb-2">Categories</h4>
+                <h4 className="font-bold text-indigo-600 dark:text-indigo-400 mb-2">{t('categories')}</h4>
                 <div className="flex flex-col gap-1 mb-4">
                   {visibleCharacterSets.map(set => <CategoryCheckbox key={set.nameKey} categorySet={set} />)}
                 </div>

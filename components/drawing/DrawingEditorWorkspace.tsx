@@ -8,6 +8,8 @@ import { Character, GlyphData, Path, FontMetrics, Tool, AppSettings, CharacterSe
 import { DRAWING_CANVAS_SIZE } from '../../constants';
 import { getAccurateGlyphBBox } from '../../services/glyphRenderService';
 import { isShortViewport } from '../../hooks/useMediaQuery';
+import { useLocale } from '../../contexts/LocaleContext';
+import ToolOptionsStrip from './ToolOptionsStrip';
 
 interface DrawingEditorWorkspaceProps {
     character: Character;
@@ -71,6 +73,7 @@ interface DrawingEditorWorkspaceProps {
 }
 
 const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) => {
+    const { t } = useLocale();
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
     
@@ -132,6 +135,13 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
                 <div className="flex-1 w-full min-h-0 flex items-center justify-center overflow-hidden relative">
                     <div className="relative w-full h-full flex items-center justify-center">
                         <div className="relative h-[92%] max-h-full aspect-square flex items-center justify-center max-w-full group">
+                            {/* A "Finish me" letter (ஆ started as a copy of அ): say what to do (row 100). Read from the
+                                project, not the prop, so it goes away as soon as a changed version is saved. */}
+                            {(props.allCharsByName.get(props.character.name) ?? props.character).unfinishedCopy && props.character.composite?.[0] && (
+                                <div role="status" className="absolute top-2 left-1/2 -translate-x-1/2 z-20 w-max max-w-[92%] rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-900/40 dark:border-amber-700 px-3 py-1.5 text-xs sm:text-sm text-amber-900 dark:text-amber-100 shadow-sm pointer-events-none text-center">
+                                    {t('finishMeEditorHint', { source: props.character.composite[0], name: props.character.label || props.character.name })}
+                                </div>
+                            )}
                             {props.isLargeScreen && (
                                 <div className="absolute right-full mr-6 top-0 bottom-0 z-30">
                                     <DrawingToolbar
@@ -175,6 +185,7 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
                                     previewTransform={props.previewTransform}
                                     onTransformComponent={props.onTransformComponent}
                                 />
+                                <ToolOptionsStrip tool={props.currentTool} />
                             </div>
                         </div>
                     </div>
@@ -184,7 +195,7 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
                     {props.sourceGlyphs.length > 0 && (
                         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden" data-tour="linked-source-strip">
                             <LinkedGlyphsStrip 
-                                title="Sources" items={props.sourceGlyphs} glyphDataMap={props.allGlyphData} 
+                                title={t('sources')} items={props.sourceGlyphs} glyphDataMap={props.allGlyphData} 
                                 settings={props.settings} onSelect={props.handleNavigationAttempt} variant="sources"
                                 allCharsByName={props.allCharsByName} metrics={props.metrics}
                                 markAttachmentRules={props.markAttachmentRules} characterSets={props.allCharacterSets} groups={props.groups}
@@ -197,7 +208,7 @@ const DrawingEditorWorkspace: React.FC<DrawingEditorWorkspaceProps> = (props) =>
                     {props.dependentGlyphs.length > 0 && (
                         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                             <LinkedGlyphsStrip 
-                                title="Used In" items={props.dependentGlyphs} glyphDataMap={props.allGlyphData} settings={props.settings}
+                                title={t('usedIn')} items={props.dependentGlyphs} glyphDataMap={props.allGlyphData} settings={props.settings}
                                 onSelect={props.handleNavigationAttempt} variant="dependents" liveSourcePaths={props.currentPaths}
                                 sourceCharacter={props.character} allCharsByName={props.allCharsByName} metrics={props.metrics}
                                 markAttachmentRules={props.markAttachmentRules} characterSets={props.allCharacterSets} groups={props.groups}

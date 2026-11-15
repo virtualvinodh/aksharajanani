@@ -1,8 +1,9 @@
 import { Character, CharacterDefinition, MarkAttachmentRules, ScriptConfig } from '../types';
 import { appUrl } from '../utils/appUrl';
+import { toGroupRef } from '../utils/groupRef';
 
 /** Where a combining mark sits on its letter (from data/languages.json, built by tools/data/build_languages.py). */
-export type MarkPosition = 'above' | 'aboveRight' | 'below' | 'belowAttached' | 'overlay';
+export type MarkPosition = 'above' | 'aboveRight' | 'below' | 'belowAttached' | 'overlay' | 'kanaVoiced';
 
 export interface LanguageEntry {
     /** CLDR locale, e.g. "nb" or "sr-Latn". */
@@ -117,6 +118,11 @@ const ATTACHMENT: Record<MarkPosition, AttachmentRule> = {
     below: ['bottomCenter', 'topCenter', '0', '30'],
     belowAttached: ['bottomCenter', 'topCenter'],
     overlay: ['center', 'center'],
+    // Japanese ゛ ゜ tuck into the letter's top-right corner (row 12). In Noto Sans JP the mark starts
+    // ~0.21 of the letter's height inside its right edge and ends ~0.16 below its top, but Noto also
+    // shrinks the letter; with the letter unchanged, that much overlap runs into ぐ ぽ ポ, so this
+    // goes about two thirds of the way (0.13 and 0.12 for kana ~450 units tall).
+    kanaVoiced: ['topRight', 'bottomLeft', '-60', '55'],
 };
 
 export const LANGUAGE_LETTERS_SET = 'languageLetters';
@@ -182,7 +188,7 @@ export const buildLanguageSets = (chosen: string[], punctuation: string[], marks
         // Every mark is placed on every letter; the user fine-tunes pairs in the positioning step.
         const rules: Record<string, AttachmentRule> = {};
         for (const m of markChars.keys()) rules[m] = ATTACHMENT[positionOf(m)];
-        definitions.push({ markAttachment: { [`$${LANGUAGE_LETTERS_SET}`]: rules } });
+        definitions.push({ markAttachment: { [toGroupRef(LANGUAGE_LETTERS_SET)]: rules } });
     }
 
     const builtCount = letterList.filter(c => c.glyphClass === 'ligature').length;

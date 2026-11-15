@@ -85,7 +85,7 @@ export const extractProjectData = async (
     
     // Create a default character set
     const characterSet: CharacterSet = {
-        nameKey: 'Imported',
+        nameKey: 'importedFontLetters',
         characters: []
     };
 

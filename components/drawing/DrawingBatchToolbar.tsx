@@ -38,100 +38,74 @@ const DrawingBatchToolbar: React.FC<DrawingBatchToolbarProps> = (props) => {
         return t('pasteSelection');
     };
 
+    const btn = 'flex items-center gap-2 px-3 py-2 text-white font-bold text-sm rounded-xl disabled:opacity-30 transition-all shadow-md active:scale-95';
+    const label = 'hidden @3xl:inline';
+    const pasteDisabled = props.selectionSize === 0 || props.isSelectionVirtual || props.selectionSize !== props.clipboardSize;
+
+    // Sits at the bottom of the letter grid, not over the whole window, so with a letter open next
+    // to the grid it never covers the editor's Back button or title (F15). It sizes to the grid's
+    // width (container queries): names show when there's room, icons with tooltips otherwise.
     return (
-        <div className="fixed inset-x-0 bottom-6 sm:bottom-auto sm:top-24 flex justify-center z-[60] px-4 pointer-events-none">
-            <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 pointer-events-auto animate-fade-in-up w-full max-w-4xl">
-                
-                {/* Selection Info Section */}
-                <div className="flex items-center gap-3 pr-4 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-gray-700 w-full sm:w-auto pb-2 sm:pb-0 justify-center">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 flex-shrink-0">
+        <div className="@container absolute inset-x-0 bottom-3 flex justify-center z-[60] px-2 pointer-events-none">
+            <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2 flex flex-wrap items-center justify-center gap-2 @2xl:gap-3 pointer-events-auto animate-fade-in-up max-w-4xl">
+
+                {/* How many are selected, and select all / none */}
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 flex-shrink-0" aria-label={t('selectedCount', { count: props.selectionSize })}>
                         <span className="font-black text-sm">{props.selectionSize}</span>
                     </div>
-                    <div className="flex flex-row gap-1">
-                        <button onClick={props.onSelectAll} className="px-2 py-1 text-[11px] font-bold uppercase tracking-tight bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
-                            <span className="hidden sm:inline">{t('selectAll')}</span>
-                            <span className="sm:hidden">{t('showAll')}</span>
-                        </button>
-                        <button onClick={props.onSelectNone} disabled={props.selectionSize === 0} className="px-2 py-1 text-[11px] font-bold uppercase tracking-tight bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-30 transition-colors">
-                            <span className="hidden sm:inline">{t('selectNone')}</span>
-                            <span className="sm:hidden">{t('none')}</span>
-                        </button>
-                    </div>
+                    <button onClick={props.onSelectAll} className="px-2 py-1 text-[11px] font-bold uppercase tracking-tight bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
+                        {t('selectAll')}
+                    </button>
+                    <button onClick={props.onSelectNone} disabled={props.selectionSize === 0} className="px-2 py-1 text-[11px] font-bold uppercase tracking-tight bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-30 transition-colors">
+                        {t('selectNone')}
+                    </button>
                 </div>
 
-                {/* Main Actions Section */}
-                <div className="flex flex-wrap items-center justify-center gap-2 flex-grow">
+                {/* What to do with them */}
+                <div className="flex flex-wrap items-center justify-center gap-2">
                     {props.showAccept && (
-                        <button 
-                            onClick={props.onAccept} 
-                            disabled={props.selectionSize === 0}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold text-sm rounded-xl hover:bg-green-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                        >
+                        <button onClick={props.onAccept} disabled={props.selectionSize === 0} title={t('acceptAllDefaults')} aria-label={t('acceptAllDefaults')}
+                            className={`${btn} bg-green-600 hover:bg-green-700`}>
                             <CheckCircleIcon className="w-4 h-4" />
-                            <span className="hidden lg:inline">{t('acceptAllDefaults')}</span>
+                            <span className={label}>{t('acceptAllDefaults')}</span>
                         </button>
                     )}
-                    
                     {props.onCopy && (
-                        <button 
-                            onClick={props.onCopy} 
-                            disabled={props.selectionSize === 0 || props.isSelectionVirtual}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                            title={getCopyTooltip()}
-                        >
+                        <button onClick={props.onCopy} disabled={props.selectionSize === 0 || props.isSelectionVirtual} title={getCopyTooltip()} aria-label={t('copy')}
+                            className={`${btn} bg-blue-600 hover:bg-blue-700`}>
                             <CopyIcon className="w-4 h-4" />
-                            <span className="hidden lg:inline">{t('copy')}</span>
+                            <span className={label}>{t('copy')}</span>
                         </button>
                     )}
-
-                    {props.onPaste && props.clipboardSize && props.clipboardSize > 0 && (
-                        <button 
-                            onClick={props.onPaste} 
-                            disabled={props.selectionSize === 0 || props.isSelectionVirtual || props.selectionSize !== props.clipboardSize}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                            title={getPasteTooltip()}
-                        >
+                    {/* Only when something was copied ("&&" with a 0 count would print a bare "0"). */}
+                    {props.onPaste && (props.clipboardSize ?? 0) > 0 && (
+                        <button onClick={props.onPaste} disabled={pasteDisabled} title={getPasteTooltip()} aria-label={t('paste')}
+                            className={`${btn} bg-blue-600 hover:bg-blue-700`}>
                             <PasteIcon className="w-4 h-4" />
-                            <span className="hidden lg:inline">{t('paste')} ({props.clipboardSize})</span>
+                            <span className={label}>{t('paste')} ({props.clipboardSize})</span>
                         </button>
                     )}
-
                     {props.showTransform && (
-                        <button 
-                            onClick={props.onTransform} 
-                            disabled={props.selectionSize === 0}
-                            className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white font-bold text-sm rounded-xl hover:bg-teal-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                        >
+                        <button onClick={props.onTransform} disabled={props.selectionSize === 0} title={t('transform')} aria-label={t('transform')}
+                            className={`${btn} bg-teal-600 hover:bg-teal-700`}>
                             <TransformIcon className="w-4 h-4" />
-                            <span className="hidden lg:inline">{t('transform')}</span>
+                            <span className={label}>{t('transform')}</span>
                         </button>
                     )}
-                    <button 
-                        onClick={props.onProperties} 
-                        disabled={props.selectionSize === 0}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                    >
+                    <button onClick={props.onProperties} disabled={props.selectionSize === 0} title={t('editProperties')} aria-label={t('editProperties')}
+                        className={`${btn} bg-indigo-600 hover:bg-indigo-700`}>
                         <SettingsIcon className="w-4 h-4" />
-                        <span className="hidden lg:inline">{t('editProperties')}</span>
+                        <span className={label}>{t('editProperties')}</span>
                     </button>
-                    <button 
-                        onClick={props.onDelete} 
-                        disabled={props.selectionSize === 0 || script?.isImportedFont}
-                        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-bold text-sm rounded-xl hover:bg-red-700 disabled:opacity-30 transition-all shadow-md active:scale-95"
-                        title={script?.isImportedFont ? "Deletion disabled for imported fonts" : t('delete')}
-                    >
+                    <button onClick={props.onDelete} disabled={props.selectionSize === 0 || script?.isImportedFont}
+                        title={script?.isImportedFont ? t('deletionDisabledImported') : t('delete')} aria-label={t('delete')}
+                        className={`${btn} bg-red-600 hover:bg-red-700`}>
                         <TrashIcon className="w-4 h-4" />
-                        <span className="hidden lg:inline">{t('delete')}</span>
+                        <span className={label}>{t('delete')}</span>
                     </button>
-                </div>
-
-                {/* Exit Action */}
-                <div className="pl-4 sm:border-l border-gray-200 dark:border-gray-700 flex-shrink-0">
-                    <button 
-                        onClick={props.onClose} 
-                        className="p-2.5 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-all"
-                        title={t('exitSelectionMode')}
-                    >
+                    <button onClick={props.onClose} title={t('exitSelectionMode')} aria-label={t('exitSelectionMode')}
+                        className="p-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
                         <CloseIcon className="w-5 h-5" />
                     </button>
                 </div>

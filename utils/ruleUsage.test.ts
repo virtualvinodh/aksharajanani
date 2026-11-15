@@ -20,7 +20,8 @@ describe('rule usage', () => {
     });
 
     it('lists features, lookups, other groups and extra sources', () => {
-        expect(findGroupUsages('ottuG', rules)).toEqual(['lookup_a', '$ottuPlus']);
+        // Shown with @ (F49), whichever prefix the data uses.
+        expect(findGroupUsages('ottuG', rules)).toEqual(['lookup_a', '@ottuPlus']);
         expect(findGroupUsages('virama', rules, [{ label: 'Positioning', value: [{ base: ['$virama'] }] }])).toEqual(['psts', 'Positioning']);
         expect(findGroupUsages('unused', rules)).toEqual([]);
     });

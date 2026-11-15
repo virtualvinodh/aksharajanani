@@ -84,7 +84,7 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
             setIsLoading(false);
         }
     } else {
-        setError(t('errorFontPreview', { error: 'No font data received for preview.' }));
+        setError(t('errorFontPreview', { error: t('noFontDataPreview') }));
         setIsLoading(false);
     }
     
@@ -181,8 +181,8 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
             </label>
             {missing.length > 0 && (
               <p data-testid="test-missing-letters" className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {t('testMissingLetters', { count: missing.length })}{' '}
-                <span className="text-gray-500" style={{ fontFamily: 'var(--guide-font-family)' }}>{missing.slice(0, 30).join(' ')}{missing.length > 30 ? ' …' : ''}</span>
+                {missing.length === 1 ? t('testMissingLettersOne') : t('testMissingLetters', { count: missing.length })}{' '}
+                <span className="text-gray-600 dark:text-gray-300 text-lg leading-none">{missing.slice(0, 30).join('  ')}{missing.length > 30 ? ' …' : ''}</span>
               </p>
             )}
             <div
@@ -208,22 +208,26 @@ const FontTestPage: React.FC<FontTestPageProps> = ({
   
   return (
     <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col">
-      <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-4 flex justify-between items-center shadow-md w-full flex-shrink-0">
+      <header className="bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm p-3 sm:p-4 flex justify-between items-center gap-2 shadow-md w-full flex-shrink-0">
         <button
           onClick={onClose}
           data-tour="test-page-close"
-          className="flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+          title={t('back')}
+          aria-label={t('back')}
+          className="shrink-0 flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
         >
           <BackIcon />
           <span className="hidden sm:inline">{t('back')}</span>
         </button>
-        <div className="text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{t('fontTestGround')}</h2>
+        {/* Smaller on phones, so a long title (Tamil) stays on one or two lines (row 109). */}
+        <div className="flex-1 min-w-0 text-center">
+          <h2 className="text-lg sm:text-2xl md:text-3xl leading-tight font-bold text-gray-900 dark:text-white">{t('fontTestGround')}</h2>
         </div>
-        <div className="w-24 flex justify-end">
+        <div className="shrink-0 sm:w-24 flex justify-end">
              <button 
                 onClick={handleReset}
                 title={t('reset')}
+                aria-label={t('reset')}
                 className="flex items-center gap-2 px-3 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm"
             >
                 <UndoIcon className="w-4 h-4" />

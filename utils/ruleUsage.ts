@@ -1,3 +1,4 @@
+import { toGroupRef } from './groupRef';
 /**
  * What still uses a group or a lookup in the rules screens, so deleting one can say so first
  * (F50: deleting either used to ask nothing, and export then left the rules out without a word).
@@ -5,7 +6,7 @@
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** True when `value` (any JSON) mentions the group as `$key` or `@key`, in a value or an object key. */
+/** True when `value` (any JSON) mentions the group as `@key` (or the older `$key`), in a value or an object key. */
 export const mentionsGroup = (value: unknown, key: string): boolean => {
     const re = new RegExp(`(^|[^\\w-])[$@]${escapeRegExp(key)}(?![\\w-])`);
     const walk = (v: unknown): boolean => {
@@ -49,7 +50,7 @@ export const findGroupUsages = (
             if (mentionsGroup(lookup, key)) found.push(name);
         }
         for (const [name, members] of Object.entries(rules.groups || {})) {
-            if (name !== key && mentionsGroup(members, key)) found.push(`$${name}`);
+            if (name !== key && mentionsGroup(members, key)) found.push(toGroupRef(name));
         }
     }
     for (const e of extra) if (mentionsGroup(e.value, key)) found.push(e.label);

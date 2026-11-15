@@ -415,7 +415,7 @@ export const useProjectLoad = ({
             }
 
         } catch (err) {
-            setScriptDataError(err instanceof Error ? err.message : 'An unknown error occurred loading script data');
+            setScriptDataError(err instanceof Error ? err.message : t('unknownError'));
         } finally {
             setIsScriptDataLoading(false);
         }

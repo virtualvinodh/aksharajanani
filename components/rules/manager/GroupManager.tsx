@@ -10,6 +10,7 @@ import { useRules } from '../../../contexts/RulesContext';
 import { useProject } from '../../../contexts/ProjectContext';
 import ConfirmRuleItemDeleteModal from '../ConfirmRuleItemDeleteModal';
 import { findGroupUsages } from '../../../utils/ruleUsage';
+import { GROUP_PREFIX, toGroupRef, normalizeGroupRef } from '../../../utils/groupRef';
 
 interface GroupManagerProps {
     groups: Record<string, string[]>;
@@ -58,7 +59,7 @@ const GroupCard: React.FC<{
             <div className="flex flex-wrap gap-1 mb-2">
                 {members.slice(0, 8).map((m, i) => (
                     <span key={i} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded border dark:border-gray-600 font-mono" style={fontStyle}>
-                        {m}
+                        {normalizeGroupRef(m)}
                     </span>
                 ))}
                 {members.length > 8 && (
@@ -71,7 +72,7 @@ const GroupCard: React.FC<{
                     <span className="text-[11px] uppercase font-bold text-gray-500">{t('appliesTo')}</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                         {applies.slice(0, 5).map((m, i) => (
-                            <span key={i} className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded border border-blue-100 dark:border-blue-800 font-mono" style={fontStyle}>{m}</span>
+                            <span key={i} className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded border border-blue-100 dark:border-blue-800 font-mono" style={fontStyle}>{normalizeGroupRef(m)}</span>
                         ))}
                         {applies.length > 5 && <span className="text-xs text-gray-400">+{applies.length - 5}</span>}
                     </div>
@@ -83,7 +84,7 @@ const GroupCard: React.FC<{
                     <span className="text-[11px] uppercase font-bold text-gray-500">{t('exceptions')}</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                         {exceptions.slice(0, 5).map((m, i) => (
-                            <span key={i} className="text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 px-1.5 py-0.5 rounded border border-red-100 dark:border-red-800 font-mono" style={fontStyle}>{m}</span>
+                            <span key={i} className="text-xs bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 px-1.5 py-0.5 rounded border border-red-100 dark:border-red-800 font-mono" style={fontStyle}>{normalizeGroupRef(m)}</span>
                         ))}
                         {exceptions.length > 5 && <span className="text-xs text-gray-400">+{exceptions.length - 5}</span>}
                     </div>
@@ -92,7 +93,7 @@ const GroupCard: React.FC<{
 
             {(exceptPairs && exceptPairs.length > 0) && (
                 <div className="mt-2 pt-2 border-t dark:border-gray-700">
-                    <span className="text-[11px] uppercase font-bold text-gray-500">Unlinked Pairs</span>
+                    <span className="text-[11px] uppercase font-bold text-gray-500">{t('unlinkedPairs')}</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                         {exceptPairs.slice(0, 5).map((m, i) => (
                             <span key={i} className="text-xs bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-300 px-1.5 py-0.5 rounded border border-orange-100 dark:border-orange-800 font-mono" style={fontStyle}>{m}</span>
@@ -215,7 +216,7 @@ const EditorPanel: React.FC<{
                                 value={nameValue} 
                                 onChange={e => handleNameChangeLocally(e.target.value)} 
                                 className={`flex-grow p-2 border rounded dark:bg-gray-700 dark:border-gray-600 font-mono ${showHint ? 'border-amber-500 ring-1 ring-amber-500' : ''}`}
-                                placeholder={namePrefix === '$' ? "consonants" : t('classNameOptional')}
+                                placeholder={namePrefix === GROUP_PREFIX ? "consonants" : t('classNameOptional')}
                              />
                         </div>
                         {showHint && (
@@ -261,7 +262,7 @@ const EditorPanel: React.FC<{
 
                 {onExceptPairsChange && (
                      <ChipInput 
-                        label="Unlinked Pairs (Base-Mark)"
+                        label={t('unlinkedPairsBaseMark')}
                         items={exceptPairs || []} 
                         onChange={onExceptPairsChange} 
                         placeholder="e.g. ka-u"
@@ -357,11 +358,11 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
         const usages = findGroupUsages(key, rulesState.fontRules, [
             ...usageSources,
             { label: t('markAttachmentClasses'), value: [markClasses, baseClasses] },
-            ...Object.entries(groups).filter(([k]) => k !== key).map(([k, members]) => ({ label: '$' + k, value: members })),
+            ...Object.entries(groups).filter(([k]) => k !== key).map(([k, members]) => ({ label: toGroupRef(k), value: members })),
         ]);
         setPendingGroupDelete({
             key, usages,
-            title: t('deleteGroupConfirmTitle', { name: '$' + key }),
+            title: t('deleteGroupConfirmTitle', { name: toGroupRef(key) }),
             message: usages.length ? t('deleteGroupUsedMessage') : t('deleteGroupUnusedMessage'),
         });
     };
@@ -408,7 +409,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
                         title={t('newGroup')}
                         nameValue={editingState.data.key}
                         onNameChange={(val) => updateEditingData('key', val)}
-                        namePrefix="$"
+                        namePrefix={GROUP_PREFIX}
                         members={editingState.data.members}
                         onMembersChange={(m) => updateEditingData('members', m)}
                         onSave={() => handleSaveGroup('', editingState.data.key, editingState.data.members)}
@@ -426,7 +427,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
                                 title={t('editGroup')}
                                 nameValue={editingState.data.key}
                                 onNameChange={(val) => updateEditingData('key', val)}
-                                namePrefix="$"
+                                namePrefix={GROUP_PREFIX}
                                 members={editingState.data.members}
                                 onMembersChange={(m) => updateEditingData('members', m)}
                                 onSave={() => handleSaveGroup(key, editingState.data.key, editingState.data.members)}
@@ -437,7 +438,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ groups, setGroups, markClas
                         ) : (
                             <GroupCard 
                                 key={key} 
-                                title={`$${key}`} 
+                                title={toGroupRef(key)} 
                                 members={members} 
                                 type="group" 
                                 onDelete={() => handleDeleteGroup(key)}

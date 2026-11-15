@@ -3,6 +3,7 @@ import React from 'react';
 import KerningToolbar from '../KerningToolbar';
 import LinkedGlyphsStrip from '../drawing/LinkedGlyphsStrip';
 import { Character, GlyphData, AppSettings } from '../../types';
+import { useLocale } from '../../contexts/LocaleContext';
 
 interface KerningEditorWorkspaceProps {
     isLargeScreen: boolean;
@@ -39,6 +40,7 @@ const KerningEditorWorkspace: React.FC<KerningEditorWorkspaceProps> = ({
     onXDistFocus, onXDistHover, xDistInputRef, children,
     sourceGlyphs, onSelectCharacter, glyphDataMap, settings, allCharsByName
 }) => {
+    const { t } = useLocale();
     return (
         <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-gray-950/20 relative min-h-0 h-full w-full">
             <div className="flex-1 flex flex-col items-center w-full h-full overflow-hidden relative min-h-0">
@@ -103,7 +105,7 @@ const KerningEditorWorkspace: React.FC<KerningEditorWorkspaceProps> = ({
                 <div className="w-full max-w-5xl mx-auto flex-shrink-0 z-20 px-2 pb-2">
                     <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <LinkedGlyphsStrip
-                            title="Sources"
+                            title={t('sources')}
                             items={sourceGlyphs}
                             glyphDataMap={glyphDataMap}
                             settings={settings}

@@ -8,6 +8,7 @@ import { Character, GlyphData, Path, Point, FontMetrics, MarkAttachmentRules, Po
 import { DRAWING_CANVAS_SIZE } from '../../constants';
 import { useLayout } from '../../contexts/LayoutContext';
 import { isShortViewport } from '../../hooks/useMediaQuery';
+import { useLocale } from '../../contexts/LocaleContext';
 
 interface PositioningEditorWorkspaceProps {
     markPaths: Path[];
@@ -78,6 +79,7 @@ const PositioningEditorWorkspace: React.FC<PositioningEditorWorkspaceProps> = ({
     manualX, manualY, onManualChange, onManualCommit, setIsInputFocused,
     sourceGlyphs, onSelectCharacter, allCharsByName, markPositioningMap
 }) => {
+    const { t } = useLocale();
     const [activeTab, setActiveTab] = useState<'class' | 'sources'>('class');
     const [isClassStripCollapsed, setIsClassStripCollapsed] = useState(() => !isLargeScreen || isShortViewport());
     const { showNotification } = useLayout();
@@ -183,7 +185,7 @@ const PositioningEditorWorkspace: React.FC<PositioningEditorWorkspaceProps> = ({
                                     ${!activeAttachmentClass ? 'opacity-50 cursor-not-allowed' : ''}
                                 `}
                             >
-                                Related Pairs
+                                {t('relatedPairs')}
                                 {classSiblings && classSiblings.length > 0 && (
                                     <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-1.5 py-0.5 rounded-full text-[11px] min-w-[16px] text-center">
                                         {classSiblings.length}
@@ -239,7 +241,7 @@ const PositioningEditorWorkspace: React.FC<PositioningEditorWorkspaceProps> = ({
                                 />
                             ) : (
                                 <LinkedGlyphsStrip
-                                    title="Sources"
+                                    title={t('sources')}
                                     items={sourceGlyphs}
                                     glyphDataMap={glyphDataMap}
                                     settings={settings}

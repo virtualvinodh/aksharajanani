@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import Modal from './Modal';
 import { useLocale } from '../contexts/LocaleContext';
 import { parseFontFile, extractProjectData } from '../services/importFontService';
+import { unwrapWoff2 } from '../services/pythonFontService';
 import { extractFea } from '../services/importFeaService';
 import { ProjectData } from '../types';
 
@@ -22,8 +23,8 @@ const ImportFontModal: React.FC<ImportFontModalProps> = ({ isOpen, onClose, onIm
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const chosenFile = e.target.files?.[0];
+    if (!chosenFile) return;
 
     setIsProcessing(true);
     setError(null);
@@ -31,6 +32,9 @@ const ImportFontModal: React.FC<ImportFontModalProps> = ({ isOpen, onClose, onIm
     setStatus(t('parsingFontFile') || 'Parsing font file...');
 
     try {
+      // WOFF2 is unpacked to a plain font file first (opentype.js can't read it); everything below
+      // then works on that file.
+      const file = await unwrapWoff2(chosenFile);
       const font = await parseFontFile(file);
       
       let manualFeaCode: string | undefined;
@@ -87,7 +91,7 @@ const ImportFontModal: React.FC<ImportFontModalProps> = ({ isOpen, onClose, onIm
               {t('clickToUpload') || 'Click to upload font file'}
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Supports TTF, OTF, WOFF
+              {t('supportsFontFormats')}
             </p>
           </div>
           
@@ -100,11 +104,11 @@ const ImportFontModal: React.FC<ImportFontModalProps> = ({ isOpen, onClose, onIm
               className="h-4 w-4 text-indigo-600 focus:ring-accent border-gray-300 rounded"
             />
             <label htmlFor="editMode" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-              Edit Mode (Experimental)
+              {t('editModeExperimental')}
             </label>
           </div>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 ml-6">
-             Preserves original OpenType features (GSUB, GPOS) and only updates glyph shapes and metrics. Use this for modifying existing fonts.
+             {t('editModeDescription')}
           </p>
           </>
         ) : (

@@ -5,11 +5,12 @@ import { useLayout } from '../contexts/LayoutContext';
 import { Character, PositioningRules, ScriptConfig, KerningMap, RecommendedKerning } from '../types';
 import { useProject } from '../contexts/ProjectContext';
 import { useGlyphData } from '../contexts/GlyphDataContext';
-import { SearchIcon, EditIcon, SettingsIcon, CompareIcon, TestIcon, ExportIcon, SaveIcon, LoadIcon, CodeBracketsIcon, CopyIcon, AddIcon } from '../constants';
+import { SearchIcon, EditIcon, SettingsIcon, CompareIcon, TestIcon, ExportIcon, SaveIcon, LoadIcon, CodeBracketsIcon, CopyIcon, AddIcon, ADDED_CHARACTERS_SET } from '../constants';
 import { isGlyphDrawn } from '../utils/glyphUtils';
 import { useSettings } from '../contexts/SettingsContext';
 import { useRules } from '../contexts/RulesContext';
 import { parseSearchQuery, getCharacterMatchScore } from '../utils/searchUtils';
+import { isGroupRef } from '../utils/groupRef';
 
 interface CommandPaletteProps {
     isOpen: boolean;
@@ -62,14 +63,14 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
     const kerningLabel = useKerningTerm ? t('kerning') : t('spacing');
     const workspaceKerningLabel = useKerningTerm ? t('workspaceKerning') : t('workspaceSpacing');
 
-    // Helper to resolve groups referenced in rules (e.g. $vowels) to individual character names
+    // Helper to resolve groups referenced in rules (e.g. @vowels) to individual character names
     const expandGroup = useMemo(() => {
         const resolve = (name: string, visited: Set<string>, depth: number): string[] => {
             if (typeof name !== 'string') return []; // Safety check for malformed data
             if (depth > 50) return []; // Recursion depth limit to prevent stack overflow
 
             const trimmedName = name.trim();
-            if (!trimmedName.startsWith('$')) return [trimmedName];
+            if (!isGroupRef(trimmedName)) return [trimmedName];
             
             const groupName = trimmedName.substring(1);
             if (visited.has(groupName)) return []; // Cycle detected, stop recursion
@@ -445,16 +446,16 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
             results.push({
                 id: 'create-glyph-option',
                 type: 'create',
-                title: `Create glyph for "${searchTerm}"`,
-                subtitle: 'Add to Custom Glyphs',
+                title: t('paletteCreateFor', { name: searchTerm }),
+                subtitle: t('paletteAddAsNew'),
                 icon: <AddIcon className="w-5 h-5 text-green-500" />,
-                onExecute: () => onAction('quick-add-glyph', { prefillName: searchTerm, targetSet: 'Custom Glyphs' })
+                onExecute: () => onAction('quick-add-glyph', { prefillName: searchTerm, targetSet: ADDED_CHARACTERS_SET })
             });
         }
 
         return results;
 
-    }, [cachedItems, searchTerm, dynamicResults]);
+    }, [cachedItems, searchTerm, dynamicResults, t]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'ArrowDown') {
@@ -522,11 +523,11 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                                              {item.subtitle && <div className={`text-xs ${index === activeIndex ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'}`}>{item.subtitle}</div>}
                                          </div>
                                          {item.type === 'workspace' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>Go</span>}
-                                         {item.type === 'action' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>Run</span>}
-                                         {item.type === 'positioning' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>Edit</span>}
-                                         {item.type === 'kerning-pair' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>Kern</span>}
-                                         {item.type === 'glyph' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>Edit</span>}
-                                         {item.type === 'create' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>New</span>}
+                                         {item.type === 'action' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>{t('paletteRun')}</span>}
+                                         {item.type === 'positioning' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>{t('edit')}</span>}
+                                         {item.type === 'kerning-pair' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>{t('paletteSpacing')}</span>}
+                                         {item.type === 'glyph' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>{t('edit')}</span>}
+                                         {item.type === 'create' && <span className={`ml-auto text-xs px-2 py-1 rounded-full ${index === activeIndex ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-800'}`}>{t('paletteNew')}</span>}
                                      </button>
                                  </li>
                              ))}
@@ -538,7 +539,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
                      )}
                  </div>
                  <div className="bg-gray-50 dark:bg-gray-900/50 p-2 text-xs text-gray-500 border-t dark:border-gray-700 flex justify-between px-4">
-                    <span>Use arrow keys to navigate</span>
+                    <span>{t('paletteArrowHint')}</span>
                     <span>{filteredItems.length} results</span>
                 </div>
              </div>

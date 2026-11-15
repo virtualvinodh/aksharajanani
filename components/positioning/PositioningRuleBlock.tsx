@@ -23,6 +23,7 @@ interface PositioningRuleBlockProps {
 const MINI_SIZE = 48; // Size of thumbnail
 
 import UnicodeProperties from 'unicode-properties';
+import { groupRefName, isGroupRef } from '../../utils/groupRef';
 
 // Internal component for a single mini glyph canvas
 const MiniGlyphCanvas: React.FC<{ 
@@ -189,12 +190,12 @@ const PositioningRuleBlock: React.FC<PositioningRuleBlockProps> = ({
         });
 
         // Heuristic labels
-        const baseLabel = rule.base.length === 1 && rule.base[0].startsWith('$') 
-            ? t(rule.base[0].substring(1)) 
+        const baseLabel = rule.base.length === 1 && isGroupRef(rule.base[0]) 
+            ? t(groupRefName(rule.base[0])) 
             : t('basesCount', { count: bases.size });
             
-        const markLabel = (rule.mark && rule.mark.length === 1 && rule.mark[0].startsWith('$'))
-            ? t(rule.mark[0].substring(1))
+        const markLabel = (rule.mark && rule.mark.length === 1 && isGroupRef(rule.mark[0]))
+            ? t(groupRefName(rule.mark[0]))
             : t('marksCount', { count: marks.size });
 
         return {

@@ -14,9 +14,11 @@ import * as dbService from '../../services/dbService';
 import { ProjectData } from '../../types';
 import { useProgressCalculators } from '../useProgressCalculators';
 import { simpleHash } from '../../utils/stringUtils';
+import { marksAreAccents } from '../../utils/marksWording';
 import { nextFontVersion, normalizeFontVersion } from '../../utils/fontVersion';
 import { fontFileName } from '../../utils/fontNaming';
 import { findRulesWithMissingGroups } from '../../services/ruleGroupCheck';
+import type { FontFileFormat } from '../../services/pythonFontService';
 
 export type ExportingType = 'export' | 'test' | 'create' | null;
 
@@ -40,7 +42,7 @@ export const useExportActions = ({
     const { markPositioningMap } = usePositioning();
     const { state: rulesState } = useRules();
     const { fontRules, isFeaEditMode, manualFeaCode } = rulesState;
-    const { positioningRules, markAttachmentRules, recommendedKerning, guideFont } = useProject();
+    const { positioningRules, markAttachmentRules, recommendedKerning, guideFont, script } = useProject();
 
     const [exportingType, setExportingType] = useState<ExportingType>(null);
     const [feaErrorState, setFeaErrorState] = useState<{ error: string, blob: Blob } | null>(null);
@@ -55,11 +57,11 @@ export const useExportActions = ({
     });
 
     /** Downloads the font as "<font name> <version>.otf" (local date and time without a version; row 40). */
-    const downloadFontBlob = useCallback((blob: Blob, fontName: string, version?: string | null): string => {
+    const downloadFontBlob = useCallback((blob: Blob, fontName: string, version?: string | null, format: FontFileFormat = 'otf'): string => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = fontFileName(fontName, version);
+        a.download = fontFileName(fontName, version).replace(/\.otf$/i, `.${format}`);
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         return a.download;
     }, []);
@@ -131,9 +133,9 @@ export const useExportActions = ({
         a.download = `${safeFileName}_Template.json`;
         
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        layout.showNotification("Template saved successfully!");
+        layout.showNotification(t('templateSaved'));
 
-    }, [settings, getProjectState, projectName, layout, guideFont]);
+    }, [settings, getProjectState, projectName, layout, guideFont, t]);
 
     /**
      * The built font, from the cache when nothing changed. The version number goes up after every
@@ -144,7 +146,7 @@ export const useExportActions = ({
         const projectState = getProjectState();
 
         if (!projectState || !settings || !metrics || !characterSets) {
-            layout.showNotification('Project data is not ready.', 'error');
+            layout.showNotification(t('projectNotReady'), 'error');
             return null;
         }
     
@@ -205,7 +207,8 @@ export const useExportActions = ({
         return { blob: fontBlob, feaError: feaError };
     }, [getProjectState, projectId, settings, metrics, characterSets, glyphDataMap, t, fontRules, kerningMap, suggestedKerningMap, ignoredPairs, markPositioningMap, allCharsByUnicode, positioningRules, markAttachmentRules, isFeaEditMode, manualFeaCode, layout.showNotification, isEditMode, baseFontBinary]);
 
-    const performExport = useCallback(async () => {
+    /** Builds the font and downloads it: OTF by default, or WOFF2/TTF from the ⋮ menu (row 92). */
+    const performExport = useCallback(async (format: FontFileFormat = 'otf') => {
         setExportingType('export');
         layout.showNotification(t('exportingNotice'), 'info');
         setFeaErrorState(null);
@@ -219,7 +222,14 @@ export const useExportActions = ({
                     setFeaErrorState({ error: feaError, blob });
                     layout.openModal('feaError');
                 } else {
-                    const fileName = downloadFontBlob(blob, settings?.fontName || projectName, isEditMode ? null : normalizeFontVersion(settings?.fontVersion));
+                    let fileName: string;
+                    if (format === 'otf') {
+                        fileName = downloadFontBlob(blob, settings?.fontName || projectName, isEditMode ? null : normalizeFontVersion(settings?.fontVersion));
+                    } else {
+                        const { convertFont } = await import('../../services/pythonFontService');
+                        const converted = await convertFont(blob, format);
+                        fileName = downloadFontBlob(converted, settings?.fontName || projectName, isEditMode ? null : normalizeFontVersion(settings?.fontVersion), format);
+                    }
                     // The next export gets the next version number (1.000 → 1.001), so a reinstalled font is seen as newer.
                     // (Not for an imported font being edited: its own name table and version are kept.)
                     if (!isEditMode) settingsDispatch({ type: 'UPDATE_SETTINGS', payload: prev => prev && { ...prev, fontVersion: nextFontVersion(prev.fontVersion) } });
@@ -230,9 +240,20 @@ export const useExportActions = ({
                     const warning = missing.rules > 0
                         ? t('exportRulesLeftOut', { count: missing.rules, groups: missing.groups.join(', ') })
                         : undefined;
-                    if (shouldShowUseYourFont()) {
+                    if (format === 'otf' && shouldShowUseYourFont()) {
                         layout.closeNotification(); // the "building your font" message would cover the dialog
-                        layout.openModal('useYourFont', { fileName, warning });
+                        // The same font as WOFF2 (websites) or TTF (older apps), from the file just
+                        // downloaded: rebuilding would give the next version number (M11).
+                        const onOtherFormat = async (format: FontFileFormat) => {
+                            const { convertFont } = await import('../../services/pythonFontService');
+                            const converted = await convertFont(blob, format);
+                            const url = URL.createObjectURL(converted);
+                            const a = document.createElement('a');
+                            a.href = url; a.download = fileName.replace(/\.otf$/i, `.${format}`);
+                            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                            return a.download;
+                        };
+                        layout.openModal('useYourFont', { fileName, warning, onOtherFormat });
                     }
                     else layout.showNotification([t('fontExportedSuccess'), warning, t('backupReminderAfterExport')].filter(Boolean).join(' '), 'success', { duration: warning ? 15000 : 8000 });
                 }
@@ -249,11 +270,14 @@ export const useExportActions = ({
             return;
         }
 
-        // How much is left in each step, so the warning can say it in numbers.
+        // How much is left in each step, so the warning can say it in numbers. Placing and spacing
+        // count only what can be done now, with every letter drawn (row 104): with 3 letters drawn,
+        // "2020 marks haven't been checked" was mostly about letters that don't exist yet.
         const remaining = {
             drawing: Math.max(0, drawingProgress.total - drawingProgress.completed),
-            positioning: Math.max(0, positioningProgress.total - positioningProgress.completed),
-            kerning: Math.max(0, kerningProgress.total - kerningProgress.completed),
+            positioning: positioningProgress.pendingReady,
+            kerning: kerningProgress.pendingReady,
+            accents: marksAreAccents(script),
         };
 
         const shouldWarn = remaining.drawing > 0 || remaining.positioning > 0 || remaining.kerning > 0;
@@ -269,14 +293,14 @@ export const useExportActions = ({
         } else {
             onProceed();
         }
-    }, [drawingProgress, positioningProgress, kerningProgress, settings, layout, t]);
+    }, [drawingProgress, positioningProgress, kerningProgress, settings, layout, t, script]);
 
-    const buildAndDownload = useCallback(() => {
+    const buildAndDownload = useCallback((format: FontFileFormat = 'otf') => {
         // Start building right away. The letters animation is progress feedback for
         // slow builds only: it appears if the font is not ready within 300ms (a cached
         // font exports instantly) and never holds up the download.
         const showAnimation = window.setTimeout(() => setIsAnimatingExport(true), 300);
-        void performExport().finally(() => {
+        void performExport(format).finally(() => {
             window.clearTimeout(showAnimation);
             setIsAnimatingExport(false);
         });
@@ -286,15 +310,17 @@ export const useExportActions = ({
     const latestBuild = useRef(buildAndDownload);
     latestBuild.current = buildAndDownload;
 
-    const startExportProcess = useCallback(() => {
+    // Called from buttons too, so anything that isn't a format name (a click event) means OTF.
+    const startExportProcess = useCallback((formatArg?: unknown) => {
+        const format: FontFileFormat = formatArg === 'woff2' || formatArg === 'ttf' ? formatArg : 'otf';
         checkAndExecute(() => {
             // The first export asks what the font should be called (row 40); an imported font keeps its own name.
             if (settings && !settings.fontNameAsked && !isEditMode) {
                 layout.openModal('fontNamePrompt', {
-                    onDone: () => { layout.closeModal(); window.setTimeout(() => latestBuild.current(), 0); },
+                    onDone: () => { layout.closeModal(); window.setTimeout(() => latestBuild.current(format), 0); },
                     onCancel: layout.closeModal,
                 });
-            } else buildAndDownload();
+            } else buildAndDownload(format);
         });
     }, [checkAndExecute, buildAndDownload, settings, isEditMode, layout]);
 

@@ -18,8 +18,9 @@ import { useKerning } from '../contexts/KerningContext';
 interface KerningEditorPageProps {
     pair: { left: Character, right: Character };
     onClose: () => void;
-    onDelete: () => void;
     onSave: (value: number) => void;
+    /** Only for a letter in the grid that is built as a pair: deletes the letter itself. */
+    onDeleteLetter?: () => void;
     onRemove: () => void;
     initialValue: number;
     glyphDataMap: Map<number, GlyphData>;
@@ -37,8 +38,6 @@ interface KerningEditorPageProps {
     allCharsByName: Map<string, Character>;
     character: Character; // The virtual/real character representing this pair
     showPropertiesButton?: boolean; // New optional prop
-    onIgnore?: () => void;
-    isIgnored?: boolean;
     
     disableStructuralEditing?: boolean;
 }
@@ -88,7 +87,7 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
     const onSaveConstruction = useCallback((type: 'drawing' | 'composite' | 'link' | 'positioning' | 'kerning', components: string[], transforms?: ComponentTransform[]) => {
         const { character } = props;
         if (!character.unicode) {
-            showNotification("Cannot modify a character without a Unicode ID.", "error");
+            showNotification(t('errorNoUnicode'), "error");
             return;
         }
 
@@ -148,9 +147,9 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
             glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: character.unicode } });
         } 
         
-        showNotification("Construction type changed. The editor will now update.", "success");
+        showNotification(t('constructionChanged'), "success");
     
-    }, [props, characterDispatch, glyphDataDispatch, showNotification, kerningMap, kerningDispatch]);
+    }, [props, characterDispatch, glyphDataDispatch, showNotification, kerningMap, kerningDispatch, t]);
 
     const onPathsChange = useCallback((paths: Path[]) => {
         if (props.character.unicode && paths.length === 0) {
@@ -158,7 +157,7 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
         } else if (paths.length > 0) {
              showNotification(t('pairEditorNoDrawing'), "info");
         }
-    }, [props.character.unicode, glyphDataDispatch, showNotification]);
+    }, [props.character.unicode, glyphDataDispatch, showNotification, t]);
 
     const session = useKerningSession(props);
     // A pair can use the same glyph on both sides (e.g. "AA"): list it once.
@@ -239,7 +238,6 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
             <KerningEditorHeader 
                 pair={props.pair} 
                 onClose={() => session.handleCloseAttempt(props.onClose)}
-                onDelete={props.onDelete}
                 onNavigate={session.handleNavigationAttempt} 
                 hasPrev={props.hasPrev} 
                 hasNext={props.hasNext} 
@@ -247,6 +245,7 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
                 isAutoKerning={session.isAutoKerning} 
                 onSave={session.handleSave} 
                 onRemove={props.onRemove} 
+                onDeleteLetter={props.onDeleteLetter}
                 isDirty={session.isDirty} 
                 settings={props.settings} 
                 isKerned={props.isKerned}
@@ -267,8 +266,6 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
                 gsub={gsub} setGsub={setGsub}
                 liga={liga} setLiga={setLiga}
                 glyphClass={glyphClass} setGlyphClass={setGlyphClass}
-                onIgnore={props.onIgnore!}
-                isIgnored={!!props.isIgnored}
                 disableStructuralEditing={props.disableStructuralEditing}
             />
             
@@ -327,10 +324,10 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
             <Modal 
                 isOpen={isDetachConfirmOpen} 
                 onClose={() => setIsDetachConfirmOpen(false)} 
-                title="Detach Pair?" 
-                footer={<><button onClick={() => setIsDetachConfirmOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded">{t('cancel')}</button><button onClick={handleDetach} className="px-4 py-2 bg-indigo-600 text-white rounded">Detach & Edit</button></>}
+                title={t('detachPairTitle')} 
+                footer={<><button onClick={() => setIsDetachConfirmOpen(false)} className="px-4 py-2 bg-gray-500 text-white rounded">{t('cancel')}</button><button onClick={handleDetach} className="px-4 py-2 bg-indigo-600 text-white rounded">{t('detachAndEdit')}</button></>}
             >
-                <p>This will convert the kerning pair into a static ligature glyph. You will be able to edit the outlines manually.</p>
+                <p>{t('detachPairBody')}</p>
             </Modal>
             <UnsavedChangesModal
                 isOpen={session.isUnsavedModalOpen}

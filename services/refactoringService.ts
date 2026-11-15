@@ -1,6 +1,7 @@
 
 import { CharacterSet, PositioningRules, MarkAttachmentRules, AttachmentClass, RecommendedKerning } from '../types';
 import { deepClone } from '../utils/cloneUtils';
+import { isGroupRef, groupRefName, toGroupRef } from '../utils/groupRef';
 
 export interface RefactoringState {
     characterSets: CharacterSet[];
@@ -13,19 +14,22 @@ export interface RefactoringState {
     fontRules: any;
 }
 
-const getRefString = (name: string, type: 'group' | 'set') => {
-    return type === 'group' ? `@${name}` : `$${name}`;
-};
+// Groups and character sets are both referenced as `@name` (older data: `$name`, still matched).
+const getRefString = (name: string, _type: 'group' | 'set') => toGroupRef(name);
+
+/** True when `x` refers to the same group as `ref`, whichever prefix either uses. */
+const sameRef = (x: unknown, ref: string): boolean =>
+    typeof x === 'string' && isGroupRef(x) && groupRefName(x) === groupRefName(ref);
 
 const replaceInArray = (arr: string[] | undefined, oldRef: string, newRef: string): string[] | undefined => {
     if (!arr) return undefined;
-    return arr.map(item => item === oldRef ? newRef : item);
+    return arr.map(item => sameRef(item, oldRef) ? newRef : item);
 };
 
 // Recursive function to walk FontRules (GSUB/GPOS tree) and replace strings
 const traverseAndReplace = (obj: any, oldRef: string, newRef: string): any => {
     if (typeof obj === 'string') {
-        return obj === oldRef ? newRef : obj;
+        return sameRef(obj, oldRef) ? newRef : obj;
     }
     if (Array.isArray(obj)) {
         return obj.map(item => traverseAndReplace(item, oldRef, newRef));
@@ -35,7 +39,7 @@ const traverseAndReplace = (obj: any, oldRef: string, newRef: string): any => {
         for (const key in obj) {
             // Handle key replacement if needed (rare for features, but maybe for specific rule maps)
             // Ideally keys are glyph names or group names.
-            const newKey = key === oldRef ? newRef : key;
+            const newKey = sameRef(key, oldRef) ? newRef : key;
             newObj[newKey] = traverseAndReplace(obj[key], oldRef, newRef);
         }
         return newObj;
@@ -89,13 +93,13 @@ export const renameGroupInState = (
              if (rule.ligatureMap) {
                  const newMap: any = {};
                  Object.keys(rule.ligatureMap).forEach(baseKey => {
-                     const effectiveBaseKey = baseKey === oldRef ? newRef : baseKey;
+                     const effectiveBaseKey = sameRef(baseKey, oldRef) ? newRef : baseKey;
                      const innerMap: any = {};
                      const oldInner = rule.ligatureMap![baseKey];
                      Object.keys(oldInner).forEach(markKey => {
-                         const effectiveMarkKey = markKey === oldRef ? newRef : markKey;
+                         const effectiveMarkKey = sameRef(markKey, oldRef) ? newRef : markKey;
                          let val = oldInner[markKey];
-                         if (val === oldRef) val = newRef;
+                         if (sameRef(val, oldRef)) val = newRef;
                          innerMap[effectiveMarkKey] = val;
                      });
                      newMap[effectiveBaseKey] = innerMap;
@@ -109,12 +113,12 @@ export const renameGroupInState = (
     if (newState.markAttachmentRules) {
         const newRules: MarkAttachmentRules = {};
         Object.keys(newState.markAttachmentRules).forEach(baseKey => {
-            const effectiveBaseKey = baseKey === oldRef ? newRef : baseKey;
+            const effectiveBaseKey = sameRef(baseKey, oldRef) ? newRef : baseKey;
             const innerRules: any = {};
             const oldInner = newState.markAttachmentRules![baseKey];
             
             Object.keys(oldInner).forEach(markKey => {
-                const effectiveMarkKey = markKey === oldRef ? newRef : markKey;
+                const effectiveMarkKey = sameRef(markKey, oldRef) ? newRef : markKey;
                 innerRules[effectiveMarkKey] = oldInner[markKey];
             });
             newRules[effectiveBaseKey] = innerRules;
@@ -140,8 +144,8 @@ export const renameGroupInState = (
     // 5. Update Kerning
     if (newState.recommendedKerning) {
         newState.recommendedKerning = newState.recommendedKerning.map(pair => {
-            const newLeft = pair[0] === oldRef ? newRef : pair[0];
-            const newRight = pair[1] === oldRef ? newRef : pair[1];
+            const newLeft = sameRef(pair[0], oldRef) ? newRef : pair[0];
+            const newRight = sameRef(pair[1], oldRef) ? newRef : pair[1];
             if (pair.length === 3) return [newLeft, newRight, pair[2]];
             return [newLeft, newRight];
         });

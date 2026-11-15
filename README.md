@@ -2,7 +2,7 @@
 
 Make a font from your own handwriting, in your own language, in the browser.
 
-Aksharajanani is for people who have never made a font. You pick your language, draw each letter over a faint guide, and the app does the rest. It builds the letters that are made from other letters (for example கா from க and ா), places accents and vowel signs, spaces the letters, and exports a working OpenType font (`.otf`) that you can install and use in Word, Canva or on a phone.
+Aksharajanani is for people who have never made a font. You pick your language, draw each letter over a faint guide, and the app does the rest. It builds the letters that are made from other letters (for example கா from க and ா), places accents and vowel signs, spaces the letters, and exports a working OpenType font (`.otf`) that you can install and use in Word, Canva or on a phone, or as WOFF2 for websites and TTF for older apps.
 
 It comes with ready-made letter sets for many languages: English and other European languages, Greek, Russian and other Cyrillic languages, Hebrew, Hindi, Marathi, Tamil, Kannada, Telugu, Malayalam, Sinhala, Punjabi, Thai, Lao, Japanese kana and more. You can also start an empty project and pick characters from the Unicode table.
 

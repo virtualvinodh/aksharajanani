@@ -4,6 +4,7 @@ import { TooltipRenderProps } from 'react-joyride';
 
 const TutorialTooltip = ({
     index,
+    size,
     step,
     backProps,
     primaryProps,
@@ -14,6 +15,8 @@ const TutorialTooltip = ({
     
     // Access translations passed via step.data
     const labels = step.data?.translations || {};
+    const primaryLabel: string = isLastStep ? (step.data?.isTutorial ? (labels.finishBtn || 'Finish') : (labels.ok || 'OK')) : (labels.next || 'Next');
+    const exitLabel: string = step.data?.isTutorial ? (labels.exit || 'Exit Tutorial') : (labels.close || 'Close');
 
     // 1. Define the action logic closing over current props
     const performDismiss = (e?: React.MouseEvent<HTMLElement>, persist: boolean = true) => {
@@ -75,8 +78,15 @@ const TutorialTooltip = ({
     }, []); 
   
     return (
-      <div {...tooltipProps} data-tutorial-tooltip="" className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-5 max-w-[min(24rem,calc(100vw-2rem))] border border-gray-200 dark:border-gray-700 flex flex-col gap-4 relative z-50">
-         <div className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+      <div {...tooltipProps} data-tutorial-tooltip="" className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 sm:p-5 min-w-[min(18rem,calc(100vw-2rem))] max-w-[min(24rem,calc(100vw-2rem))] border border-gray-200 dark:border-gray-700 flex flex-col gap-3 sm:gap-4 relative z-50">
+         {size > 1 && (
+             // "Step 3 of 10": people can see how far along they are (row 62).
+             <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400 -mb-2" data-testid="tour-progress">
+                 {(step.data?.isTutorial ? (labels.stepOf || 'Step {current} of {total}') : (labels.tipOf || '{current} of {total}'))
+                     .replace('{current}', String(index + 1)).replace('{total}', String(size))}
+             </p>
+         )}
+         <div className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed whitespace-pre-line">
            {step.content}
          </div>
          
@@ -84,24 +94,28 @@ const TutorialTooltip = ({
               <div className="flex justify-between items-center">
                    <div className="flex items-center">
                       {!isLastStep && (
-                                                      <button {...skipProps} onClick={(e) => performDismiss(e, true)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-xs font-bold uppercase tracking-wider transition-colors">
-                               {step.data?.isTutorial ? (labels.exit || 'Exit Tutorial') : (labels.close || 'Close')}
+                           <button {...skipProps} onClick={(e) => performDismiss(e, true)}
+                               // Its name is what it says (Joyride would call it "Skip Tutorial").
+                               aria-label={exitLabel} title={exitLabel}
+                               className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-xs font-bold uppercase tracking-wider transition-colors">
+                               {exitLabel}
                            </button>
                       )}
                    </div>
                    <div className="flex gap-2">
                        {index > 0 && (
-                          <button {...backProps} className="px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                          <button {...backProps} aria-label={labels.back || 'Back'} title={labels.back || 'Back'} className="px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                              {labels.back || 'Back'}
                           </button>
                        )}
                        {!step.hideFooter && (
                            <button 
                                 {...primaryProps} 
+                                aria-label={primaryLabel} title={primaryLabel}
                                 onClick={handlePrimaryClick}
                                 className="px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md transition-all active:scale-95"
                            >
-                              {isLastStep ? (step.data?.isTutorial ? (labels.finishBtn || 'Finish') : (labels.ok || 'OK')) : (labels.next || 'Next')}
+                              {primaryLabel}
                            </button>
                        )}
                    </div>

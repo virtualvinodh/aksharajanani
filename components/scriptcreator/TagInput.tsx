@@ -10,7 +10,7 @@ interface TagInputProps {
 }
 
 const TagInput: React.FC<TagInputProps> = ({ tags, setTags, placeholder, availableSets = [] }) => {
-    useLocale();
+    const { t } = useLocale();
     const [inputValue, setInputValue] = useState('');
 
     const handleAddTag = () => {
@@ -57,7 +57,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, setTags, placeholder, availab
                     <AddIcon className="w-5 h-5" />
                 </button>
             </div>
-            {availableSets.length > 0 && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Available sets: <span className="font-mono">{availableSets.join(', ')}</span></p>}
+            {availableSets.length > 0 && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('availableSets')} <span className="font-mono">{availableSets.join(', ')}</span></p>}
         </div>
     );
 };

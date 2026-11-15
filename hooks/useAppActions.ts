@@ -8,6 +8,7 @@ import { ScriptConfig, ProjectData } from '../types';
 
 import { useGlyphData } from '../contexts/GlyphDataContext';
 import { mergeFontIntoProject } from '../services/importFontService';
+import { ADDED_CHARACTERS_SET } from '../constants';
 import { useProjectTabLock } from './useProjectTabLock';
 import { useProjectPersistence } from './actions/useProjectPersistence';
 import { useGlyphActions } from './actions/useGlyphActions';
@@ -15,6 +16,7 @@ import { useProjectLoad } from './actions/useProjectLoad';
 import { useExportActions } from './actions/useExportActions';
 import * as dbService from '../services/dbService';
 import { nextFreeName } from '../utils/fontNaming';
+import { useRememberOpenProject } from './useRememberOpenProject';
 
 interface UseAppActionsProps {
     projectDataToRestore: ProjectData | null;
@@ -110,7 +112,7 @@ export const useAppActions = ({
                 type: 'ADD_CHARACTERS', 
                 payload: { 
                     characters: newCharacters, 
-                    activeTabNameKey: 'Imported' 
+                    activeTabNameKey: ADDED_CHARACTERS_SET
                 } 
             });
         }
@@ -147,6 +149,7 @@ export const useAppActions = ({
     }, [projectDataToRestore, initializeProjectState]);
 
     // One tab per project saves (P3).
+    useRememberOpenProject(projectId);
     const { isOwner: isProjectTabOwner, takeOver: takeOverProjectTab } = useProjectTabLock(projectId, {
         beforeRelease: () => saveProjectToDB(),
         afterTakeOver: async () => {

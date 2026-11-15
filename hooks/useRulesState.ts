@@ -238,7 +238,7 @@ export const useRulesState = () => {
     const handleAddLookup = (name: string): boolean => {
         const trimmedName = name.trim();
         if (!trimmedName || lookups[trimmedName]) {
-            showNotification('Invalid or duplicate lookup name.', 'error');
+            showNotification(t('invalidLookupName'), 'error');
             return false;
         }
         setLocalRules(prev => {
@@ -254,7 +254,7 @@ export const useRulesState = () => {
     const handleUpdateLookup = (oldName: string, newName: string): boolean => {
         const trimmedNewName = newName.trim();
         if (!trimmedNewName || (trimmedNewName !== oldName && lookups[trimmedNewName])) {
-            showNotification('Invalid or duplicate lookup name.', 'error');
+            showNotification(t('invalidLookupName'), 'error');
             return false;
         }
         setLocalRules(prev => {

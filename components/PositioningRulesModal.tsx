@@ -142,7 +142,7 @@ const PositioningRulesModal: React.FC<PositioningRulesModalProps> = ({ isOpen, o
     const handleResetConfirm = () => {
         loadData();
         setIsResetConfirmOpen(false);
-        showNotification("Changes reverted to last saved version.", "info");
+        showNotification(t('changesReverted'), "info");
     };
 
     const handleDiscardChanges = () => {
@@ -156,12 +156,14 @@ const PositioningRulesModal: React.FC<PositioningRulesModalProps> = ({ isOpen, o
         <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col animate-fade-in-up">
             {/* Header */}
             <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-4 flex justify-between items-center shadow-md w-full flex-shrink-0 z-30 border-b dark:border-gray-700">
+                {/* "Back", not "Cancel": it goes back, and asks first if anything is unsaved (UX "Expert tools"). */}
                 <button
                     onClick={handleCloseRequest}
+                    aria-label={t('back')}
                     className="flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
                 >
                     <BackIcon />
-                    <span className="hidden sm:inline">{t('cancel')}</span>
+                    <span className="hidden sm:inline">{t('back')}</span>
                 </button>
                 <div className="text-center">
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('manageRules')}</h2>
@@ -170,10 +172,10 @@ const PositioningRulesModal: React.FC<PositioningRulesModalProps> = ({ isOpen, o
                      <button 
                         onClick={() => setIsResetConfirmOpen(true)}
                         className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                        title="Revert Changes"
+                        title={t('revertChanges')}
                     >
                         <RefreshIcon />
-                        <span className="hidden sm:inline font-medium">Revert</span>
+                        <span className="hidden sm:inline font-medium">{t('revert')}</span>
                     </button>
                      <button 
                         onClick={handleSave} 
@@ -202,7 +204,7 @@ const PositioningRulesModal: React.FC<PositioningRulesModalProps> = ({ isOpen, o
                 isOpen={isResetConfirmOpen}
                 onClose={() => setIsResetConfirmOpen(false)}
                 onConfirm={handleResetConfirm}
-                title="Revert Changes?"
+                title={t('revertChangesQuestion')}
                 message="This will revert all changes made in this session to the last saved state. This cannot be undone."
                 confirmActionText="Revert"
             />
@@ -211,7 +213,7 @@ const PositioningRulesModal: React.FC<PositioningRulesModalProps> = ({ isOpen, o
                 isOpen={isUnsavedConfirmOpen}
                 onClose={() => setIsUnsavedConfirmOpen(false)}
                 onConfirm={handleDiscardChanges}
-                title="Unsaved Changes"
+                title={t('unsavedChangesTitle')}
                 message="You have unsaved changes. Are you sure you want to discard them and close?"
                 confirmActionText="Discard"
             />

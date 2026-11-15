@@ -8,13 +8,43 @@ import { isGlyphDrawn } from '../../utils/glyphUtils';
 import { renderFormattedText } from '../../utils/formattedText';
 import { toolTourTarget } from '../drawing/compactToolbar';
 
+/** The first element matching `selector` that is fully on screen (a hint must point at something visible). */
+const firstOnScreen = (selector: string): HTMLElement | null => {
+    const el = Array.from(document.querySelectorAll<HTMLElement>(selector)).find(e => {
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.top >= 0 && r.left >= 0 && r.bottom <= window.innerHeight && r.right <= window.innerWidth;
+    });
+    return el ?? null;
+};
+
+/** The element a step points at, if it is still on the page and has a size. */
+const resolveTarget = (target: Step['target']): Element | null => {
+    if (target === 'body') return document.body;
+    const el = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!el || !(el as Element).isConnected) return null;
+    const r = (el as Element).getBoundingClientRect();
+    return r.width > 0 && r.height > 0 ? el as Element : null;
+};
+
+/** A dialog is open (one of the app's, or a page like Help): no tip may appear over it. */
+const dialogOpen = (): boolean => !!document.querySelector('[role="dialog"][aria-modal="true"], #mobile-nav-drawer');
+
+/** For tips on header buttons: the distance that puts the tip below the whole header, not over its second row. */
+const belowHeaderOffset = (selector: string): number => {
+    const target = document.querySelector(selector)?.getBoundingClientRect();
+    const header = document.querySelector('header')?.getBoundingClientRect();
+    return target && header ? Math.max(10, Math.round(header.bottom - target.bottom) + 10) : 10;
+};
+
 export const useJITHints = (
     translations: Record<string, string> | null,
     isLargeScreen: boolean
 ) => {
     const { script } = useProject();
     const { glyphDataMap, version } = useGlyphData();
-    const { selectedCharacter, activeModal, workspace, currentView, isNavDrawerOpen } = useLayout();
+    const { selectedCharacter, activeModal, workspace, currentView, isNavDrawerOpen, isMetricsSelectionMode } = useLayout();
+    // In the middle of something else (choosing several letters, a menu or dialog open): no tips.
+    const isBusy = isMetricsSelectionMode || isNavDrawerOpen;
     
     const [run, setRun] = useState(false);
     const [steps, setSteps] = useState<Step[]>([]);
@@ -35,18 +65,44 @@ export const useJITHints = (
         wasRunning.current = run;
     }, [run]);
     const isNonBlockingRun = run && steps.length > 0;
+    const [stepIndex, setStepIndex] = useState(0);
+    const currentTargetRef = useRef<Step['target'] | null>(null);
+    currentTargetRef.current = steps[stepIndex]?.target ?? null;
     useEffect(() => {
         if (!isNonBlockingRun) return;
         const onPointerDown = (e: PointerEvent) => {
             const target = e.target as Element | null;
             if (target?.closest?.('[data-tutorial-tooltip]')) return;
+            // Using the thing the tip points at (dragging a spacing line, a tool) keeps the tip.
+            const pointed = currentTargetRef.current ? resolveTarget(currentTargetRef.current) : null;
+            if (pointed && pointed !== document.body && target && pointed.contains(target)) return;
             setRun(false);
             setSteps([]);
         };
         document.addEventListener('pointerdown', onPointerDown, true);
         return () => document.removeEventListener('pointerdown', onPointerDown, true);
     }, [isNonBlockingRun]);
-    const [stepIndex, setStepIndex] = useState(0);
+
+    useEffect(() => {
+        if (isNonBlockingRun && isBusy) { setRun(false); setSteps([]); }
+    }, [isNonBlockingRun, isBusy]);
+
+    // A tip whose target went away (the grid re-rendered, a panel closed) would float loose in
+    // the middle of the screen. Point it at a fresh card, or hide it (unseen, so it comes back).
+    useEffect(() => {
+        if (!isNonBlockingRun) return;
+        const timer = setInterval(() => {
+            const step = steps[stepIndex];
+            if (!step || resolveTarget(step.target)) return;
+            if (step.data?.storageKey === 'hint_grid_select_seen') {
+                const card = firstOnScreen('.tutorial-glyph-item');
+                if (card) { setSteps(list => list.map((s, i) => i === stepIndex ? { ...s, target: card } : s)); return; }
+            }
+            setRun(false);
+            setSteps([]);
+        }, 500);
+        return () => clearInterval(timer);
+    }, [isNonBlockingRun, steps, stepIndex]);
 
     const isTutorialActive = script?.id === 'tutorial';
 
@@ -61,13 +117,13 @@ export const useJITHints = (
 
     // Triggers
     useEffect(() => {
-        if (!translations || isTutorialActive || activeModal || run) return;
+        if (!translations || isTutorialActive || activeModal || run || isMetricsSelectionMode) return;
         if (Date.now() - lastTipEndedAt.current < TIP_GAP_MS) return;
         
         // Global Header Hints: Test & Export. Only on the grid, never while a letter is open: they
         // used to arrive mid-letter and eat the next strokes (U14).
         const isHeaderVisible = !['creator', 'settings', 'comparison', 'rules'].includes(currentView);
-        const canShowHeaderHints = isHeaderVisible && !selectedCharacter;
+        const canShowHeaderHints = isHeaderVisible && !selectedCharacter && !isNavDrawerOpen;
 
         if (canShowHeaderHints) {
             const exportUnseen = drawnCount >= 3 && !localStorage.getItem('hint_export_seen');
@@ -77,8 +133,10 @@ export const useJITHints = (
                  const exportBtn = document.querySelector('[data-tour="header-export"]');
                  if (exportBtn) {
                      const timer = setTimeout(() => {
+                        if (dialogOpen()) return;
                         setSteps([{
                             target: '[data-tour="header-export"]',
+                            offset: belowHeaderOffset('[data-tour="header-export"]'),
                             content: (
                                 <div>
                                     <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintExportTitle}</h3>
@@ -99,8 +157,10 @@ export const useJITHints = (
                  const testBtn = document.querySelector('[data-tour="header-test"]');
                  if (testBtn) {
                      const timer = setTimeout(() => {
+                        if (dialogOpen()) return;
                         setSteps([{
                             target: '[data-tour="header-test"]',
+                            offset: belowHeaderOffset('[data-tour="header-test"]'),
                             content: (
                                 <div>
                                     <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintTestTitle}</h3>
@@ -131,6 +191,7 @@ export const useJITHints = (
 
                 if (!hasSeenSelect || !hasSeenDotted) {
                     const checkGridHints = setInterval(() => {
+                        if (dialogOpen()) return;
                         // 1. Priority Check: Review Required (Dotted)
                         // We check this FIRST so it takes precedence over the generic select hint
                         if (!hasSeenDotted) {
@@ -163,14 +224,19 @@ export const useJITHints = (
                         // 2. Fallback Check: Generic Select
                         // Only runs if we didn't trigger the review hint above
                         if (!hasSeenSelect) {
-                            if (document.querySelector('.tutorial-glyph-item')) {
+                            // The first card that's actually on screen, as an element: a selector
+                            // could match a card that is hidden or scrolled away, and the tip then
+                            // shows up in the middle of the screen instead of on a card.
+                            const firstCard = firstOnScreen('.tutorial-glyph-item');
+                            if (firstCard) {
                                 clearInterval(checkGridHints);
                                 setSteps([{
-                                    target: '.tutorial-glyph-item',
+                                    target: firstCard,
                                     content: renderFormattedText(translations.hintGridSelect || "Select a character card to start drawing your font."),
                                     disableBeacon: true,
                                     placement: 'bottom' as Placement,
                                     spotlightClicks: true,
+                                    disableScrolling: true,
                                     data: { isTutorial: false, storageKey: selectStorageKey, translations }
                                 }]);
                                 setStepIndex(0);
@@ -220,7 +286,7 @@ export const useJITHints = (
                                     target: '[data-tour="main-toolbar"]',
                                     content: (
                                         <div>
-                                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Toolbar</h3>
+                                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.toolbarTitle}</h3>
                                             <p>{renderFormattedText(translations.toolbarIntro)}</p>
                                         </div>
                                     ),
@@ -228,6 +294,12 @@ export const useJITHints = (
                                     disableBeacon: true,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 },
+                                ...(toolTourTarget('tool-select') === '[data-tour="tool-more"]' || toolTourTarget('tool-pan') === '[data-tour="tool-more"]' ? [{
+                                    target: '[data-tour="tool-more"]',
+                                    content: <div>{renderFormattedText(translations.moreToolsTour)}</div>,
+                                    placement,
+                                    data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
+                                }] : []),
                                 {
                                     target: toolTourTarget('tool-select'),
                                     content: <div>{renderFormattedText(translations.toolSelect)}</div>,
@@ -303,6 +375,18 @@ export const useJITHints = (
                                 {
                                     target: toolTourTarget('action-ungroup'),
                                     content: <div>{renderFormattedText(translations.actionUngroup)}</div>,
+                                    placement,
+                                    data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
+                                },
+                                {
+                                    target: toolTourTarget('action-trace-photo'),
+                                    content: <div>{renderFormattedText(translations.tracePhotoTour)}</div>,
+                                    placement,
+                                    data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
+                                },
+                                {
+                                    target: toolTourTarget('action-fit-view'),
+                                    content: <div>{renderFormattedText(translations.fitViewTour)}</div>,
                                     placement,
                                     data: { isTutorial: false, storageKey: toolbarStorageKey, translations }
                                 }
@@ -515,8 +599,8 @@ export const useJITHints = (
                             target: '[data-tour="floating-grid-btn"]',
                             content: (
                                 <div>
-                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Test Your Font</h3>
-                                    <p>Tap here to open the navigation menu, then click the <strong>Test</strong> icon to try out your new character!</p>
+                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintTestTitle}</h3>
+                                    <p>{renderFormattedText(translations.hintMobileMenuContent)}</p>
                                 </div>
                             ),
                             placement: 'right',
@@ -541,8 +625,8 @@ export const useJITHints = (
                             target: '[data-tour="drawer-test-btn"]',
                             content: (
                                 <div>
-                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Test Your Font</h3>
-                                    <p>Click here to type with the characters you&apos;ve drawn so far!</p>
+                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintTestTitle}</h3>
+                                    <p>{renderFormattedText(translations.hintDrawerTestContent)}</p>
                                 </div>
                             ),
                             placement: 'bottom',
@@ -577,6 +661,12 @@ export const useJITHints = (
                             data: { isTutorial: false, storageKey: storageKey, translations }
                         },
                         {
+                            target: '[data-tour="spacing-defaults"]',
+                            content: <div>{renderFormattedText(translations.spacingStripTour)}</div>,
+                            placement: 'bottom' as Placement,
+                            data: { isTutorial: false, storageKey: storageKey, translations }
+                        },
+                        {
                             target: '[data-tour="kerning-tabs"]',
                             content: (
                                 <div>
@@ -606,13 +696,14 @@ export const useJITHints = (
             }
         }
         
-    }, [isTutorialActive, workspace, currentView, selectedCharacter, activeModal, translations, run, drawnCount, isLargeScreen]);
+    }, [isTutorialActive, workspace, currentView, selectedCharacter, activeModal, translations, run, drawnCount, isLargeScreen, isMetricsSelectionMode, isNavDrawerOpen]);
 
     // Combined Polling Effect for Positioning & Kerning JIT Hints
     useEffect(() => {
-        if (activeModal || run || !translations || isTutorialActive) return;
+        if (activeModal || run || !translations || isTutorialActive || isBusy) return;
 
         const checkHints = setInterval(() => {
+            if (dialogOpen()) return;
             if (workspace === 'positioning') {
                 if (!localStorage.getItem('hint_pos_intro_seen')) {
                     const toggle = document.querySelector('[data-tour="positioning-view-toggle"]');
@@ -622,8 +713,8 @@ export const useJITHints = (
                             target: '[data-tour="positioning-view-toggle"]',
                             content: (
                                 <div>
-                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Positioning Workspace</h3>
-                                    <p>This workspace aligns marks to base characters. The view toggles allow organization by <strong>Rule</strong> (groups), <strong>Base</strong>, or <strong>Mark</strong>.</p>
+                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintPosIntroTitle}</h3>
+                                    <p>{renderFormattedText(translations.hintPosIntroContent)}</p>
                                 </div>
                             ),
                             placement: 'bottom',
@@ -643,8 +734,8 @@ export const useJITHints = (
                             target: ruleBlock as HTMLElement,
                             content: (
                                 <div>
-                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Auto-Positioning</h3>
-                                    <p>The app has already calculated default positions for these pairs based on standard typography rules. The <strong>Start Positioning</strong> button opens the detailed grid to review them.</p>
+                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintPosRulesTitle}</h3>
+                                    <p>{renderFormattedText(translations.hintPosRulesContent)}</p>
                                 </div>
                             ),
                             placement: isLargeScreen ? 'right' : 'bottom',
@@ -665,8 +756,8 @@ export const useJITHints = (
                             target: acceptBtn as HTMLElement,
                             content: (
                                 <div>
-                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">Accepting Suggestions</h3>
-                                    <p>Cards with dashed borders are <strong>Auto-Positioned suggestions</strong>. The <strong>Checkmark</strong> button confirms the position and saves it to the font file.</p>
+                                    <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">{translations.hintPosGridTitle}</h3>
+                                    <p>{renderFormattedText(translations.hintPosGridContent)}</p>
                                 </div>
                             ),
                             placement: 'left', 
@@ -706,12 +797,13 @@ export const useJITHints = (
             }
         }, 1000); 
         return () => clearInterval(checkHints);
-    }, [workspace, activeModal, run, translations, isLargeScreen, isTutorialActive]);
+    }, [workspace, activeModal, run, translations, isLargeScreen, isTutorialActive, isBusy]);
 
     useEffect(() => {
-        if (activeModal || run || !translations) return;
+        if (activeModal || run || !translations || isBusy) return;
         if (!localStorage.getItem('hint_related_pairs_seen')) {
             const checkStrip = setInterval(() => {
+                if (dialogOpen()) return;
                 const strip = document.querySelector('[data-tour="related-pairs-strip"]');
                 if (strip) {
                     clearInterval(checkStrip);
@@ -748,13 +840,13 @@ export const useJITHints = (
             }, 1000);
             return () => clearInterval(checkStrip);
         }
-    }, [activeModal, run, translations, isLargeScreen]);
+    }, [activeModal, run, translations, isLargeScreen, isBusy]);
 
     // Cleanup Logic
     useEffect(() => {
         if (run && steps.length > 0 && !steps[0].data?.isTutorial) {
-             const currentStepTarget = steps[0].target as string;
-             if (currentStepTarget === '.tutorial-glyph-item' && selectedCharacter) {
+             const currentStepTarget = typeof steps[0].target === 'string' ? steps[0].target : '';
+             if (steps[0].data?.storageKey === 'hint_grid_select_seen' && selectedCharacter) {
                  setRun(false);
                  setSteps([]);
              }

@@ -1,4 +1,5 @@
 import { CharacterSet } from '../types';
+import { isGroupRef } from '../utils/groupRef';
 
 /**
  * Rules that use a group (`$name` or `@name`) that no longer exists are left out of the exported
@@ -19,7 +20,7 @@ export const findRulesWithMissingGroups = (
 
     const refsIn = (value: unknown, out: string[]) => {
         if (typeof value === 'string') {
-            if ((value.startsWith('$') || value.startsWith('@')) && value.length > 1) out.push(value.slice(1));
+            if (isGroupRef(value) && value.length > 1) out.push(value.slice(1));
         } else if (Array.isArray(value)) value.forEach(v => refsIn(v, out));
         else if (value && typeof value === 'object') Object.entries(value).forEach(([k, v]) => { refsIn(k, out); refsIn(v, out); });
     };

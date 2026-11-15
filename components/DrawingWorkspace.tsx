@@ -572,7 +572,8 @@ const DrawingWorkspace: React.FC<DrawingWorkspaceProps> = ({ characterSets, onSe
                 </>
             )}
 
-            <div className="flex-grow overflow-hidden">
+            {/* Room under the grid for the selection bar, so it doesn't hide the last row. */}
+            <div className={`flex-grow overflow-hidden ${isMetricsSelectionMode && !isOverlayMode ? 'pb-28' : ''}`}>
                 {showEmptyState ? (
                     <div className="flex items-center justify-center h-full text-gray-500 italic">{t('noMatchesFound')}</div>
                 ) : (

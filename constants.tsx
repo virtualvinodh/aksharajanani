@@ -588,3 +588,6 @@ export const ChevronDownIcon = ({ className = "w-6 h-6" }) => (
 );
 
 export const DONATE_URL = "https://www.paypal.com/donate?token=YWBpb_jURmkXX4Yh3cHdhZ_ovPEVBSvFSKel-86NfowUil2tyOqW-2t11MxcXAcedyH-INjfCQJTvd92";
+
+/** The letter group that added characters go into (quick add, import from a project, merging a font, a new empty project). */
+export const ADDED_CHARACTERS_SET = "customCharacters";

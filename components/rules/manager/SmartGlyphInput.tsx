@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { CharacterSet } from '../../../types';
 import { useLocale } from '../../../contexts/LocaleContext';
+import { isGroupRef, toGroupRef } from '../../../utils/groupRef';
 
 interface SmartGlyphInputProps {
     value: string;
@@ -29,15 +30,15 @@ const SmartGlyphInput: React.FC<SmartGlyphInputProps> = ({
     const options = useMemo(() => {
         const opts: { label: string, value: string, type: 'group' | 'char' | 'set' }[] = [];
         
-        // 1. Add Groups ($)
+        // 1. Add Groups (@)
         Object.keys(groups).forEach(g => {
-            opts.push({ label: `$${g}`, value: `$${g}`, type: 'group' });
+            opts.push({ label: toGroupRef(g), value: toGroupRef(g), type: 'group' });
         });
 
-        // 2. Add Character Sets ($) - from characters.json structure
+        // 2. Add Character Sets (@) - from characters.json structure
         if (showSets) {
             characterSets.forEach(s => {
-                opts.push({ label: `$${t(s.nameKey)} (${s.nameKey})`, value: `$${s.nameKey}`, type: 'set' });
+                opts.push({ label: `${toGroupRef(t(s.nameKey))} (${s.nameKey})`, value: toGroupRef(s.nameKey), type: 'set' });
             });
         }
 
@@ -94,7 +95,7 @@ const SmartGlyphInput: React.FC<SmartGlyphInputProps> = ({
             />
             
             {/* Type Indicator Badge inside input */}
-            {value && (value.startsWith('$') || value.startsWith('@')) && (
+            {value && isGroupRef(value) && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2">
                     <span className="text-[11px] uppercase font-bold text-purple-500 px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/40 rounded">
                         {t('groupLabel')}

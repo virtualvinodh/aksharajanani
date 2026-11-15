@@ -1,8 +1,8 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { ScriptConfig, ScriptRegion, CharacterSet, CharacterDefinition, ProjectData, Character, GlyphData } from '../types';
+import { ScriptConfig, ScriptRegion, CharacterSet, CharacterDefinition, ProjectData, Character } from '../types';
 import { useLocale } from '../contexts/LocaleContext';
-import { AboutIcon, HelpIcon, LoadIcon, SearchIcon, SwitchScriptIcon, SpinnerIcon, TrashIcon, DRAWING_CANVAS_SIZE, AddIcon, ImportIcon, CodeBracketsIcon } from '../constants';
+import { AboutIcon, HelpIcon, LoadIcon, SearchIcon, SpinnerIcon, TrashIcon, DRAWING_CANVAS_SIZE, AddIcon, ImportIcon, CodeBracketsIcon, ADDED_CHARACTERS_SET } from '../constants';
 import LanguageSelector from './LanguageSelector';
 import ThemeSwitch from './ThemeSwitch';
 import Footer from './Footer';
@@ -16,7 +16,6 @@ import { nextFreeName } from '../utils/fontNaming';
 import DeleteProjectConfirmationModal from './DeleteProjectConfirmationModal';
 import { useTheme } from '../contexts/ThemeContext';
 import { renderPaths, getAccurateGlyphBBox } from '../services/glyphRenderService';
-import { isGlyphDrawn } from '../utils/glyphUtils';
 import NewProjectModal, { NewProjectData } from './NewProjectModal';
 import ImportFontModal from './ImportFontModal';
 import { safeJsonParse } from '../utils/safeJson';
@@ -24,6 +23,9 @@ import { fontFaceRule } from '../utils/cssFont';
 import { migrateLegacySettings } from '../utils/legacySettings';
 import { fetchOptionalJson } from '../utils/optionalFetch';
 import { appUrl } from '../utils/appUrl';
+import { ProjectSummary } from '../utils/projectSummary';
+import { OPEN_TUTORIAL_EVENT } from './tutorial/tours';
+import { takeProjectToReopen } from '../hooks/useRememberOpenProject';
 
 interface ScriptSelectionProps {
     scripts: ScriptConfig[];
@@ -67,6 +69,8 @@ const REGION_GROUPS: { region: ScriptRegion | 'other'; labelKey: string }[] = [
 ];
 
 const TUTORIAL_SCRIPT_ID = 'tutorial';
+/** Saved projects listed at a time on the start page. */
+const PROJECTS_PAGE = 10;
 
 // On large screens the tile area is 4 columns wide; a group spans as many columns as it
 // has tiles (up to 4), so small groups sit side by side instead of each taking a row.
@@ -74,107 +78,41 @@ const TUTORIAL_SCRIPT_ID = 'tutorial';
 const GROUP_SPAN_CLASSES = ['', 'lg:col-span-1', 'lg:col-span-2', 'lg:col-span-3', 'lg:col-span-4'];
 const GROUP_COLS_CLASSES = ['', 'lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4'];
 
-const RecentProjectPreview: React.FC<{ project: ProjectData }> = ({ project }) => {
+/** A few drawn letters of a saved project, from its summary (no need to read the whole project). */
+const RecentProjectPreview: React.FC<{ summary: ProjectSummary }> = ({ summary }) => {
     const { theme } = useTheme();
-    const canvasRefs = [useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null)];
+    const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
     const PREVIEW_SIZE = 44;
 
-    const previewChars = useMemo(() => {
-        // Explicitly cast to [number, GlyphData][] to ensure Map is correctly typed
-        const glyphEntries = project.glyphs as [number, GlyphData][];
-        const glyphDataMap = new Map<number, GlyphData>(glyphEntries);
-        if (!project.characterSets) return [];
-
-        let drawnChars: Character[] = [];
-
-        // Prioritize showing vowels if available
-        const vowelsSet = project.characterSets.find(set => set.nameKey === 'vowels');
-        if (vowelsSet) {
-            const drawnVowels = vowelsSet.characters.filter(char => !char.hidden && char.unicode && isGlyphDrawn(glyphDataMap.get(char.unicode)));
-            if (drawnVowels.length > 0) {
-                return drawnVowels.slice(0, 3);
-            }
-        }
-        
-        // Fallback to the first set with drawn characters (excluding vowels)
-        for (const set of project.characterSets) {
-            if (set.nameKey === 'vowels') continue; // Already checked
-            const charsInSet = set.characters.filter(char => !char.hidden && char.unicode && isGlyphDrawn(glyphDataMap.get(char.unicode)));
-            if (charsInSet.length > 0) {
-                drawnChars = charsInSet.slice(0, 3);
-                break;
-            }
-        }
-        
-        // If still no characters found, fall back to any drawn glyph across all sets
-        if (drawnChars.length === 0) {
-             const allDrawn = project.characterSets
-                .flatMap(set => set.characters)
-                .filter(char => !char.hidden && char.unicode && isGlyphDrawn(glyphDataMap.get(char.unicode)));
-            return allDrawn.slice(0, 3);
-        }
-
-        return drawnChars;
-    }, [project]);
-
     useEffect(() => {
-        const glyphEntries = project.glyphs as [number, GlyphData][];
-        const glyphDataMap = new Map<number, GlyphData>(glyphEntries);
-
-        previewChars.forEach((char, index) => {
-            const canvas = canvasRefs[index].current;
+        summary.preview.forEach((letter, index) => {
+            const canvas = canvasRefs.current[index];
             const ctx = canvas?.getContext('2d');
             if (!ctx || !canvas) return;
-
             ctx.clearRect(0, 0, PREVIEW_SIZE, PREVIEW_SIZE);
-            const glyphData = glyphDataMap.get(char.unicode!);
-
-            if (isGlyphDrawn(glyphData)) {
-                // Calculate accurate bounding box for auto-fit
-                const bbox = getAccurateGlyphBBox(glyphData!.paths, project.settings.strokeThickness);
-                
-                let scale = 1;
-                let tx = 0;
-                let ty = 0;
-
-                if (bbox) {
-                    // Add padding (10%)
-                    const padding = PREVIEW_SIZE * 0.1;
-                    const availableSize = PREVIEW_SIZE - (padding * 2);
-                    
-                    // Calculate scale to fit
-                    const scaleX = availableSize / bbox.width;
-                    const scaleY = availableSize / bbox.height;
-                    scale = Math.min(scaleX, scaleY);
-                    
-                    // Center the glyph
-                    tx = (PREVIEW_SIZE - (bbox.width * scale)) / 2 - (bbox.x * scale);
-                    ty = (PREVIEW_SIZE - (bbox.height * scale)) / 2 - (bbox.y * scale);
-                } else {
-                    // Fallback if bbox fails (e.g. empty glyph)
-                    scale = PREVIEW_SIZE / DRAWING_CANVAS_SIZE;
-                }
-
-                ctx.save();
-                ctx.translate(tx, ty);
-                ctx.scale(scale, scale);
-                renderPaths(ctx, glyphData!.paths, {
-                    strokeThickness: project.settings.strokeThickness,
-                    color: theme === 'dark' ? '#E5E5E5' : '#262626'
-                });
-                ctx.restore();
+            const bbox = getAccurateGlyphBBox(letter.paths, summary.strokeThickness);
+            let scale = PREVIEW_SIZE / DRAWING_CANVAS_SIZE, tx = 0, ty = 0;
+            if (bbox) {
+                const available = PREVIEW_SIZE * 0.8;
+                scale = Math.min(available / bbox.width, available / bbox.height);
+                tx = (PREVIEW_SIZE - bbox.width * scale) / 2 - bbox.x * scale;
+                ty = (PREVIEW_SIZE - bbox.height * scale) / 2 - bbox.y * scale;
             }
+            ctx.save();
+            ctx.translate(tx, ty);
+            ctx.scale(scale, scale);
+            renderPaths(ctx, letter.paths, { strokeThickness: summary.strokeThickness, color: theme === 'dark' ? '#E5E5E5' : '#262626' });
+            ctx.restore();
         });
-    }, [project, previewChars, theme, canvasRefs]);
+    }, [summary, theme]);
 
-    if (previewChars.length === 0) {
-        return <div className="h-8 my-2" />; // placeholder for consistent height
-    }
+    if (summary.preview.length === 0) return <div className="h-8 my-2" />; // keeps the cards the same height
 
+    // One row: on a narrow card the letters that don't fit are simply cut off.
     return (
-        <div className="flex justify-center items-center gap-1 my-2 h-8">
-            {previewChars.map((char, index) => (
-                <canvas key={char.unicode} ref={canvasRefs[index]} width={PREVIEW_SIZE} height={PREVIEW_SIZE} title={char.name} />
+        <div className="flex justify-center items-center gap-1 my-2 h-8 w-full overflow-hidden">
+            {summary.preview.map((letter, index) => (
+                <canvas key={letter.unicode} ref={el => { canvasRefs.current[index] = el; }} width={PREVIEW_SIZE} height={PREVIEW_SIZE} title={letter.name} className="w-8 h-8 shrink-0" />
             ))}
         </div>
     );
@@ -193,10 +131,12 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
     const [pendingScript, setPendingScript] = useState<ScriptConfig | null>(null);
     const [variantGroups, setVariantGroups] = useState<VariantGroup[]>([]);
-    const [recentProjects, setRecentProjects] = useState<ProjectData[]>([]);
-    const [showAllProjects, setShowAllProjects] = useState(false);
+    // The start page lists saved projects from their summaries, 10 at a time (F47, row 81).
+    const [recentProjects, setRecentProjects] = useState<ProjectSummary[]>([]);
+    const [projectTotal, setProjectTotal] = useState(0);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isLoadingProjects, setIsLoadingProjects] = useState(true);
-    const [projectToDelete, setProjectToDelete] = useState<ProjectData | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<ProjectSummary | null>(null);
     
     // "Can't find it?" in the language list opens the empty project with the Unicode table already open.
     const [newProjectOpensTable, setNewProjectOpensTable] = useState(false);
@@ -207,6 +147,14 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     // The tutorial gets its own banner; every other script is listed under its region,
     // keeping the order from scripts.json within each group. Empty groups are skipped.
     const tutorialScript = useMemo(() => scripts.find(s => s.id === TUTORIAL_SCRIPT_ID), [scripts]);
+    // Help → Tours from the start page opens the practice project (row 62); the tour to run is
+    // left in localStorage for the tutorial to pick up.
+    const openTutorialRef = useRef<() => void>(() => {});
+    useEffect(() => {
+        const onOpen = () => openTutorialRef.current();
+        window.addEventListener(OPEN_TUTORIAL_EVENT, onOpen);
+        return () => window.removeEventListener(OPEN_TUTORIAL_EVENT, onOpen);
+    }, []);
     const scriptGroups = useMemo(() => {
         const listed = scripts.filter(s => s.id !== TUTORIAL_SCRIPT_ID);
         return REGION_GROUPS
@@ -221,9 +169,10 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
 
     useEffect(() => {
         setIsLoadingProjects(true);
-        dbService.getRecentProjects(100)
-            .then(projects => {
-                setRecentProjects(projects);
+        dbService.getRecentProjectSummaries(PROJECTS_PAGE)
+            .then(({ summaries, total }) => {
+                setRecentProjects(summaries);
+                setProjectTotal(total);
                 setIsLoadingProjects(false);
             })
             .catch(err => {
@@ -279,6 +228,31 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         onSelectScript(script);
     };
 
+    const loadMoreProjects = async () => {
+        setIsLoadingMore(true);
+        try {
+            const { summaries, total } = await dbService.getRecentProjectSummaries(PROJECTS_PAGE, recentProjects.length);
+            setRecentProjects(prev => [...prev, ...summaries.filter(s => !prev.some(p => p.projectId === s.projectId))]);
+            setProjectTotal(total);
+        } catch (err) {
+            console.error('Failed to load more projects:', err);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
+
+    // The whole project is read only when it's opened.
+    const openSavedProject = async (projectId: number) => {
+        try {
+            const project = await dbService.getProject(projectId);
+            if (!project) { showNotification(t('errorProjectDataMissing'), 'error'); return; }
+            handleProjectClick(project);
+        } catch (err) {
+            console.error('Failed to open project:', err);
+            showNotification(t('errorProjectDataMissing'), 'error');
+        }
+    };
+
     const handleProjectClick = (project: ProjectData) => {
         let scriptToLoad = scripts.find(s => s.id === project.scriptId);
 
@@ -293,7 +267,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
 
         if (!scriptToLoad && project.scriptId?.startsWith('custom_blocks_')) {
             if (!customScriptTemplate || !project.metrics || !project.characterSets) {
-                showNotification('Could not load custom project: template or essential data missing.', 'error');
+                showNotification(t('errorProjectDataMissing'), 'error');
                 return;
             }
             // Reconstruct the ScriptConfig for this custom project from the saved data
@@ -322,7 +296,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         } else if (!scriptToLoad && project.scriptId?.startsWith('project_')) {
              // Handle "Empty Project" style custom scripts
              if (!customScriptTemplate) {
-                  showNotification('Could not load project: base template missing.', 'error');
+                  showNotification(t('errorProjectDataMissing'), 'error');
                   return;
              }
              scriptToLoad = {
@@ -343,7 +317,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         if (scriptToLoad) {
             onSelectScript(scriptToLoad, project);
         } else {
-            showNotification(`Could not find script configuration for project with script ID: ${project.scriptId}`, 'error');
+            showNotification(t('errorScriptNotFound', { id: project.scriptId }), 'error');
         }
     };
 
@@ -471,6 +445,8 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         startProject(finalScript);
     };
     
+    openTutorialRef.current = () => { if (tutorialScript) void handleScriptSelection(tutorialScript); };
+
     const handleCreateEmptyProject = async (data: NewProjectData) => {
         const { upm, ascender, descender, includeLatin, extraCharacters } = data;
         // A name nobody uses yet ("My font 2"); the font has the same name (row 40).
@@ -501,7 +477,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         if (extraCharacters.length) {
             const have = new Set(charDefs.flatMap(d => 'characters' in d ? d.characters.map(c => c.unicode) : []));
             const extra = extraCharacters.filter(c => c.unicode === undefined || !have.has(c.unicode));
-            if (extra.length) charDefs = [...charDefs, { nameKey: 'customCharacters', characters: extra }];
+            if (extra.length) charDefs = [...charDefs, { nameKey: ADDED_CHARACTERS_SET, characters: extra }];
         }
         
         // Construct a new ScriptConfig based on the Latin template but customized
@@ -586,10 +562,10 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                  // Handle custom scripts loaded from file
                  handleProjectClick(projectData);
             } else {
-                showNotification(`Error: Project file is for a script ('${projectData.scriptId}') that is not available in this version of the app.`, 'error');
+                showNotification(t('errorProjectScriptUnavailable', { id: projectData.scriptId }), 'error');
             }
         } else {
-            showNotification('Error: Project file is missing a script identifier (scriptId). It may be an old or invalid format.', 'error');
+            showNotification(t('errorProjectNoScript'), 'error');
         }
     };
 
@@ -601,6 +577,16 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         void openProjectFile(projectToRestore);
         // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once per handed-over file
     }, [projectToRestore]);
+
+    // After an accidental refresh, go straight back into the project that was open (row 52).
+    const reopenChecked = useRef(false);
+    useEffect(() => {
+        if (reopenChecked.current || scripts.length === 0 || projectToRestore) return;
+        reopenChecked.current = true;
+        const id = takeProjectToReopen();
+        if (id !== null) void openSavedProject(id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- once, as soon as the languages are known
+    }, [scripts.length]);
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -661,10 +647,11 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         try {
             await dbService.deleteProject(projectToDelete.projectId);
             setRecentProjects(prev => prev.filter(p => p.projectId !== projectToDelete.projectId));
-            showNotification(`Project "${projectToDelete.name || projectToDelete.settings.fontName}" deleted.`, 'success');
+            setProjectTotal(n => Math.max(0, n - 1));
+            showNotification(t('projectDeleted', { name: projectToDelete.name }), 'success');
         } catch (error) {
             console.error("Failed to delete project:", error);
-            showNotification("Error deleting project.", 'error');
+            showNotification(t('errorDeletingProject'), 'error');
         } finally {
             setProjectToDelete(null);
         }
@@ -773,11 +760,10 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                              <div className="flex justify-center items-center p-8"><SpinnerIcon/></div>
                          ) : (
                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                 {(showAllProjects ? recentProjects : recentProjects.slice(0, 6)).map(p => {
-                                     const scriptForSubtitle = scripts.find(s => s.id === p.scriptId) || (p.scriptId?.startsWith('custom_blocks_') ? { nameKey: 'customBlockFont' } : (p.scriptId?.startsWith('project_') ? { nameKey: 'customProject' } : (p.scriptConfig?.nameKey ? { nameKey: p.scriptConfig.nameKey } : { nameKey: '' })));
+                                 {recentProjects.map(p => {
+                                     const scriptForSubtitle = scripts.find(s => s.id === p.scriptId) || (p.scriptId?.startsWith('custom_blocks_') ? { nameKey: 'customBlockFont' } : (p.scriptId?.startsWith('project_') ? { nameKey: 'customProject' } : (p.scriptNameKey ? { nameKey: p.scriptNameKey } : { nameKey: '' })));
                                      const isDeleteVisible = longPressedProjectId === p.projectId;
-                                     // Use the new 'name' field if available, otherwise fallback to fontName for backward compatibility
-                                     const displayName = p.name || p.settings.fontName;
+                                     const displayName = p.name;
                                      
                                      return (
                                         <div
@@ -798,24 +784,26 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                                             >
                                                 <TrashIcon />
                                             </button>
-                                            <div onClick={() => handleProjectClick(p)} className="w-full h-full flex flex-col items-center justify-between text-center">
+                                            <div onClick={() => openSavedProject(p.projectId)} className="w-full h-full flex flex-col items-center justify-between text-center">
                                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate w-full" title={displayName}>{displayName}</h3>
-                                                <RecentProjectPreview project={p} />
+                                                <RecentProjectPreview summary={p} />
                                                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t(scriptForSubtitle.nameKey)}</p>
                                                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(p.savedAt!).toLocaleString()}</p>
                                             </div>
                                         </div>
                                      )
                                  })}
-                                 {recentProjects.length > 6 && (
+                                 {recentProjects.length < projectTotal && (
                                      <button
-                                         onClick={() => setShowAllProjects(!showAllProjects)}
+                                         onClick={loadMoreProjects}
+                                         disabled={isLoadingMore}
                                          className="relative bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center text-center hover:bg-indigo-50 dark:hover:bg-indigo-900/50 hover:border-indigo-500 cursor-pointer transition-all duration-200 group text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
                                      >
                                          <div className="text-4xl mb-2 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
-                                             {showAllProjects ? <SwitchScriptIcon /> : <LoadIcon />}
+                                             {isLoadingMore ? <SpinnerIcon /> : <LoadIcon />}
                                          </div>
-                                         <h3 className="text-lg font-bold">{showAllProjects ? t('less') : t('more')}</h3>
+                                         <h3 className="text-lg font-bold">{t('showMoreProjects')}</h3>
+                                         <p className="text-xs mt-1">{t('projectsShownOf', { shown: recentProjects.length, total: projectTotal })}</p>
                                      </button>
                                  )}
                              </div>
@@ -984,7 +972,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                 isOpen={!!projectToDelete}
                 onClose={() => setProjectToDelete(null)}
                 onConfirm={handleConfirmDelete}
-                projectName={projectToDelete?.name || projectToDelete?.settings.fontName || ''}
+                projectName={projectToDelete?.name || ''}
             />
 
         </div>
