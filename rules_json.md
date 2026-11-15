@@ -36,13 +36,13 @@ Defines named collections of glyphs. These translate to `@ClassName = [...]` in 
   "virama": ["्"],
   "vowels": ["అ", "ఆ", "ఇ"],
   "matras": ["ా", "ి", "ీ"],
-  "all_vowels": ["$vowels", "$matras"]
+  "all_vowels": ["@vowels", "@matras"]
 }
 ```
 
 ### Referencing External Sets
-You can include groups defined in other files by using the `$` prefix. This avoids duplication:
-*   **Character Sets:** Reference the `nameKey` from `characters.json` (e.g., `$consonants`).
+You can include groups defined elsewhere with the same `@` prefix. This avoids duplication (older data wrote `@name`; it is read the same way):
+*   **Character Sets:** Reference the `nameKey` from `characters.json` (e.g., `@consonants`).
 *   **Positioning Groups:** Reference groups defined in `positioning.json`.
 
 ---
@@ -129,14 +129,14 @@ Replaces a sequence of glyphs with a single glyph. `sub f i by fi;`
 ```
 
 #### Using Groups in Ligatures
-You can use a Group (starting with `$`) as an input component. This creates a "Many-to-One" rule, where *any* member of the group in that position will trigger the substitution.
+You can use a Group (starting with `@`) as an input component. This creates a "Many-to-One" rule, where *any* member of the group in that position will trigger the substitution.
 
 **Example (Tamil):** Both `Sa` and `Sha` combined with `Virama + Ra + II` produce the `Sri` ligature.
 1. Define group: `"sa_sha": ["ஸ", "ஶ"]`
 2. Define rule:
 ```json
 "liga": {
-  "ஸ்ரீ": ["$sa_sha", "்", "ர", "ீ"]
+  "ஸ்ரீ": ["@sa_sha", "்", "ர", "ீ"]
 }
 ```
 *This generates FEA equivalent to:* `sub [sa sha] virama ra ii by sri;`
@@ -150,7 +150,7 @@ Replaces one glyph with another. `sub a by a.alt;`
 ```json
 "single": {
   "a.alt": ["a"],
-  "$groupB": ["$groupA"] // Can map class to class
+  "@groupB": ["@groupA"] // Can map class to class
 }
 ```
 

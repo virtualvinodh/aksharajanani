@@ -1,7 +1,7 @@
 [
   {
     "groups": {
-      "consFused": ["$consonants"],
+      "consFused": ["@consonants"],
       "spacingMarksRight": ["ਾ", "ੀ"],
       "spacingMarksLeft": ["ਿ"],
       "aboveMarks": ["ਂ", "ੰ", "ੱ", "ੇ", "ੈ", "ੋ", "ੌ", "ੇੱ", "ੇੰ", "ੇਂ", "ੋੱ", "ੋੰ", "ੋਂ", "ੈੱ", "ੈੰ", "ੈਂ", "ੌੱ", "ੌੰ", "ੌਂ"],
@@ -11,23 +11,23 @@
   {
     "positioning": [
       {
-        "base": ["$vowels"],
+        "base": ["@vowels"],
         "mark": ["ਂ", "ੰ"],
         "gpos": "abvm"
       },
       {
-        "base": ["$spacingMarksRight"],
+        "base": ["@spacingMarksRight"],
         "mark": ["ਂ", "ੰ", "ੱ"],
         "gpos": "abvm"
       },
       {
-        "base": ["$consFused"],
-        "mark": ["$aboveMarks"],
+        "base": ["@consFused"],
+        "mark": ["@aboveMarks"],
         "gpos": "abvm"
       },
       {
-        "base": ["$consFused"],
-        "mark": ["$belowMarks", "੍"],
+        "base": ["@consFused"],
+        "mark": ["@belowMarks", "੍"],
         "gpos": "blwm"
       }
     ],
@@ -50,7 +50,7 @@
   },
   {
     "markAttachment": {
-      "$vowels": {
+      "@vowels": {
         "ਂ": ["topRight", "bottomRight", "-33", "-45"],
         "ੰ": ["topRight", "bottomRight", "4", "-26"]
       },
@@ -64,7 +64,7 @@
         "ੰ": ["topRight", "bottomRight", "0", "-26"],
         "ੱ": ["topRight", "bottomRight", "0", "-27"]
       },
-      "$consFused": {
+      "@consFused": {
         "ਂ": ["topRight", "bottomRight", "-45", "-45"],
         "ੰ": ["topRight", "bottomRight", "0", "-26"],
         "ੱ": ["topRight", "bottomRight", "0", "-27"],
@@ -98,8 +98,8 @@
   },
   {
     "recommendedKerning": [
-      ["$consFused", "$spacingMarksRight"],
-      ["$spacingMarksLeft", "$consFused"]
+      ["@consFused", "@spacingMarksRight"],
+      ["@spacingMarksLeft", "@consFused"]
     ]
   }
 ]

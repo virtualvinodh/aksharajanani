@@ -4,8 +4,8 @@
       "descenders": ["ஏ", "த",  "த்", "தி", "தீ", "ந", "ந்", "நி", "நீ", 
       "ர", "ர்", "ரி", "ரீ", "ற", "ற்", "றி", "றீ", "ஹ", "ஹ்", "ஹி", "ஹீ"],
       "spacingMarks": ["ா", "ெ", "ே", "ு", "ூ", "ை", "ௗ"],
-      "charsAll": ["$vowels", "$consonants", "$halfCons", 
-      "$iCons", "$iiCons", "$uCons", "$uuCons", "$spacingMarks"]
+      "charsAll": ["@vowels", "@consonants", "@halfCons", 
+      "@iCons", "@iiCons", "@uCons", "@uuCons", "@spacingMarks"]
     }
   },
   {
@@ -39,7 +39,7 @@
   },
   {
     "recommendedKerning": [
-      ["$charsAll", "$descenders"]
+      ["@charsAll", "@descenders"]
     ]
   }
 ]

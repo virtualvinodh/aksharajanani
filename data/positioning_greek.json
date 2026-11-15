@@ -2,11 +2,11 @@
 [
    {
     "markAttachment": {
-        "$GreekLetters":  { 
+        "@GreekLetters":  { 
           "́": ["topCenter", "bottomCenter", 0, -30],
           "̈": ["topCenter", "bottomCenter", 0, -30]
         },
-        "$GreekAccentedLetters": {
+        "@GreekAccentedLetters": {
            "́": ["topCenter", "bottomCenter", 0, -50]
         }
     }

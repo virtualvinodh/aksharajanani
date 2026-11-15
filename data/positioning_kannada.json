@@ -2,14 +2,14 @@
   {
     "groups": {
       "consAll": [
-        "$consonants",
-        "$halfCons",
-        "$aaCons",
-        "$iCons",
-        "$eCons",
-        "$uCons",
-        "$uuCons",
-        "$auCons"
+        "@consonants",
+        "@halfCons",
+        "@aaCons",
+        "@iCons",
+        "@eCons",
+        "@uCons",
+        "@uuCons",
+        "@auCons"
       ],
       "uUCons": ["ತ", "ಚ", "ಟ", "ಬ", "ದ", "ಡ", "ಗ", "ಥ", "ಛ", "ಠ", "ಖ", "ಭ", "ಧ", "ಝ", "ಢ", "ಘ", "ಸ", "ಶ", "ಷ", "ಮ", "ನ", "ಞ", "ಣ", "ಙ", "ರ", "ಱ", "ಲ","ಯ"],
       "spacingR": ["ೃ", "ೄ"],
@@ -24,24 +24,24 @@
   },
   {
     "markAttachment": {
-      "$uUCons": {
+      "@uUCons": {
         "ು": ["bottomRight", "bottomLeft"],
         "ೂ": ["bottomRight", "bottomLeft"]
       },                   
-      "$consAll": {
+      "@consAll": {
         "": ["topCenter", "bottomCenter", "0", "-100"]
       },                  
-      "$consCenter": {
-        "$vowCombCenter": ["topCenter", "bottomCenter"],
-        "$vowCombLeft": ["topCenter", "bottomLeft"]
+      "@consCenter": {
+        "@vowCombCenter": ["topCenter", "bottomCenter"],
+        "@vowCombLeft": ["topCenter", "bottomLeft"]
       },
-      "$consLeft": {
-        "$vowCombCenter": ["topLeft", "bottomCenter"],
-        "$vowCombLeft": ["topCenter", "bottomLeft"]
+      "@consLeft": {
+        "@vowCombCenter": ["topLeft", "bottomCenter"],
+        "@vowCombLeft": ["topCenter", "bottomLeft"]
       },
-      "$consRight": {
-        "$vowCombCenter": ["topRight", "bottomCenter"],
-        "$vowCombLeft": ["topCenter", "bottomLeft"]
+      "@consRight": {
+        "@vowCombCenter": ["topRight", "bottomCenter"],
+        "@vowCombLeft": ["topCenter", "bottomLeft"]
       }    
     }
   },
@@ -61,9 +61,9 @@
   },
   {
     "recommendedKerning": [
-      ["$consAll", "$ottu"],   
-      ["$consonants", "$spacingR"], 
-      ["$spacingu", "$ottu"]      
+      ["@consAll", "@ottu"],   
+      ["@consonants", "@spacingR"], 
+      ["@spacingu", "@ottu"]      
 
     ]
   }

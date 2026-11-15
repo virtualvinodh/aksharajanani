@@ -180,12 +180,13 @@ def fetch_font(family, cache):
 
 
 def mark_position(ch, font):
-    """Where a combining mark sits: 'above', 'aboveRight', 'below', 'belowAttached' or 'overlay'."""
+    """Where a combining mark sits: 'above', 'aboveRight', 'below', 'belowAttached', 'overlay' or
+    'kanaVoiced' (see ATTACHMENT in services/languageService.ts)."""
     ccc = unicodedata.combining(ch)
     if ccc == 1:
         return 'overlay'
-    if ccc == 8:  # kana voicing marks ゛ ゜ (が = か + ゛), at the letter's top right
-        return 'aboveRight'
+    if ccc == 8:  # kana voicing marks ゛ ゜ (が = か + ゛), overlapping the letter's top-right corner
+        return 'kanaVoiced'
     if ccc == 202:  # attached below, e.g. cedilla, ogonek
         return 'belowAttached'
     if ccc in (216, 232):  # attached / above right, e.g. the horn of ơ

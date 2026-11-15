@@ -21,18 +21,18 @@ The file is an array of objects, each serving a specific configuration purpose.
 
 ## 1. Groups (`groups`)
 
-Groups define reusable collections of glyphs. This keeps your rules concise. A group name is referenced elsewhere using the `$` prefix (e.g., `$uppercaseVowels`).
+Groups define reusable collections of glyphs. This keeps your rules concise. A group name is referenced elsewhere with the `@` prefix, as in OpenType feature code (e.g., `@uppercaseVowels`). Older data wrote `@uppercaseVowels`; the app still reads that the same way, but writes and shows `@`.
 
 *   **Structure:** A key-value object where the key is the group name and the value is an array of glyph names.
-*   **Inheritance:** You can reference `nameKey`s from your `characters.json` file here directly (e.g., `$consonants` works automatically if you have a "consonants" set). Defining a group here with the same name overrides the character set definition for positioning purposes.
-*   **Expansion:** Groups can contain other groups (e.g., `$uppercaseVowels` inside `$allLetters`).
+*   **Inheritance:** You can reference `nameKey`s from your `characters.json` file here directly (e.g., `@consonants` works automatically if you have a "consonants" set). Defining a group here with the same name overrides the character set definition for positioning purposes.
+*   **Expansion:** Groups can contain other groups (e.g., `@uppercaseVowels` inside `@allLetters`).
 
 ```json
 {
   "groups": {
     "uppercaseVowels": ["A", "E", "I", "O", "U"],
     "accents": ["acute", "grave", "circumflex"],
-    "allLetters": ["$uppercaseVowels", "B", "C", "D"] 
+    "allLetters": ["@uppercaseVowels", "B", "C", "D"] 
   }
 }
 ```
@@ -55,8 +55,8 @@ Use `gpos` to create OpenType positioning rules (`pos base <anchor> mark <anchor
 **Example: Standard Vowel Signs**
 ```json
 {
-  "base": ["$consonants"],
-  "mark": ["$vowelSigns"],
+  "base": ["@consonants"],
+  "mark": ["@vowelSigns"],
   "gpos": "abvm"
 }
 ```
@@ -84,13 +84,15 @@ This tells the engine: "When `N` is followed by `tilde`, position them visually,
 This section defines **WHERE** marks attach to bases. It acts as the "geometry layer".
 
 *   **Structure:** `BaseName -> { MarkName: [BaseAnchor, MarkAnchor, X_Offset, Y_Offset] }`
-*   **Inheritance:** You can define rules for groups (e.g., `$uppercaseVowels`) which apply to all members unless overridden by a specific character rule.
+*   **Inheritance:** You can define rules for groups (e.g., `@uppercaseVowels`) which apply to all members unless overridden by a specific character rule.
 
 ### Anchor Points
 The system uses a 9-point grid for automatic anchoring:
 `topLeft`, `topCenter`, `topRight`
 `midLeft`, `center`, `midRight`
 `bottomLeft`, `bottomCenter`, `bottomRight`
+
+These names are what the data files use. The rules screen shows them in plain words ("Top left", "Top middle", … "Bottom right"; `point_*` in `locales/`).
 
 ### The Rule Array
 `[BaseAnchor, MarkAnchor, X_Offset, Y_Offset]`
@@ -109,8 +111,8 @@ The system uses a 9-point grid for automatic anchoring:
   "A": {
     "acute": ["topCenter", "bottomCenter", "0", "-10"]
   },
-  "$consonants": {
-    "$belowMarks": ["bottomCenter", "topCenter"] 
+  "@consonants": {
+    "@belowMarks": ["bottomCenter", "topCenter"] 
   }
 }
 ```
@@ -137,7 +139,7 @@ A class for upper marks. They sync together, EXCEPT when placed on `i` (which mi
     "name": "Upper Marks",
     "members": ["acute", "grave", "circumflex"],
     "exceptions": [],
-    "applies": ["$uppercaseVowels"], 
+    "applies": ["@uppercaseVowels"], 
     "exceptPairs": ["i-acute", "j-grave"]
   }
 ]
@@ -159,6 +161,6 @@ This section defines pairs that usually require spacing adjustments. The Kerning
 "recommendedKerning": [
   ["A", "V"],          // Auto-calculate
   ["T", "o", "10"],    // Enforce 10 unit gap
-  ["$uppercase", "."]  // Kern all uppercase against period
+  ["@uppercase", "."]  // Kern all uppercase against period
 ]
 ```

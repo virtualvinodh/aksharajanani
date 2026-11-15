@@ -1,7 +1,7 @@
   [
    {
     "markAttachment": {
-        "$basicLatinLetters":  { 
+        "@basicLatinLetters":  { 
           "̈": ["topCenter", "bottomCenter", 0, -30]
           }
     }

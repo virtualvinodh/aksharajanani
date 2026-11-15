@@ -1,10 +1,10 @@
 [ {
   "groups": {
-      "consAllForms": ["$consonants", "$halfCons", "$iCons", "$iiCons", "$uCons", "$uuCons"],
+      "consAllForms": ["@consonants", "@halfCons", "@iCons", "@iiCons", "@uCons", "@uuCons"],
       "spacingSignsRight": ["ා", "ා්", "ැ", "ෑ", "ෘ", "ෲ", "ෟ", "ෳ", "ං", "ඃ"],
       "preBaseSigns": ["ෙ", "ේ", "ෛ"],
-    "consAllVowelPos": ["$consonants", "$conjuncts"],
-    "consAllforRa": ["$consonants", "$conjuncts", "$halfCons", "$iCons", "$iiCons"],
+    "consAllVowelPos": ["@consonants", "@conjuncts"],
+    "consAllforRa": ["@consonants", "@conjuncts", "@halfCons", "@iCons", "@iiCons"],
     "consForRa": [
     "ක","ඛ","ග","ඝ","ඞ","ඟ","ච","ඡ","ජ","ඣ","ඤ","ඥ","ඦ","ට","ඨ","ඩ","ඪ","ණ","ඬ",
     "ත","ථ","ද","ධ","න","ඳ","ප","ඵ","බ","භ","ම","ඹ","ය","ර","ල","ව","ශ","ෂ","ස","හ","ළ","ෆ",
@@ -37,12 +37,12 @@
     { 
     "positioning": [
       {
-        "base": ["$consonants", "$conjuncts", "$halfCons", "$iCons", "$iiCons"],
+        "base": ["@consonants", "@conjuncts", "@halfCons", "@iCons", "@iiCons"],
         "mark": ["්‍ර"],
-        "ligatureMap": { "$consForRa": { "්‍ර": "$conswithRa" }}
+        "ligatureMap": { "@consForRa": { "්‍ර": "@conswithRa" }}
       },
           {
-        "base": ["$consonants", "$conjuncts"],
+        "base": ["@consonants", "@conjuncts"],
         "mark": ["්‍රු", "්‍රූ"]
           }
     ] 
@@ -57,7 +57,7 @@
       "ා":  
       { "්": ["topCenter", "bottomLeft"]
       },
-      "$consAllVowelPos":  
+      "@consAllVowelPos":  
       { 
         "්": ["topRight", "bottomLeft"], 
         "ි": ["topLeft", "bottomLeft"], 
@@ -65,19 +65,19 @@
         "ු": ["bottomRight", "topRight"], 
         "ූ": ["bottomRight", "topRight"] 
       }, 
-      "$consAllforRa":  
+      "@consAllforRa":  
       { 
          "්‍ර": ["bottomRight", "topRight"]
       }
     } 
   },
   { "recommendedKerning": [
-      ["$consAllForms", "$consonants"],
-      ["$conjuncts", "$consonants"],
-      ["$consonants", "$conjuncts"],
-      ["$consAllForms", "$spacingSignsRight"],
-      ["$preBaseSigns", "$consonants"],
-      ["$vowels", "$consonants"],
-      ["$consonants", "$vowels"]
+      ["@consAllForms", "@consonants"],
+      ["@conjuncts", "@consonants"],
+      ["@consonants", "@conjuncts"],
+      ["@consAllForms", "@spacingSignsRight"],
+      ["@preBaseSigns", "@consonants"],
+      ["@vowels", "@consonants"],
+      ["@consonants", "@vowels"]
     ] }
 ]

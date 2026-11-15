@@ -11,15 +11,15 @@
   {
     "positioning": [
       {
-        "base": ["$consonants"],
-        "mark": ["$belowMarks", "$aboveMarks", "$centerMarks"],
+        "base": ["@consonants"],
+        "mark": ["@belowMarks", "@aboveMarks", "@centerMarks"],
         "gpos": "mark"
       }
     ]
   },
   {
     "markAttachment": {
-      "$consonants": {
+      "@consonants": {
         "ְ": ["bottomCenter", "topCenter"],
         "ֱ": ["bottomCenter", "topCenter"],
         "ֲ": ["bottomCenter", "topCenter"],

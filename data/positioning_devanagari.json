@@ -1,7 +1,7 @@
 [
    {
     "groups": {
-      "consFused": ["$consonants", "$rakarConjuncts", "$conjuncts"],
+      "consFused": ["@consonants", "@rakarConjuncts", "@conjuncts"],
       "spacingMarksRight": [ "ा", "ी", "ो", "ौ"]
     }
    },
@@ -17,17 +17,17 @@
       "gpos": "abvm"
     },    
     {
-      "base": ["$vowels"],
+      "base": ["@vowels"],
       "mark": ["ं","ँ"],
       "gpos": "abvm"
     },
     {
-      "base": ["$consFused"],
+      "base": ["@consFused"],
       "mark": ["ं","ँ", "े", "ै", "ें", "ैं","ेँ", "ैँ", "ॅ", "", "", ""],
       "gpos": "abvm"
     },    
     {
-      "base": ["$consFused"],
+      "base": ["@consFused"],
       "mark": ["्", "ु", "ू", "ृ", "ॄ", "ॢ", "ॣ"],
       "gpos": "blwm"
     }
@@ -50,15 +50,15 @@
     "baseAttachmentClass": []
   },
   { "markAttachment": {
-    "$vowelSigns":  {
+    "@vowelSigns":  {
       "ं": ["topCenter", "bottomCenter", "0", "-140"],
       "ँ": ["topCenter", "bottomCenter", "0", "-140"]
     },    
-    "$vowels":  {
+    "@vowels":  {
       "ं": ["topCenter", "bottomCenter", "0", "-140"],
       "ँ": ["topCenter", "bottomCenter", "0", "-140"]
     },
-    "$consFused":  {
+    "@consFused":  {
       "ं": ["topCenter", "bottomCenter", "0", "-140"],
       "ँ": ["topCenter", "bottomCenter", "0", "-140"],
       "ॅ": ["topCenter", "bottomCenter", "0", "-140"],
@@ -80,9 +80,9 @@
       }
   } },
   { "recommendedKerning": [
-      ["$consFused", "$spacingMarksRight"],      
-      ["ि", "$consFused"],
-      ["$halfConjuncts", "$consFused"]  
+      ["@consFused", "@spacingMarksRight"],      
+      ["ि", "@consFused"],
+      ["@halfConjuncts", "@consFused"]  
       ] 
   }
 ]
