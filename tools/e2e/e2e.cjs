@@ -457,18 +457,23 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
         log(`auto-kern took ${Math.round((Date.now() - t0) / 1000)} s`);
         await p.waitForTimeout(1500); await closeTips();
     };
-    const accept = async () => {
-        const btn = p.getByRole('button', { name: /Accept Suggestions|Accept suggestions|Accept All|Accept Visible/ }).first();
-        if (await btn.count() && await btn.isVisible().catch(() => false)) { await btn.click(); await p.waitForTimeout(1500); return true; }
-        return false;
+    // "C/T recommended pairs spaced (P%)" from the Spacing screen's status line (its numbers are in
+    // data attributes since the redesign; older builds show the sentence itself).
+    const spacingStatus = async () => {
+        const st = p.locator('[data-testid="spacing-status"]').first();
+        if (await st.count()) {
+            const c = Number(await st.getAttribute('data-completed')), tt = Number(await st.getAttribute('data-total'));
+            return `${c}/${tt} recommended pairs spaced (${tt ? Math.round(c / tt * 100) : 100}%)`;
+        }
+        return p.getByText(/recommended pairs spaced/).first().innerText().catch(() => '');
     };
     if (!(await spacingTab.count())) {
         log('no Spacing step for this script');
     } else {
         await spacingTab.click(); await p.waitForTimeout(1800); await closeTips();
-        const suggestionsTab = p.getByRole('button', { name: 'Suggestions', exact: true }).first();
+        const suggestionsTab = p.locator('[data-tour="tab-suggestions"]').first();
         if (await suggestionsTab.count()) { await suggestionsTab.click(); await p.waitForTimeout(1000); await closeTips(); }
-        const progress = await p.getByText(/recommended pairs spaced/).first().innerText().catch(() => '');
+        const progress = await spacingStatus();
         const recommended = Number((progress.match(/\/(\d+)/) || [])[1] || 0);
         if (recommended > 0) {
             spacingMode = `suggested (${recommended} pairs)`;
@@ -477,17 +482,17 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
         } else {
             spacingMode = 'all pairs';
             await caption('Spacing: auto-kern every pair of letters');
-            await p.getByRole('button', { name: 'All Pairs' }).first().click(); await p.waitForTimeout(800); await closeTips();
+            await p.locator('[data-tour="tab-all"]').first().click(); await p.waitForTimeout(800); await closeTips();
             for (const sa of await p.getByRole('button', { name: 'Select All' }).all()) await sa.click().catch(() => {});
             await p.waitForTimeout(800); await shot('06-all-pairs');
         }
-        await p.getByRole('button', { name: /Auto-kern|Auto-space/ }).first().click();
+        // One button; the spacing is applied straight away, with Undo (no separate Accept step).
+        await p.locator('[data-tour="auto-kern-btn"]').first().click();
         await waitAutoKern(); await shot('07-autokerned');
-        await caption('Accept the suggested spacing');
-        // Accept where we are; if this view has no Accept button, the results are on Suggestions.
-        if (!(await accept()) && await suggestionsTab.count()) { await suggestionsTab.click(); await p.waitForTimeout(1000); await closeTips(); await accept(); }
-        log('spacing:', spacingMode, '|', await p.getByText(/recommended pairs spaced/).first().innerText().catch(() => ''));
-        await shot('08-spacing-accepted');
+        await caption('The spacing is in the font already (Undo is there if needed)');
+        if (!(await p.locator('[data-tour="undo-auto-space-btn"]').count())) log('WARNING: no Undo button after automatic spacing');
+        log('spacing:', spacingMode, '|', await spacingStatus());
+        await shot('08-spacing-done');
         if (spacingMode === 'all pairs') await saveProjectFile(path.join(OUT, `${SCRIPT}-spaced.json`));
     }
 
@@ -552,6 +557,9 @@ const log = (...a) => console.log(`[${SCRIPT}]`, ...a);
             if (/error/i.test(dialog)) { exportError = dialog.replace(/\s+/g, ' ').slice(0, 300); log('EXPORT ERROR:', exportError); await shot('11-export-error'); }
             await ea.click().catch(() => {}); await p.waitForTimeout(1000);
         }
+        // The first export asks what the font should be called (prefilled): keep the name.
+        const useName = p.getByRole('button', { name: /^(Use this name|இந்தப் பெயரைப் பயன்படுத்து)$/ });
+        if (await useName.isVisible().catch(() => false)) { log('font name asked:', JSON.stringify(await p.locator('#font-name-prompt-input').inputValue().catch(() => ''))); await useName.click().catch(() => {}); await p.waitForTimeout(800); }
         if (await Promise.race([dlP.then(d => !!d), new Promise(r => setTimeout(() => r(false), 1000))])) break;
     }
     const dl = await dlP;

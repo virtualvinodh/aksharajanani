@@ -272,7 +272,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
                                 <input type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} onBlur={() => setIsEditingFontName(false)} onKeyDown={(e) => e.key === 'Enter' && setIsEditingFontName(false)} className="text-lg sm:text-xl font-bold text-center bg-transparent border-b-2 border-indigo-500 focus:outline-none w-full md:w-auto" autoFocus />
                             ) : (
                                 <div className="flex items-center justify-center gap-2">
-                                    <h1 className="text-lg sm:text-xl font-bold truncate max-w-[40vw] sm:max-w-xs">{projectName}{hasUnsavedChanges && !settings.isAutosaveEnabled && <span className="text-yellow-400 ml-1" title={t('unsavedChangesIndicator')}>•</span>}</h1>
+                                    <h1 className="text-lg sm:text-xl font-bold truncate max-w-[30vw] sm:max-w-xs">{projectName}{hasUnsavedChanges && !settings.isAutosaveEnabled && <span className="text-yellow-400 ml-1" title={t('unsavedChangesIndicator')}>•</span>}</h1>
                                     <button onClick={() => setIsEditingFontName(true)} title={t('renameProject')} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 text-gray-500 dark:text-gray-400"><EditIcon /></button>
                                 </div>
                             )}

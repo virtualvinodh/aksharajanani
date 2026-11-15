@@ -156,7 +156,7 @@ const KerningEditorPage: React.FC<KerningEditorPageProps> = (props) => {
         if (props.character.unicode && paths.length === 0) {
             glyphDataDispatch({ type: 'DELETE_GLYPH', payload: { unicode: props.character.unicode } });
         } else if (paths.length > 0) {
-             showNotification("Path editing is not supported in the kerning editor.", "info");
+             showNotification(t('pairEditorNoDrawing'), "info");
         }
     }, [props.character.unicode, glyphDataDispatch, showNotification]);
 

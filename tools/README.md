@@ -35,7 +35,7 @@ Does what a person would do, in any of the European scripts or Tamil:
    Scripts that place marks by rule (Malayalam, Telugu) also go through the Positioning workspace:
    one class representative is moved by hand (its synced pairs should follow), then every rule's
    suggestions are accepted.
-4. Auto-kerns in Spacing and accepts the result: the script's suggested pairs if it has any (Tamil), otherwise every pair (All Pairs → Select All).
+4. Spaces the letters with "Space all automatically" (applied straight away, no Accept step): the script's suggested pairs if it has any (Tamil), otherwise every pair (All pairs → Select All).
 5. Types a sample on the Test page.
 6. Makes a picture in Creator and saves it.
 7. Exports the font and shows it rendered by the browser.

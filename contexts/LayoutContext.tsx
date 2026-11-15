@@ -8,7 +8,7 @@ type View = 'grid' | 'comparison' | 'settings' | 'creator' | 'rules' | 'editor';
 export type PanelLayout = 'grid' | 'split' | 'editor';
 
 interface ModalState {
-  name: 'confirmChangeScript' | 'incompleteWarning' | 'mismatchedScript' | 'testPage' | 'addGlyph' | 'positioningUpdateWarning' | 'feaError' | 'unsavedRules' | 'about' | 'help' | 'restoreSession' | 'testCases' | 'confirmLoadProject' | 'addBlock' | 'importGlyphs' | 'confirmSnapshotRestore' | 'snapshotRestore' | 'saveAs' | 'positioningRulesManager' | 'importFont' | 'useYourFont';
+  name: 'confirmChangeScript' | 'incompleteWarning' | 'mismatchedScript' | 'testPage' | 'addGlyph' | 'positioningUpdateWarning' | 'feaError' | 'unsavedRules' | 'about' | 'help' | 'restoreSession' | 'testCases' | 'confirmLoadProject' | 'addBlock' | 'importGlyphs' | 'confirmSnapshotRestore' | 'snapshotRestore' | 'saveAs' | 'positioningRulesManager' | 'importFont' | 'useYourFont' | 'fontNamePrompt';
   props?: any;
 }
 

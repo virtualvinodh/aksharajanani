@@ -15,10 +15,13 @@ interface SpacingDefaultsPanelProps {
 }
 
 /**
- * The two spacing values every letter follows unless it has its own: the space beside each letter
- * (Settings → Metrics' left and right side, moved together) and the width of the word space (U22).
- * Shown on the Spacing screen with a sample line, so people can judge the result where they space.
+ * "Overall spacing": the two values every letter follows unless it has its own space: the room beside
+ * each letter (Settings → Metrics' left and right side, moved together) and the word space (U22).
+ * A permanent strip at the top of the Spacing screen, above the pair fixes, with a sample line in the
+ * project's own letters. Collapsible; starts collapsed on phones.
  */
+const COLLAPSED_KEY = 'spacingStripCollapsed';
+
 const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, glyphDataMap, kerningMap, suggestedKerningMap, glyphVersion }) => {
     const { t } = useLocale();
     const { theme } = useTheme();
@@ -28,6 +31,11 @@ const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, gl
     const [width, setWidth] = useState(600);
     // What the values were when the panel opened, for "Back to how it was".
     const [initial] = useState(() => metrics ? { lsb: metrics.defaultLSB, rsb: metrics.defaultRSB, space: metrics.spaceAdvanceWidth } : null);
+    const [collapsed, setCollapsed] = useState<boolean>(() => {
+        try { const v = localStorage.getItem(COLLAPSED_KEY); if (v !== null) return v === 'true'; } catch { /* storage blocked */ }
+        return typeof window !== 'undefined' && window.matchMedia?.('(max-width: 639px)').matches;
+    });
+    const toggle = () => setCollapsed(c => { try { localStorage.setItem(COLLAPSED_KEY, String(!c)); } catch { /* storage blocked */ } return !c; });
 
     useEffect(() => {
         const el = wrapRef.current;
@@ -35,7 +43,7 @@ const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, gl
         const ro = new ResizeObserver(entries => setWidth(Math.max(200, Math.floor(entries[0].contentRect.width))));
         ro.observe(el);
         return () => ro.disconnect();
-    }, []);
+    }, [collapsed]);
 
     // Sample words: words of the sample text made only of drawn letters that need no joining or
     // signs (anything else would need the font's rules to look right), topped up with drawn letters.
@@ -54,10 +62,11 @@ const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, gl
     }, [letters, settings?.customSampleText]);
 
     useEffect(() => {
+        if (collapsed) return;
         const canvas = canvasRef.current, ctx = canvas?.getContext('2d');
         if (!canvas || !ctx || !metrics || !settings) return;
         const dpr = window.devicePixelRatio || 1;
-        const height = 96;
+        const height = 64;
         canvas.width = width * dpr; canvas.height = height * dpr;
         canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -95,7 +104,7 @@ const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, gl
             ctx.restore();
         }
         ctx.restore();
-    }, [words, width, metrics, settings, theme, glyphDataMap, kerningMap, suggestedKerningMap, glyphVersion]);
+    }, [words, width, metrics, settings, theme, glyphDataMap, kerningMap, suggestedKerningMap, glyphVersion, collapsed]);
 
     if (!metrics || !initial) return null;
 
@@ -114,27 +123,35 @@ const SpacingDefaultsPanel: React.FC<SpacingDefaultsPanelProps> = ({ letters, gl
     const wordMin = Math.min(100, metrics.spaceAdvanceWidth), wordMax = Math.max(1000, metrics.spaceAdvanceWidth);
 
     const slider = (id: string, label: string, low: string, high: string, value: number, min: number, max: number, step: number, onChange: (v: number) => void) => (
-        <div className="flex-1 min-w-[12rem]">
-            <label htmlFor={id} className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
+        <div className="w-full sm:w-56 flex-shrink-0">
+            <label htmlFor={id} className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</label>
             <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} className="w-full accent-indigo-600" />
             <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400"><span>{low}</span><span>{high}</span></div>
         </div>
     );
 
     return (
-        <div className="p-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 space-y-3" data-tour="spacing-defaults">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{t('spacingDefaultsHint')}</p>
-            <div className="flex flex-wrap gap-6">
-                {slider('spacing-letters', t('spaceBetweenLetters'), t('spacingTighter'), t('spacingLooser'), letterSpace, letterMin, letterMax, 1, setLetterSpace)}
-                {slider('spacing-words', t('spaceBetweenWords'), t('spacingNarrower'), t('spacingWider'), metrics.spaceAdvanceWidth, wordMin, wordMax, 10, setWordSpace)}
+        <section className="flex-shrink-0 px-4 py-1.5 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60" data-tour="spacing-defaults" aria-label={t('overallSpacing')}>
+            <div className="flex items-center justify-between gap-2">
+                <button type="button" onClick={toggle} aria-expanded={!collapsed} title={t('spacingDefaultsHint')}
+                    className="flex items-center gap-2 py-1 text-sm font-bold text-gray-800 dark:text-gray-100">
+                    <span aria-hidden="true" className={`inline-block transition-transform ${collapsed ? '' : 'rotate-90'}`}>▸</span>
+                    {t('overallSpacingTitle')}
+                </button>
+                {changed && !collapsed && (
+                    <button type="button" onClick={restore} className="text-sm text-indigo-600 dark:text-indigo-400 underline underline-offset-2">{t('spacingBackToBefore')}</button>
+                )}
             </div>
-            <div ref={wrapRef} className="w-full rounded-md bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-700 overflow-hidden">
-                <canvas ref={canvasRef} aria-label={t('spacingSample')} role="img" />
-            </div>
-            {changed && (
-                <button type="button" onClick={restore} className="text-sm text-indigo-600 dark:text-indigo-400 underline underline-offset-2">{t('spacingBackToBefore')}</button>
+            {!collapsed && (
+                <div className="flex flex-wrap lg:flex-nowrap items-center gap-x-6 gap-y-2 pb-1">
+                    {slider('spacing-letters', t('overallSpacing'), t('spacingTighter'), t('spacingLooser'), letterSpace, letterMin, letterMax, 1, setLetterSpace)}
+                    {slider('spacing-words', t('wordSpace'), t('spacingNarrower'), t('spacingWider'), metrics.spaceAdvanceWidth, wordMin, wordMax, 10, setWordSpace)}
+                    <div ref={wrapRef} className="w-full lg:w-auto lg:flex-1 min-w-0 rounded-md bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-700 overflow-hidden">
+                        <canvas ref={canvasRef} aria-label={t('spacingSample')} role="img" />
+                    </div>
+                </div>
             )}
-        </div>
+        </section>
     );
 };
 

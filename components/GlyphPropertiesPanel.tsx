@@ -544,6 +544,9 @@ const GlyphPropertiesPanel: React.FC<GlyphPropertiesPanelProps> = ({
         {isMetricsExpanded && (
           <div className="mt-3 space-y-4 animate-fade-in-up">
             {!isNonSpacing && type !== 'kerning' && !gpos && (
+            <div>
+            {/* Plain name for this letter's left/right room (its own sidebearings), as on the Spacing screen. */}
+            <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2" title={t('letterOwnSpaceHint')}>{t('letterOwnSpace')}</p>
             <div className="grid grid-cols-2 gap-3 flex-shrink-0">
                 <div>
                     <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
@@ -577,6 +580,7 @@ const GlyphPropertiesPanel: React.FC<GlyphPropertiesPanelProps> = ({
                         }}
                     />
                 </div>
+            </div>
             </div>
             )}
 

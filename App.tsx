@@ -5,6 +5,7 @@ import UnifiedEditorModal from './components/UnifiedEditorModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import IncompleteFontWarningModal from './components/IncompleteFontWarningModal';
 import UseYourFontModal from './components/UseYourFontModal';
+import FontNamePromptModal from './components/FontNamePromptModal';
 import Footer from './components/Footer';
 import AddGlyphModal from './components/AddGlyphModal';
 import UnicodeBlockSelectorModal from './components/UnicodeBlockSelectorModal';
@@ -66,6 +67,13 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
   const { glyphDataMap, version: glyphVersion } = useGlyphData();
   const { kerningMap } = useKerning();
   const { settings, metrics, dispatch: settingsDispatch } = useSettings();
+
+  // "Same as project name" (row 40): renaming the project renames the font.
+  const fontNameFollows = settings?.fontNameFollowsProject !== false;
+  useEffect(() => {
+    const name = projectName.trim();
+    if (fontNameFollows && name) settingsDispatch({ type: 'UPDATE_SETTINGS', payload: prev => prev && prev.fontName !== name ? { ...prev, fontName: name } : prev });
+  }, [projectName, fontNameFollows, settingsDispatch]);
   const { clipboard, dispatch: clipboardDispatch } = useClipboard();
   const { markPositioningMap } = usePositioning();
   const { state: rulesState } = useRules();
@@ -604,6 +612,7 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
       )}
       {layout.activeModal?.name === 'confirmChangeScript' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('confirmChangeScriptTitle')} message={t('confirmChangeScriptMessage')} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'useYourFont' && <UseYourFontModal isOpen={true} onClose={layout.closeModal} {...layout.activeModal.props} />}
+      {layout.activeModal?.name === 'fontNamePrompt' && <FontNamePromptModal isOpen={true} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'mismatchedScript' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('mismatchedScriptTitle')} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'confirmLoadProject' && <ConfirmationModal isOpen={true} onClose={layout.closeModal} title={t('confirmLoadProjectTitle')} message={t('confirmLoadProjectMessage')} {...layout.activeModal.props} />}
       {layout.activeModal?.name === 'incompleteWarning' && <IncompleteFontWarningModal isOpen={true} onClose={layout.closeModal} {...layout.activeModal.props} />}
@@ -626,7 +635,7 @@ const App: React.FC<AppProps> = ({ allScripts, onBackToSelection, onShowAbout, o
       )}
       
       {layout.activeModal?.name === 'positioningUpdateWarning' && <PositioningUpdateWarningModal isOpen={true} onClose={() => layout.closeModal()} {...layout.activeModal.props} />}
-      {layout.activeModal?.name === 'feaError' && feaErrorState && <FeaErrorModal isOpen={true} onClose={() => { layout.closeModal(); }} onConfirm={() => { downloadFontBlob(feaErrorState.blob, projectName); layout.closeModal(); }} errorMessage={feaErrorState.error} />}
+      {layout.activeModal?.name === 'feaError' && feaErrorState && <FeaErrorModal isOpen={true} onClose={() => { layout.closeModal(); }} onConfirm={() => { downloadFontBlob(feaErrorState.blob, settings?.fontName || projectName); layout.closeModal(); }} errorMessage={feaErrorState.error} />}
       {layout.activeModal?.name === 'unsavedRules' && ( <UnsavedRulesModal isOpen={true} onClose={layout.closeModal} onDiscard={() => { layout.setWorkspace(layout.activeModal?.props.pendingWorkspace); layout.closeModal(); }} onSave={async () => { if (await handleSaveToDB()) { layout.setWorkspace(layout.activeModal?.props.pendingWorkspace); layout.closeModal(); } }} /> )}
       {layout.activeModal?.name === 'testCases' && <Suspense fallback={null}><TestCasePage onClose={layout.closeModal} /></Suspense>}
       {layout.activeModal?.name === 'snapshotRestore' && (

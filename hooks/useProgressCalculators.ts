@@ -4,6 +4,7 @@ import { CharacterSet, GlyphData, KerningMap, MarkPositioningMap, RecommendedKer
 import { isGlyphDrawn, isGlyphComplete, shouldExportEmpty } from '../utils/glyphUtils';
 import { useSettings } from '../contexts/SettingsContext';
 import { expandMembers } from '../services/groupExpansionService';
+import { useKerning } from '../contexts/KerningContext';
 
 interface UseProgressCalculatorsProps {
     characterSets: CharacterSet[] | null;
@@ -32,6 +33,16 @@ export const useProgressCalculators = ({
     const { settings } = useSettings();
     const showHidden = settings?.showHiddenGlyphs ?? false;
 
+    // A pair is spaced when it's in the font: spaced automatically (applied straight away, row 27)
+    // or set by hand (which wins). Both are exported, so both count.
+    const { suggestedKerningMap } = useKerning();
+    const spacedMap = useMemo(() => {
+        if (suggestedKerningMap.size === 0) return kerningMap;
+        const m = new Map(suggestedKerningMap);
+        kerningMap.forEach((v, k) => m.set(k, v));
+        return m;
+    }, [kerningMap, suggestedKerningMap]);
+
     /**
      * Drawing Progress:
      * Calculates percentage of glyphs drawn relative to the total glyphs defined in the script.
@@ -47,11 +58,11 @@ export const useProgressCalculators = ({
         const totalDrawableChars = allDrawableChars.length;
         
         const drawnGlyphCount = allDrawableChars.filter(char => {
-            return isGlyphComplete(char, glyphDataMap, markPositioningMap, kerningMap, allCharsByName) || shouldExportEmpty(char.unicode, char.name);
+            return isGlyphComplete(char, glyphDataMap, markPositioningMap, spacedMap, allCharsByName) || shouldExportEmpty(char.unicode, char.name);
         }).length;
 
         return { completed: drawnGlyphCount, total: totalDrawableChars };
-    }, [glyphDataMap, characterSets, glyphVersion, showHidden, markPositioningMap, kerningMap, allCharsByName]);
+    }, [glyphDataMap, characterSets, glyphVersion, showHidden, markPositioningMap, spacedMap, allCharsByName]);
 
     /**
      * Positioning Progress (Absolute Scope):
@@ -143,13 +154,13 @@ export const useProgressCalculators = ({
 
         let completedCount = 0;
         allRecommendedPairs.forEach(key => {
-            if (kerningMap.has(key)) {
+            if (spacedMap.has(key)) {
                 completedCount++;
             }
         });
 
         return { completed: completedCount, total: allRecommendedPairs.size };
-    }, [kerningMap, recommendedKerning, allCharsByName, fontRules, characterSets]);
+    }, [spacedMap, recommendedKerning, allCharsByName, fontRules, characterSets]);
 
     /**
      * Rules Progress:

@@ -94,7 +94,8 @@ export const FilterMenu: React.FC = () => {
                     )}
                     {(isDrawingMode || isPositioningMode || isKerningMode) && (
                         <button onClick={() => handleFilterChange('toBeReviewed')} className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${filterMode === 'toBeReviewed' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
-                            {t('filterToBeReviewed')}
+                            {/* In Spacing there's nothing to review: these pairs are spaced automatically, not by hand (row 27). */}
+                            {isKerningMode ? t('filterSpacedAutomatically') : t('filterToBeReviewed')}
                         </button>
                     )}
                     {isDrawingMode && (

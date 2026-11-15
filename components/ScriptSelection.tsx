@@ -12,6 +12,7 @@ import CustomScriptLoader from './CustomScriptLoader';
 import ScriptVariantModal, { VariantGroup } from './ScriptVariantModal';
 import LanguagePickerModal from './LanguagePickerModal';
 import * as dbService from '../services/dbService';
+import { nextFreeName } from '../utils/fontNaming';
 import DeleteProjectConfirmationModal from './DeleteProjectConfirmationModal';
 import { useTheme } from '../contexts/ThemeContext';
 import { renderPaths, getAccurateGlyphBBox } from '../services/glyphRenderService';
@@ -471,7 +472,9 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     };
     
     const handleCreateEmptyProject = async (data: NewProjectData) => {
-        const { projectName, fontFamily, upm, ascender, descender, includeLatin, extraCharacters } = data;
+        const { upm, ascender, descender, includeLatin, extraCharacters } = data;
+        // A name nobody uses yet ("My font 2"); the font has the same name (row 40).
+        const projectName = nextFreeName(data.projectName, await dbService.getAllProjectNames());
         
         let charDefs: CharacterDefinition[] = [];
         
@@ -524,7 +527,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                 defaultRSB: 50
             },
             defaults: {
-                fontName: fontFamily,
+                fontName: projectName,
                 strokeThickness: 20,
                 pathSimplification: 0.5,
                 showGridOutlines: true,
@@ -549,7 +552,9 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         const initialProjectData: ProjectData = {
              settings: { 
                  ...newScript.defaults, 
-                 fontName: fontFamily,
+                 fontName: projectName,
+                 fontNameFollowsProject: true,
+                 fontNameAsked: false,
                  contrast: newScript.defaults.contrast ?? 1.0,
                  showHiddenGlyphs: newScript.defaults.showHiddenGlyphs ?? false,
                  showUnicodeValues: newScript.defaults.showUnicodeValues ?? false,
@@ -569,8 +574,10 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         fileInputRef.current?.click();
     };
 
-    /** Opens a project read from a file (its projectId already removed). */
-    const openProjectFile = (projectData: ProjectData) => {
+    /** Opens a project read from a file (its projectId already removed), as a new project with a name nobody uses yet (row 40). */
+    const openProjectFile = async (fileData: ProjectData) => {
+        const original = fileData.name || fileData.settings?.fontName || t('newFontNameEmpty');
+        const projectData: ProjectData = { ...fileData, name: nextFreeName(original, await dbService.getAllProjectNames()) };
         if (projectData.scriptId) {
             const scriptToLoad = scripts.find(s => s.id === projectData.scriptId);
             if (scriptToLoad) {
@@ -591,7 +598,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
     useEffect(() => {
         if (!projectToRestore) return;
         setProjectToRestore(null);
-        openProjectFile(projectToRestore);
+        void openProjectFile(projectToRestore);
         // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once per handed-over file
     }, [projectToRestore]);
 
@@ -606,7 +613,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
                 // The file's projectId is the exporting browser's local IndexedDB key. Never reuse it:
                 // adopting it would make the next autosave overwrite whichever local project has that id.
                 const { projectId: _fileProjectId, ...projectData }: ProjectData = safeJsonParse<ProjectData>(text);
-                openProjectFile(projectData);
+                void openProjectFile(projectData);
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 showNotification(t('errorLoadingProject', { error: errorMessage }), 'error');
@@ -618,7 +625,13 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
         }
     };
 
-    const handleImportFont = (projectData: ProjectData) => {
+    const handleImportFont = async (imported: ProjectData) => {
+        // The project gets a name nobody uses yet; the font keeps its own family name (row 40).
+        const projectData: ProjectData = {
+            ...imported,
+            name: nextFreeName(imported.name || imported.settings.fontName, await dbService.getAllProjectNames()),
+            settings: { ...imported.settings, fontNameFollowsProject: false, fontNameAsked: true },
+        };
         const baseTemplate = customScriptTemplate || scripts[0];
         
         const newScript: ScriptConfig = {
@@ -629,7 +642,7 @@ const ScriptSelection: React.FC<ScriptSelectionProps> = ({ scripts, onSelectScri
             defaults: {
                 ...baseTemplate.defaults,
                 ...projectData.settings,
-                fontName: projectData.name || projectData.settings.fontName,
+                fontName: projectData.settings.fontName || projectData.name,
             },
             characterSetData: projectData.characterSets || [],
             rulesData: projectData.fontRules || { 'dflt': {} },

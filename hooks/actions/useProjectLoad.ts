@@ -10,6 +10,8 @@ import { usePositioning } from '../../contexts/PositioningContext';
 import { useRules } from '../../contexts/RulesContext';
 import { useLayout } from '../../contexts/LayoutContext';
 import { useLocale } from '../../contexts/LocaleContext';
+import { nextFreeName } from '../../utils/fontNaming';
+import * as dbService from '../../services/dbService';
 import { ScriptConfig, ProjectData, Character, CharacterSet, CharacterDefinition, AppSettings } from '../../types';
 import { FONT_META_DEFAULTS } from '../../constants';
 import { safeJsonParse, isSafeKey } from '../../utils/safeJson';
@@ -75,6 +77,13 @@ export const useProjectLoad = ({
     useEffect(() => {
         scriptRef.current = script;
     }, [script]);
+
+    /** The language a project is for, for its first name: "Hindi" for the Hindi/Marathi/Nepali set. */
+    const languageNameOf = useCallback((sc: ScriptConfig): string => {
+        const langs = sc.languagesKey ? t(sc.languagesKey) : '';
+        const first = langs.split(/[,،、]/)[0].trim();
+        return first && (langs.includes(',') || first.split(/\s+/).length <= 2) ? first : t(sc.nameKey);
+    }, [t]);
 
     const initializeProjectState = useCallback(async (projectToLoad: ProjectData | null, options?: { treatAsUnsaved?: boolean }) => {
         const currentScript = scriptRef.current;
@@ -388,13 +397,18 @@ export const useProjectLoad = ({
                 newSettings.testPage = { ...currentScript.testPage, ...(savedSettings.testPage || {}), fontSize: { ...currentScript.testPage.fontSize, ...(savedSettings.testPage?.fontSize || {}) }, lineHeight: { ...currentScript.testPage.lineHeight, ...(savedSettings.testPage?.lineHeight || {}) } };
                 newSettings.customSampleText = sampleText;
                 migrateLegacySettings(newSettings);
+                // "My Tamil font" in the interface language, numbered if taken; the font has the same name (row 40).
+                const newName = nextFreeName(t('newFontName', { language: languageNameOf(currentScript) }), await dbService.getAllProjectNames());
+                newSettings.fontName = newName;
+                newSettings.fontNameFollowsProject = true;
+                newSettings.fontNameAsked = false;
 
                 settingsDispatch({ type: 'SET_SETTINGS', payload: newSettings });
                 settingsDispatch({ type: 'SET_METRICS', payload: currentScript.metrics });
                 rulesDispatch({ type: 'SET_FEA_EDIT_MODE', payload: isFeaOnly });
                 rulesDispatch({ type: 'SET_MANUAL_FEA_CODE', payload: isFeaOnly ? feaFileData || '' : '' });
                 setLastSavedState(null);
-                setProjectName(baseSettings.fontName);
+                setProjectName(newName);
                 
                 setIsEditMode(false);
                 setBaseFontBinary(undefined);
@@ -405,7 +419,7 @@ export const useProjectLoad = ({
         } finally {
             setIsScriptDataLoading(false);
         }
-    }, [allScripts, characterDispatch, rulesDispatch, settingsDispatch, glyphDataDispatch, kerningDispatch, positioningDispatch, t, setProjectId, setLastSavedState, setMarkAttachmentRules, setMarkAttachmentClasses, setBaseAttachmentClasses, setPositioningRules, setRecommendedKerning, dependencyMap, setProjectName, setGuideFont, setPositioningGroupNames]);
+    }, [allScripts, characterDispatch, rulesDispatch, settingsDispatch, glyphDataDispatch, kerningDispatch, positioningDispatch, t, setProjectId, setLastSavedState, setMarkAttachmentRules, setMarkAttachmentClasses, setBaseAttachmentClasses, setPositioningRules, setRecommendedKerning, dependencyMap, setProjectName, setGuideFont, setPositioningGroupNames, languageNameOf]);
 
     const handleLoadProject = () => fileInputRef.current?.click();
 

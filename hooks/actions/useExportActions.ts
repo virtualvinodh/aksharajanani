@@ -1,6 +1,6 @@
 
 import { shouldShowUseYourFont } from '../../components/UseYourFontModal';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useProject } from '../../contexts/ProjectContext';
 import { useGlyphData } from '../../contexts/GlyphDataContext';
 import { useKerning } from '../../contexts/KerningContext';
@@ -14,7 +14,8 @@ import * as dbService from '../../services/dbService';
 import { ProjectData } from '../../types';
 import { useProgressCalculators } from '../useProgressCalculators';
 import { simpleHash } from '../../utils/stringUtils';
-import { nextFontVersion } from '../../utils/fontVersion';
+import { nextFontVersion, normalizeFontVersion } from '../../utils/fontVersion';
+import { fontFileName } from '../../utils/fontNaming';
 import { findRulesWithMissingGroups } from '../../services/ruleGroupCheck';
 
 export type ExportingType = 'export' | 'test' | 'create' | null;
@@ -53,13 +54,12 @@ export const useExportActions = ({
         allCharsByName, fontRules, kerningMap, positioningRules, glyphVersion 
     });
 
-    const downloadFontBlob = useCallback((blob: Blob, fileNameBase: string): string => {
+    /** Downloads the font as "<font name> <version>.otf" (local date and time without a version; row 40). */
+    const downloadFontBlob = useCallback((blob: Blob, fontName: string, version?: string | null): string => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const safeFileName = fileNameBase.replace(/[^a-z0-9\- ]/gi, '_').trim();
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        a.download = `${safeFileName}_${timestamp}.otf`;
+        a.download = fontFileName(fontName, version);
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         return a.download;
     }, []);
@@ -219,7 +219,7 @@ export const useExportActions = ({
                     setFeaErrorState({ error: feaError, blob });
                     layout.openModal('feaError');
                 } else {
-                    const fileName = downloadFontBlob(blob, projectName);
+                    const fileName = downloadFontBlob(blob, settings?.fontName || projectName, isEditMode ? null : normalizeFontVersion(settings?.fontVersion));
                     // The next export gets the next version number (1.000 → 1.001), so a reinstalled font is seen as newer.
                     // (Not for an imported font being edited: its own name table and version are kept.)
                     if (!isEditMode) settingsDispatch({ type: 'UPDATE_SETTINGS', payload: prev => prev && { ...prev, fontVersion: nextFontVersion(prev.fontVersion) } });
@@ -240,7 +240,7 @@ export const useExportActions = ({
         } finally {
             setExportingType(null);
         }
-    }, [getCachedOrGeneratedFont, downloadFontBlob, layout, t, projectName, settingsDispatch, fontRules, characterSets, isEditMode]);
+    }, [getCachedOrGeneratedFont, downloadFontBlob, layout, t, projectName, settingsDispatch, fontRules, characterSets, isEditMode, settings?.fontName, settings?.fontVersion]);
 
     // Shared logic to check for completeness and warn if necessary
     const checkAndExecute = useCallback((onProceed: () => void) => {
@@ -271,18 +271,32 @@ export const useExportActions = ({
         }
     }, [drawingProgress, positioningProgress, kerningProgress, settings, layout, t]);
 
+    const buildAndDownload = useCallback(() => {
+        // Start building right away. The letters animation is progress feedback for
+        // slow builds only: it appears if the font is not ready within 300ms (a cached
+        // font exports instantly) and never holds up the download.
+        const showAnimation = window.setTimeout(() => setIsAnimatingExport(true), 300);
+        void performExport().finally(() => {
+            window.clearTimeout(showAnimation);
+            setIsAnimatingExport(false);
+        });
+    }, [performExport, setIsAnimatingExport]);
+    // After the name question the font must be built with the new name, i.e. by the next render's
+    // buildAndDownload, not the one this click started with.
+    const latestBuild = useRef(buildAndDownload);
+    latestBuild.current = buildAndDownload;
+
     const startExportProcess = useCallback(() => {
         checkAndExecute(() => {
-            // Start building right away. The letters animation is progress feedback for
-            // slow builds only: it appears if the font is not ready within 300ms (a cached
-            // font exports instantly) and never holds up the download.
-            const showAnimation = window.setTimeout(() => setIsAnimatingExport(true), 300);
-            void performExport().finally(() => {
-                window.clearTimeout(showAnimation);
-                setIsAnimatingExport(false);
-            });
+            // The first export asks what the font should be called (row 40); an imported font keeps its own name.
+            if (settings && !settings.fontNameAsked && !isEditMode) {
+                layout.openModal('fontNamePrompt', {
+                    onDone: () => { layout.closeModal(); window.setTimeout(() => latestBuild.current(), 0); },
+                    onCancel: layout.closeModal,
+                });
+            } else buildAndDownload();
         });
-    }, [checkAndExecute, performExport, setIsAnimatingExport]);
+    }, [checkAndExecute, buildAndDownload, settings, isEditMode, layout]);
 
     const handleTestClick = useCallback(async () => {
         // Like Export and Create: with nothing drawn there is nothing to try (F23).

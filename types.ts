@@ -175,6 +175,10 @@ export interface AppSettings {
   licenseInfoURL?: string;
   /** "1.000", raised by 0.001 after every export (utils/fontVersion.ts). Missing in older projects = 1.000. */
   fontVersion?: string;
+  /** The font's name is the project's name ("Same as project name"); renaming one renames the other (row 40). */
+  fontNameFollowsProject?: boolean;
+  /** "What should your font be called?" was answered (or skipped) at the first export. */
+  fontNameAsked?: boolean;
   testPage?: TestPageConfig;
   isDebugKerningEnabled?: boolean;
   showBoundingBox?: boolean;

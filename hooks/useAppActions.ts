@@ -14,6 +14,7 @@ import { useGlyphActions } from './actions/useGlyphActions';
 import { useProjectLoad } from './actions/useProjectLoad';
 import { useExportActions } from './actions/useExportActions';
 import * as dbService from '../services/dbService';
+import { nextFreeName } from '../utils/fontNaming';
 
 interface UseAppActionsProps {
     projectDataToRestore: ProjectData | null;
@@ -278,10 +279,13 @@ export const useAppActions = ({
         }
     }, [hasSnapshot, projectId, layout, handleRestoreAction]);
     
-    const handleSaveAs = useCallback(async (newName: string) => {
+    const handleSaveAs = useCallback(async (typedName: string) => {
         const currentState = getProjectState();
         if (!currentState) return;
+        // A name nobody uses yet ("… 2"); with "Same as project name" the copy's font gets it too (row 40).
+        const newName = nextFreeName(typedName, await dbService.getAllProjectNames());
         currentState.name = newName;
+        if (currentState.settings?.fontNameFollowsProject !== false) currentState.settings = { ...currentState.settings, fontName: newName };
         const newData = {
             ...currentState,
             savedAt: new Date().toISOString()

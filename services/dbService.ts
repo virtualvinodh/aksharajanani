@@ -89,6 +89,17 @@ export const getRecentProjects = async (limit: number = 5): Promise<ProjectData[
     return projects;
 };
 
+/** Every saved project's name, for picking a name nobody uses yet ("My Tamil font 2"). */
+export const getAllProjectNames = async (): Promise<string[]> => {
+    try {
+        const db = await getDb();
+        const all = await db.getAll(STORE_NAME);
+        return all.map((p: ProjectData) => p.name || p.settings?.fontName || '').filter(Boolean);
+    } catch {
+        return [];
+    }
+};
+
 export const deleteProject = async (projectId: number): Promise<void> => {
     const db = await getDb();
     const tx = db.transaction([STORE_NAME, CACHE_STORE_NAME, SNAPSHOT_STORE_NAME], 'readwrite');

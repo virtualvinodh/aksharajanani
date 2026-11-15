@@ -35,8 +35,8 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 m
 const NewProjectModal: React.FC<NewProjectModalProps> = ({ isOpen, onClose, onConfirm, openTableOnStart }) => {
   const { t } = useLocale();
 
-  const [projectName, setProjectName] = useState('My New Font');
-  const [fontFamily, setFontFamily] = useState('MyFont');
+  // One name for the project and the font (row 40); it can differ later in Settings.
+  const [projectName, setProjectName] = useState('');
   const [upm, setUpm] = useState(1000);
   const [ascender, setAscender] = useState(800);
   const [descender, setDescender] = useState(-200);
@@ -47,14 +47,16 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({ isOpen, onClose, onCo
 
   useEffect(() => {
       if (!isOpen) return;
+      setProjectName(t('newFontNameEmpty'));
       setExtraCharacters([]);
       setExtraBlockNames([]);
       setIsTableOpen(!!openTableOnStart);
-  }, [isOpen, openTableOnStart]);
+  }, [isOpen, openTableOnStart, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      onConfirm({ projectName, fontFamily, upm, ascender, descender, includeLatin, extraCharacters });
+      const name = projectName.trim() || t('newFontNameEmpty');
+      onConfirm({ projectName: name, fontFamily: name, upm, ascender, descender, includeLatin, extraCharacters });
   };
 
   const handlePicked = (chars: Character[], blockNames: string[]) => {
@@ -95,12 +97,8 @@ const NewProjectModal: React.FC<NewProjectModalProps> = ({ isOpen, onClose, onCo
     >
       <form id="new-project-form" onSubmit={handleSubmit} className="space-y-4">
         <div>
-            <label htmlFor="project-name" className={labelClass}>{t('newProjectName')}</label>
+            <label htmlFor="project-name" className={labelClass}>{t('newProjectFontName')}</label>
             <input id="project-name" type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} className={inputClass} required />
-        </div>
-        <div>
-            <label htmlFor="font-family" className={labelClass}>{t('fontFamily')}</label>
-            <input id="font-family" type="text" value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className={inputClass} required />
         </div>
 
         <fieldset className="pt-2 space-y-3">

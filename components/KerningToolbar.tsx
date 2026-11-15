@@ -62,7 +62,7 @@ const KerningToolbar: React.FC<KerningToolbarProps> = ({
 
             {/* Kerning/Spacing Input */}
             <div className="flex flex-col items-center gap-0.5">
-                <label className="text-[11px] font-black text-gray-400 uppercase leading-none">Kern</label>
+                <label className="text-[11px] font-black text-gray-400 uppercase leading-none" title={t('pairFixNumberHint')}>{t('pairFixNumber')}</label>
                 <div className="relative">
                     <input
                         type="text"
@@ -85,7 +85,7 @@ const KerningToolbar: React.FC<KerningToolbarProps> = ({
 
             {/* X-Distance Input */}
             <div className="flex flex-col items-center gap-0.5">
-                <label className="text-[11px] font-black text-gray-400 uppercase leading-none">X-Dist</label>
+                <label className="text-[11px] font-black text-gray-400 uppercase leading-none" title={t('pairGapNumberHint')}>{t('pairGapNumber')}</label>
                 <input
                     ref={xDistInputRef}
                     type="text"

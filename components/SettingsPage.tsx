@@ -44,7 +44,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
   const { settings, metrics, dispatch } = useSettings();
   const { handleBack } = useLayout();
   // Get GuideFont from ProjectContext
-  const { guideFont, setGuideFont, script } = useProject();
+  const { guideFont, setGuideFont, script, projectName, setProjectName } = useProject();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('tools');
   const [localSettings, setLocalSettings] = useState(settings!);
@@ -56,6 +56,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
   const { visibility, handleScroll, scrollRef } = useHorizontalScroll();
 
   const handleClose = () => {
+    // With "Same as project name", a name typed here renames the project too (row 40).
+    const typed = localSettings.fontName?.trim();
+    if (localSettings.fontNameFollowsProject !== false && typed && typed !== projectName) setProjectName(typed);
     dispatch({ type: 'SET_SETTINGS', payload: localSettings });
     dispatch({ type: 'SET_METRICS', payload: localMetrics });
     // Commit GuideFont to ProjectContext
@@ -139,6 +142,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ toolRanges }) => {
                     <MetaDataSettings
                          settings={localSettings} 
                          onSettingsChange={setLocalSettings} 
+                         projectName={projectName}
+                         metrics={localMetrics}
+                         onMetricsChange={setLocalMetrics}
                     />
                 )}
                 {activeTab === 'metrics' && (

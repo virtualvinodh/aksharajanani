@@ -681,7 +681,8 @@ export const useJITHints = (
                 }
             } else if (workspace === 'kerning') {
                 if (!localStorage.getItem('hint_kerning_accept_seen')) {
-                    const btn = document.querySelector('[data-tour="accept-batch-btn"]');
+                    // After automatic spacing: it's applied already, Undo is there (row 27).
+                    const btn = document.querySelector('[data-tour="undo-auto-space-btn"]');
                     if (btn) {
                         clearInterval(checkHints);
                         setSteps([{

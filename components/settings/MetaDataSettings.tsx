@@ -1,16 +1,21 @@
 
 import React from 'react';
-import { AppSettings } from '../../types';
+import { AppSettings, FontMetrics } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
 import { DEFAULT_FONT_VERSION, normalizeFontVersion } from '../../utils/fontVersion';
 
 interface MetaDataSettingsProps {
     settings: AppSettings;
     onSettingsChange: React.Dispatch<React.SetStateAction<AppSettings>>;
+    projectName: string;
+    metrics: FontMetrics;
+    onMetricsChange: React.Dispatch<React.SetStateAction<FontMetrics>>;
 }
 
-const MetaDataSettings: React.FC<MetaDataSettingsProps> = ({ settings, onSettingsChange }) => {
+const MetaDataSettings: React.FC<MetaDataSettingsProps> = ({ settings, onSettingsChange, projectName, metrics, onMetricsChange }) => {
     const { t } = useLocale();
+
+    const follows = settings.fontNameFollowsProject !== false; // missing means it follows
 
     const handleSettingChange = (key: keyof AppSettings) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         onSettingsChange(prev => ({
@@ -23,17 +28,40 @@ const MetaDataSettings: React.FC<MetaDataSettingsProps> = ({ settings, onSetting
         <div className="space-y-6">
              {/* Font Name moved from General */}
              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                <label htmlFor="font-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('fontName')} (For Export):
+                {/* The name people pick the font by in Word, Canva or on a phone (row 40). */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-grow min-w-0">
+                        <label htmlFor="font-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fontNameLabel')}</label>
+                        <input 
+                            type="text" 
+                            id="font-name"
+                            value={follows ? (settings.fontName || projectName) : settings.fontName} 
+                            onChange={handleSettingChange('fontName')} 
+                            className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-lg font-semibold text-gray-900 dark:text-white focus:ring-2 focus:ring-accent focus:outline-none"
+                        />
+                    </div>
+                    <div className="sm:w-40">
+                        <label htmlFor="font-style" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fontStyleLabel')}</label>
+                        <input
+                            type="text"
+                            id="font-style"
+                            value={metrics.styleName}
+                            onChange={e => { const v = e.target.value; onMetricsChange(prev => ({ ...prev, styleName: v })); }}
+                            onBlur={() => onMetricsChange(prev => prev.styleName?.trim() ? prev : { ...prev, styleName: 'Regular' })}
+                            className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent focus:outline-none"
+                        />
+                    </div>
+                </div>
+                <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={follows}
+                        onChange={e => { const on = e.target.checked; onSettingsChange(prev => ({ ...prev, fontNameFollowsProject: on, fontName: on ? (prev.fontName?.trim() && prev.fontName === projectName ? prev.fontName : projectName) : prev.fontName })); }}
+                        className="h-4 w-4 rounded border-gray-300 dark:border-gray-600"
+                    />
+                    {t('fontNameSameAsProject')}
                 </label>
-                <input 
-                    type="text" 
-                    id="font-name"
-                    value={settings.fontName} 
-                    onChange={handleSettingChange('fontName')} 
-                    className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-900 dark:border-gray-600 text-lg font-semibold text-gray-900 dark:text-white focus:ring-2 focus:ring-accent focus:outline-none"
-                />
-                <p className="text-xs text-gray-500 mt-1">This name will be used inside the exported OTF file.</p>
+                <p className="text-xs text-gray-500 mt-1">{t(follows ? 'fontNameFollowsHint' : 'fontNameOwnHint')}</p>
                 <label htmlFor="font-version" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-4 mb-1">{t('fontVersionLabel')}</label>
                 <input
                     type="text"

@@ -14,7 +14,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -52,7 +52,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 300,
         "baseLineY": 600,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -95,7 +95,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 300,
         "baseLineY": 600,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -138,7 +138,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 300,
         "baseLineY": 600,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -181,7 +181,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 300,
         "baseLineY": 600,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -224,7 +224,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 300,
         "baseLineY": 600,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -268,7 +268,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 400,
         "baseLineY": 800,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": -5,
         "defaultRSB": -5
@@ -305,7 +305,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 400,
         "baseLineY": 800,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": -5,
         "defaultRSB": -5
@@ -341,7 +341,7 @@
         "defaultAdvanceWidth": 800,
         "topLineY": 400,
         "baseLineY": 800,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -385,7 +385,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -430,7 +430,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -474,7 +474,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -518,7 +518,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -557,7 +557,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -597,7 +597,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -637,7 +637,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -676,7 +676,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -715,7 +715,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -754,7 +754,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50
@@ -799,7 +799,7 @@
         "topLineY": 460,
         "baseLineY": 660,
         "subBaseLineY": 860,
-        "styleName": "Medium",
+        "styleName": "Regular",
         "spaceAdvanceWidth": 400,
         "defaultLSB": 50,
         "defaultRSB": 50

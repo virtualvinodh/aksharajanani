@@ -245,7 +245,12 @@ elif classes:
 
 # ---- 4. spacing ------------------------------------------------------------------------------
 section('4. Spacing')
-kern = dict((k, v) for k, v in (project.get('kerning') or []))
+# The spacing the export uses (hooks/actions/useExportActions.ts): automatic spacing (applied
+# straight away since row 27, saved as `suggestedKerning`), overridden by pairs set by hand
+# (`kerning`), minus ignored pairs.
+kern = dict((k, v) for k, v in (project.get('suggestedKerning') or []))
+kern.update((k, v) for k, v in (project.get('kerning') or []))
+for k in (project.get('ignoredKerning') or []): kern.pop(k, None)
 uni_to_name = {code_point(c): c['name'] for c in chars if code_point(c) is not None}
 import unicodedata as _ud
 kern_ok = kern_bad = kern_skip = 0; bad = []

@@ -86,6 +86,14 @@ def _sync_font_revision(font):
     except Exception as e:
         print(f"Could not set the font revision: {e}")
 
+def _sync_style_bits(font):
+    """head.macStyle bold/italic bits follow OS/2 fsSelection (opentype.js always writes 0)."""
+    try:
+        sel = font["OS/2"].fsSelection
+        font["head"].macStyle = (1 if sel & 0x20 else 0) | (2 if sel & 0x01 else 0)
+    except Exception as e:
+        print(f"Could not set the style bits: {e}")
+
 def compile_fea_and_patch(font_data, fea_text):
     """Compiles FEA features, applies them, and adds a Unicode cmap."""
     font_bytes = font_data.to_py()
@@ -111,6 +119,7 @@ def compile_fea_and_patch(font_data, fea_text):
     font = _add_unicode_cmap_to_font_object(font)
 
     _sync_font_revision(font)
+    _sync_style_bits(font)
     
     # Save the modified font
     buffer = io.BytesIO()

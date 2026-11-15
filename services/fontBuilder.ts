@@ -13,6 +13,7 @@ import { curveToPolyline, quadraticCurveToPolyline, getStrokeOutlinePoints, gene
 import { DRAWING_CANVAS_SIZE } from '../canvasConstants';
 import { isGlyphDrawn, getGlyphExportNameByUnicode, getBlankAdvanceWidth } from '../utils/glyphUtils';
 import { normalizeFontVersion } from '../utils/fontVersion';
+import { fontNames } from '../utils/fontNaming';
 import opentype from 'opentype.js';
 import paper from 'paper';
 
@@ -427,9 +428,15 @@ export const createFont = (
     }
 
     const fontVersion = normalizeFontVersion(settings.fontVersion);
+    // Family/style/PostScript names and weight, consistent across the name table (row 40).
+    const names = fontNames(settings.fontName, metrics.styleName);
     const font = new opentype.Font({
-      familyName: settings.fontName,
-      styleName: metrics.styleName,
+      familyName: names.family,
+      styleName: names.subfamily,
+      fullName: names.fullName,
+      postScriptName: names.postScriptName,
+      weightClass: names.weightClass,
+      fsSelection: (names.bold ? 0x20 : 0) | (names.italic ? 0x01 : 0) || 0x40,
       unitsPerEm: metrics.unitsPerEm,
       ascender: metrics.ascender,
       descender: metrics.descender,
@@ -446,8 +453,18 @@ export const createFont = (
       // sets from name ID 5 (opentype.js always writes 1.0 there).
       version: `Version ${fontVersion}`
     });
-    // "1.001;FamilyStyle": a new version gets a new unique ID, so a reinstalled font is seen as new.
-    font.names.uniqueID = { en: `${fontVersion};${(settings.fontName + metrics.styleName).replace(/\s/g, '')}` };
+    // "1.001;MyTamilfont-Regular": a new version gets a new unique ID, so a reinstalled font is seen as new.
+    font.names.uniqueID = { en: `${fontVersion};${names.postScriptName}` };
+    if (names.typographicFamily) {
+      font.names.preferredFamily = { en: names.typographicFamily };
+      font.names.preferredSubfamily = { en: names.typographicSubfamily! };
+    }
+    // opentype.js writes " " for every name not given; leave out the empty ones (licence, URLs…).
+    for (const key of ['designer', 'designerURL', 'manufacturer', 'manufacturerURL', 'license', 'licenseURL', 'description', 'copyright', 'trademark'] as const) {
+      const v = font.names[key]?.en;
+      if (v === undefined || !v.trim()) delete font.names[key];
+    }
+    // head.macStyle (bold/italic) is set from OS/2 fsSelection in the Python step; opentype.js can't.
 
     return font;
 };

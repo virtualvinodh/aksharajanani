@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Character, RecommendedKerning, KerningMap } from '../../types';
 import { useLocale } from '../../contexts/LocaleContext';
-import { SparklesIcon, UndoIcon, CheckCircleIcon, SearchIcon, GridViewIcon, SettingsIcon } from '../../constants';
+import { SparklesIcon, UndoIcon, SearchIcon, GridViewIcon } from '../../constants';
 import { calculateAutoKerning } from '../../services/kerningService';
 import { useMeasurableGlyphs } from '../../hooks/kerning/useMeasurableGlyphs';
 import PairCard from '../PairCard';
@@ -17,7 +17,6 @@ import { useLayout } from '../../contexts/LayoutContext';
 import AutoKerningProgressModal from '../AutoKerningProgressModal';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import Modal from '../Modal';
-import SpacingDefaultsPanel from './SpacingDefaultsPanel';
 
 interface KerningSelectionViewProps {
     filteredPairs: { left: Character, right: Character }[];
@@ -31,7 +30,6 @@ interface KerningSelectionViewProps {
     hasHiddenRecommended?: boolean;
     kerningMap: KerningMap;
     suggestedKerningMap: KerningMap;
-    onAcceptSuggestions: (keys: string[]) => void;
     onSwitchToAllPairs?: () => void;
     emptyStateTitle?: string;
     emptyStateMessage?: string;
@@ -39,7 +37,7 @@ interface KerningSelectionViewProps {
 
 const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({ 
     filteredPairs, onEditPair, selectedLeftChars, setSelectedLeftChars, selectedRightChars, setSelectedRightChars, mode, showRecommendedLabel,
-    hasHiddenRecommended, kerningMap, suggestedKerningMap, onAcceptSuggestions, emptyStateTitle, emptyStateMessage
+    hasHiddenRecommended, kerningMap, suggestedKerningMap, emptyStateTitle, emptyStateMessage
 }) => {
     const { t } = useLocale();
     const { showNotification, filterMode, searchQuery } = useLayout();
@@ -55,11 +53,19 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
     const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
     const [kerningProgressValue, setKerningProgressValue] = useState(0);
     const [isResetVisibleConfirmOpen, setIsResetVisibleConfirmOpen] = useState(false);
+    const [showLetterFilters, setShowLetterFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isSpacingPanelOpen, setIsSpacingPanelOpen] = useState(false);
     // Set by the progress dialog's Stop button; each run checks it (F43).
     const stopRequested = useRef(false);
     const [stopRun, setStopRun] = useState<(() => void) | null>(null);
+    // The spacing before the last automatic spacing or reset, for Undo (row 27: applied straight away).
+    const [undoSnapshot, setUndoSnapshot] = useState<{ kerning: KerningMap; suggested: KerningMap } | null>(null);
+    const restore = (snap: { kerning: KerningMap; suggested: KerningMap }) => {
+        kerningDispatch({ type: 'SET_MAP', payload: new Map(snap.kerning) });
+        kerningDispatch({ type: 'SET_SUGGESTIONS', payload: new Map(snap.suggested) });
+        setUndoSnapshot(null);
+        showNotification(t('spacingUndone'), 'info');
+    };
 
     const isLargeScreen = useMediaQuery('(min-width: 1024px)');
     const PAGE_SIZE = isLargeScreen ? 100 : 20;
@@ -93,12 +99,18 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
         setIsProgressModalOpen(true);
         stopRequested.current = false;
         setStopRun(() => () => { stopRequested.current = true; });
+        const snap = { kerning: new Map(kerningMap), suggested: new Map(suggestedKerningMap) };
         try {
             const results = await calculateAutoKerning(pairsToKern, glyphDataMap, metrics, settings.strokeThickness, setKerningProgressValue, recommendedKerning, { groups: rulesState.fontRules?.groups || {}, characterSets }, () => stopRequested.current);
-            // Stopping keeps what was measured so far.
-            if (results.size > 0) kerningDispatch({ type: 'MERGE_SUGGESTIONS', payload: results });
-            if (stopRequested.current) showNotification(t('autoKerningStopped', { count: results.size }), 'info');
-            else if (results.size > 0) showNotification(t('autoKerningComplete', { count: results.size }), 'success');
+            // Applied straight away (they go into the font as they are); stopping keeps what was
+            // measured so far. Undo puts the spacing back as it was.
+            if (results.size > 0) {
+                kerningDispatch({ type: 'MERGE_SUGGESTIONS', payload: results });
+                setUndoSnapshot(snap);
+                const undo = { onUndo: () => restore(snap) };
+                if (stopRequested.current) showNotification(t('autoKerningStopped', { count: results.size }), 'info', undo);
+                else showNotification(t('autoKerningComplete', { count: results.size }), 'success', undo);
+            } else if (stopRequested.current) showNotification(t('autoKerningStopped', { count: 0 }), 'info');
         } finally {
             setStopRun(null);
             setIsProgressModalOpen(false);
@@ -148,17 +160,28 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
 
             if (newPairs.length > 0) {
                 setRecommendedKerning([...(recommendedKerning || []), ...newPairs]);
-                showNotification(`Scan complete. ${newPairs.length} new pairs added to Recommendations.`, 'success');
+                showNotification(t('findPairsAdded', { count: newPairs.length }), 'success');
             } else {
-                showNotification("Scan complete. All colliding pairs are already in recommendations.", 'info');
+                showNotification(t('findPairsNoneNew'), 'info');
             }
 
         } else {
-            showNotification("Scan complete. No new collisions found.", 'info');
+            showNotification(t('findPairsNoneFound'), 'info');
         }
     };
 
+    // "Back to usual" for one pair: it follows the overall spacing again. Kept as a choice made by
+    // hand ("as usual"), so it counts as checked and automatic spacing doesn't fix it again.
+    const handleBackToUsual = (key: string, label: string) => {
+        const snap = { kerning: new Map(kerningMap), suggested: new Map(suggestedKerningMap) };
+        const next = new Map(kerningMap); next.set(key, 0);
+        kerningDispatch({ type: 'SET_MAP', payload: next });
+        kerningDispatch({ type: 'REMOVE_SUGGESTIONS', payload: [key] });
+        showNotification(t('pairFixBackToUsualDone', { pair: label }), 'success', { onUndo: () => restore(snap) });
+    };
+
     const handleResetVisible = () => {
+        const snap = { kerning: new Map(kerningMap), suggested: new Map(suggestedKerningMap) };
         const newMap = new Map(kerningMap);
         const keysToRemove: string[] = [];
         let count = 0;
@@ -188,7 +211,8 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
             kerningDispatch({ type: 'REMOVE_SUGGESTIONS', payload: keysToRemove });
         }
         
-        showNotification(t('kerningResetSuccess', { count }), 'success');
+        if (count > 0) setUndoSnapshot(snap);
+        showNotification(t('kerningResetSuccess', { count }), 'success', count > 0 ? { onUndo: () => restore(snap) } : undefined);
         setIsResetVisibleConfirmOpen(false);
     };
 
@@ -198,31 +222,6 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
     // Use "Filter" title for both Recommended and Spaced modes
     const leftTitle = mode === 'all' ? "kerningSelectLeftChars" : "kerningFilterLeftChars";
     const rightTitle = mode === 'all' ? "kerningSelectRightChars" : "kerningFilterRightChars";
-
-    const unreviewedCount = useMemo(() => {
-        let count = 0;
-        for (const p of filteredPairs) {
-            const key = `${p.left.unicode}-${p.right.unicode}`;
-            // It matches if it has a suggestion but no manual kerning
-            if (suggestedKerningMap.has(key) && !kerningMap.has(key)) {
-                count++;
-            }
-        }
-        return count;
-    }, [filteredPairs, suggestedKerningMap, kerningMap]);
-    
-    const handleAcceptVisibleSuggestions = () => {
-        const keysToAccept: string[] = [];
-        for (const p of filteredPairs) {
-            const key = `${p.left.unicode}-${p.right.unicode}`;
-            if (suggestedKerningMap.has(key) && !kerningMap.has(key)) {
-                keysToAccept.push(key);
-            }
-        }
-        if (keysToAccept.length > 0) {
-            onAcceptSuggestions(keysToAccept);
-        }
-    };
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -240,38 +239,39 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
                         </div>
                     )}
 
-                    {!isLargeScreen && (
+                    {!isLargeScreen && mode !== 'all' && (
+                        // On phones the letter filters are folded away, so the pairs come first. "All
+                        // pairs" needs them to choose letters, so there they stay open.
+                        <button type="button" onClick={() => setShowLetterFilters(v => !v)} aria-expanded={showLetterFilters}
+                            className="mx-4 mt-3 self-start text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                            <span aria-hidden="true" className={`inline-block mr-1 transition-transform ${showLetterFilters ? 'rotate-90' : ''}`}>▸</span>{t('filterByLetter')}
+                        </button>
+                    )}
+                    {!isLargeScreen && (mode === 'all' || showLetterFilters) && (
                         <div className="p-4 space-y-4 border-b dark:border-gray-700">
                              <CharacterSelectionRow title={leftTitle} characters={drawnCharacters} selectedChars={selectedLeftChars} onSelectionChange={(u, s) => setSelectedLeftChars(prev => { const n = new Set(prev); if (s) { n.add(u); } else { n.delete(u); } return n; })} onSelectAll={() => setSelectedLeftChars(new Set(drawnCharacters.map(c => c.unicode!)))} onSelectNone={() => setSelectedLeftChars(new Set())} />
                              <CharacterSelectionRow title={rightTitle} characters={drawnCharacters} selectedChars={selectedRightChars} onSelectionChange={(u, s) => setSelectedRightChars(prev => { const n = new Set(prev); if (s) { n.add(u); } else { n.delete(u); } return n; })} onSelectAll={() => setSelectedRightChars(new Set(drawnCharacters.map(c => c.unicode!)))} onSelectNone={() => setSelectedRightChars(new Set())} />
                         </div>
                     )}
 
-                    <div className="p-4 border-b dark:border-gray-700 flex items-center gap-4 flex-wrap bg-white dark:bg-gray-800">
-                        <button onClick={handleAutoKern} disabled={isAutoKerning} data-tour="auto-kern-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"><SparklesIcon /> {t('autoKern')}</button>
+                    <div className="px-4 py-3 border-b dark:border-gray-700 flex items-center gap-3 flex-wrap bg-white dark:bg-gray-800">
+                        <button onClick={handleAutoKern} disabled={isAutoKerning} data-tour="auto-kern-btn" title={t('spaceAllAutomaticallyHint')} className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-colors"><SparklesIcon /> {t('spaceAllAutomatically')}</button>
+                        {undoSnapshot && (
+                            <button onClick={() => restore(undoSnapshot)} data-tour="undo-auto-space-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"><UndoIcon /> {t('undoSpacing')}</button>
+                        )}
                         
                         <button onClick={handleDiscoverKerning} disabled={isAutoKerning} data-tour="detect-pairs-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 dark:bg-gray-700 text-gray-800 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors" title={t('detectNewPairsHint')}>
                              <SearchIcon className="w-4 h-4" />
                              <span>{t('detectNewPairs')}</span>
                         </button>
 
-                        {unreviewedCount > 0 && (
-                            <button onClick={handleAcceptVisibleSuggestions} data-tour="accept-batch-btn" className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors">
-                                <CheckCircleIcon className="w-4 h-4" />
-                                {t('acceptSuggestions', { count: unreviewedCount })}
-                            </button>
-                        )}
-                        <button onClick={() => setIsSpacingPanelOpen(o => !o)} aria-expanded={isSpacingPanelOpen} data-tour="spacing-defaults-btn" className={`inline-flex items-center gap-2 px-4 py-2 ring-1 ring-inset font-semibold rounded-lg transition-colors ${isSpacingPanelOpen ? 'bg-indigo-50 ring-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:ring-indigo-500 dark:text-indigo-200' : 'bg-white ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600'}`}><SettingsIcon className="w-4 h-4" /> {t('spacingDefaultsButton')}</button>
-                        <button onClick={() => setIsResetVisibleConfirmOpen(true)} disabled={kerningMap.size === 0 && suggestedKerningMap.size === 0} className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 font-semibold rounded-lg disabled:opacity-50 transition-colors"><UndoIcon /> {t('resetVisible')}</button>
+                        <button onClick={() => setIsResetVisibleConfirmOpen(true)} disabled={kerningMap.size === 0 && suggestedKerningMap.size === 0} className="inline-flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 text-gray-800 dark:bg-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 font-semibold rounded-lg disabled:opacity-50 transition-colors" title={t('resetVisibleTitle')}><UndoIcon /> {t('resetVisible')}</button>
                     </div>
 
-                    {isSpacingPanelOpen && (
-                        <SpacingDefaultsPanel letters={drawnCharacters} glyphDataMap={glyphDataMap} kerningMap={kerningMap} suggestedKerningMap={suggestedKerningMap} glyphVersion={glyphVersion} />
-                    )}
 
                     <div className="flex-grow">
                         {paginatedPairs.length > 0 ? (
-                            <div className="p-4 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4">
+                            <div className="p-4 grid grid-cols-[repeat(auto-fill,minmax(5.25rem,1fr))] gap-3 sm:gap-4">
                                 {paginatedPairs.map(p => {
                                     const key = `${p.left.unicode}-${p.right.unicode}`;
                                     const savedValue = kerningMap.get(key);
@@ -287,6 +287,7 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
                                             showRecommendedLabel={showRecommendedLabel} 
                                             kerningValue={savedValue ?? suggestedValue}
                                             isSuggested={isSuggested}
+                                            onBackToUsual={() => handleBackToUsual(key, `${p.left.name} ${p.right.name}`)}
                                             glyphDataMap={glyphDataMap} 
                                             strokeThickness={settings!.strokeThickness} 
                                             metrics={metrics!} 
@@ -307,7 +308,7 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
                                      </>
                                 ) : (
                                      mode === 'spaced' ? (
-                                          <p className="italic text-lg">No manually spaced pairs yet.</p>
+                                          <p className="italic text-lg">{t('noSpacedPairsYet')}</p>
                                      ) : (
                                           <span className="italic text-lg">{t('noResultsFound')}</span>
                                      )
@@ -318,9 +319,9 @@ const KerningSelectionView: React.FC<KerningSelectionViewProps> = ({
 
                     {totalPages > 1 && (
                         <div className="p-6 border-t dark:border-gray-700 flex justify-center gap-4">
-                            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50">Prev</button>
-                            <span className="self-center">Page {currentPage} of {totalPages}</span>
-                            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50">Next</button>
+                            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50">{t('previous')}</button>
+                            <span className="self-center">{t('pageOf', { current: currentPage, total: totalPages })}</span>
+                            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50">{t('next')}</button>
                         </div>
                     )}
                 </main>
