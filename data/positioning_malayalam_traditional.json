@@ -10,6 +10,11 @@
         "base": ["$consonants", "$conjuncts", "$mini_cons", "$mini_conj"],
         "mark": ["ൢ", "ൣ", "", "ു", "ൂ", "ൃ", "ൄ", "$mini_marks"],
         "gpos": "blwm"
+      },
+      {
+        "base": ["$traditional_cons_ra", "$traditional_conj_ra"],
+        "mark": ["ു.ra", "ൂ.ra"],
+        "gpos": "blwm"
       }
     ]
   },
@@ -57,6 +62,14 @@
         "ൄ": ["bottomRight", "topRight"],
         "ൃ.mini": ["bottomRight", "topRight"],
         "ൄ.mini": ["bottomRight", "topRight"]
+      },
+      "$traditional_cons_ra": {
+        "ു.ra": ["bottomRight", "topRight"],
+        "ൂ.ra": ["bottomRight", "topRight"]
+      },
+      "$traditional_conj_ra": {
+        "ു.ra": ["bottomRight", "topRight"],
+        "ൂ.ra": ["bottomRight", "topRight"]
       }
     }
   },
@@ -70,6 +83,17 @@
       },
       {
         "members": ["്", "഼"]
+      },
+      {
+        "name": "ു and ൂ under the ra-sign",
+        "members": ["ു.ra", "ൂ.ra"]
+      }
+    ],
+    "baseAttachmentClass": [
+      {
+        "name": "Letters with the ra-sign",
+        "members": ["$traditional_cons_ra", "$traditional_conj_ra"],
+        "applies": ["ു.ra", "ൂ.ra"]
       }
     ]
   },

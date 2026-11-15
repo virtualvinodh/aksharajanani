@@ -40,6 +40,18 @@
         "glyphClass": "base"
       },
       {
+        "name": "ു.ra",
+        "glyphClass": "mark",
+        "advWidth": "0",
+        "desc": "ു after the ra-sign (ക്രു): just the small circle that goes under the ra-sign"
+      },
+      {
+        "name": "ൂ.ra",
+        "glyphClass": "mark",
+        "advWidth": "0",
+        "desc": "ൂ after the ra-sign (ക്രൂ): the small circle with its tail"
+      },
+      {
         "unicode": 3426,
         "name": "ൢ",
         "glyphClass": "mark",
@@ -1796,6 +1808,500 @@
           "ഺ",
           "ു"
         ]
+      },
+      {
+        "name": "ക്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഖ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഖ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഖ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഗ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഘ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഘ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഘ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ങ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ച്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഛ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഛ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഛ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ജ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഝ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഝ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഝ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഞ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ട്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ട്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ട്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഠ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഠ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഠ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഡ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഡ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഡ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഢ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഢ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഢ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ണ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഥ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഥ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഥ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ദ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ധ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ധ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ധ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "പ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "പ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "പ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഫ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഫ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഫ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ബ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ബ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ബ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഭ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഭ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഭ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "യ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "യ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "യ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ര്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ര്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ര്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ല്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ല്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ല്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "വ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "വ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "വ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ശ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഷ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഷ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഷ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "സ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഹ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ള്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ള്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ള്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഴ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഴ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഴ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "റ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "റ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "റ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഩ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഩ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഩ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഺ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഺ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഺ്ര",
+          "ു.ra"
+        ]
       }
     ]
   },
@@ -2212,6 +2718,500 @@
         "position": [
           "ഺ",
           "ൂ"
+        ]
+      },
+      {
+        "name": "ക്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഖ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഖ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഖ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഗ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഘ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഘ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഘ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ങ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ച്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഛ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഛ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഛ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ജ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഝ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഝ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഝ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഞ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ട്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ട്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ട്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഠ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഠ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഠ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഡ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഡ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഡ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഢ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഢ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഢ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ണ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഥ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഥ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഥ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ദ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ധ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ധ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ധ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "പ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "പ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "പ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഫ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഫ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഫ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ബ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ബ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ബ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഭ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഭ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഭ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "യ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "യ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "യ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ര്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ര്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ര്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ല്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ല്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ല്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "വ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "വ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "വ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ശ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഷ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഷ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഷ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "സ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഹ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ള്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ള്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ള്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഴ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഴ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഴ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "റ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "റ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "റ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഩ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഩ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഩ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഺ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഺ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഺ്ര",
+          "ൂ.ra"
         ]
       }
     ]
@@ -4053,6 +5053,656 @@
           "വ്വ",
           "ു"
         ]
+      },
+      {
+        "name": "ക്ക്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ക്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ക്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ക്ത്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ത്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ത്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ക്ഷ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ഷ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ഷ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഗ്ഗ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ഗ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ഗ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഗ്ന്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ന്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ന്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഗ്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ങ്ങ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ങ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ങ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ങ്ക്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ക്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ക്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ച്ഛ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ഛ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ഛ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ജ്ജ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ജ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ജ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ജ്ഞ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ഞ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ഞ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഞ്ച്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ച്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ച്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഞ്ഞ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ഞ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ഞ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ട്ട്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ട്ട്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ട്ട്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഡ്ഡ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഡ്ഡ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഡ്ഡ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ണ്ട്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ട്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ട്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ണ്ഡ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ഡ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ഡ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ണ്ണ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ണ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ണ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ണ്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്ത്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ത്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ത്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്ഥ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ഥ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ഥ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്ന്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ന്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ന്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ദ്ദ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ദ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ദ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ദ്ധ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ധ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ധ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്ത്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ത്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ത്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്ഥ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ഥ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ഥ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്ദ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ദ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ദ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്ധ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ധ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ധ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്ന്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ന്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ന്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ന്റ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്റ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്റ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "പ്പ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "പ്പ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "പ്പ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "മ്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "മ്പ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്പ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്പ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ള്ള്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ള്ള്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ള്ള്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ശ്ശ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ശ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ശ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ശ്ച്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ച്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ച്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "സ്സ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്സ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്സ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "സ്ഥ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്ഥ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്ഥ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "സ്റ്റ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്റ്റ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്റ്റ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ത്സ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്സ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്സ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഹ്മ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്മ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്മ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ഹ്ന്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്ന്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്ന്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "റ്റ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "റ്റ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "റ്റ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ബ്ബ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ബ്ബ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ബ്ബ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ച്ച്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ച്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ച്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "യ്യ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "യ്യ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "യ്യ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "വ്വ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "വ്വ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "വ്വ്ര",
+          "ു.ra"
+        ]
+      },
+      {
+        "name": "ൻ്റ്രു",
+        "glyphClass": "ligature",
+        "liga": [
+          "ൻ്റ്ര",
+          "ു"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ൻ്റ്ര",
+          "ു.ra"
+        ]
       }
     ]
   },
@@ -4711,6 +6361,656 @@
         "position": [
           "വ്വ",
           "ൂ"
+        ]
+      },
+      {
+        "name": "ക്ക്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ക്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ക്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ക്ത്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ത്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ത്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ക്ഷ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ക്ഷ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ക്ഷ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഗ്ഗ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ഗ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ഗ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഗ്ന്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്ന്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്ന്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഗ്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഗ്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഗ്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ങ്ങ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ങ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ങ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ങ്ക്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ങ്ക്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ങ്ക്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ച്ഛ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ഛ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ഛ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ജ്ജ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ജ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ജ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ജ്ഞ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ജ്ഞ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ജ്ഞ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഞ്ച്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ച്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ച്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഞ്ഞ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഞ്ഞ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഞ്ഞ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ട്ട്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ട്ട്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ട്ട്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഡ്ഡ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഡ്ഡ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഡ്ഡ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ണ്ട്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ട്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ട്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ണ്ഡ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ഡ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ഡ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ണ്ണ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്ണ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്ണ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ണ്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ണ്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ണ്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്ത്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ത്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ത്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്ഥ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ഥ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ഥ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്ന്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്ന്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്ന്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ദ്ദ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ദ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ദ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ദ്ധ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ദ്ധ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ദ്ധ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്ത്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ത്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ത്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്ഥ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ഥ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ഥ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്ദ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ദ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ദ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്ധ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ധ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ധ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്ന്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്ന്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്ന്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ന്റ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ന്റ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ന്റ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "പ്പ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "പ്പ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "പ്പ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "മ്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "മ്പ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "മ്പ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "മ്പ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ള്ള്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ള്ള്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ള്ള്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ശ്ശ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ശ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ശ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ശ്ച്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ശ്ച്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ശ്ച്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "സ്സ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്സ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്സ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "സ്ഥ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്ഥ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്ഥ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "സ്റ്റ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "സ്റ്റ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "സ്റ്റ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ത്സ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ത്സ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ത്സ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഹ്മ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്മ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്മ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ഹ്ന്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ഹ്ന്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ഹ്ന്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "റ്റ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "റ്റ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "റ്റ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ബ്ബ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ബ്ബ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ബ്ബ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ച്ച്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ച്ച്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ച്ച്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "യ്യ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "യ്യ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "യ്യ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "വ്വ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "വ്വ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "വ്വ്ര",
+          "ൂ.ra"
+        ]
+      },
+      {
+        "name": "ൻ്റ്രൂ",
+        "glyphClass": "ligature",
+        "liga": [
+          "ൻ്റ്ര",
+          "ൂ"
+        ],
+        "gsub": "blws",
+        "position": [
+          "ൻ്റ്ര",
+          "ൂ.ra"
         ]
       }
     ]
